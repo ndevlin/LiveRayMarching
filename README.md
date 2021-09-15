@@ -16,8 +16,8 @@ level to 6 so you have more vertices with which to work.
 noise function permutations to offset the vertices on the surface of the icosphere and modify the color of the icosphere so that it looks like a planet with geographic
 features. Your planet should have __at least four distinct "biomes"__ on its surface (they do not have to be Earth biomes). Try making formations like mountain ranges, oceans, rivers, lakes, canyons, volcanoes, ice caps, glaciers, or even forests. We recommend using 3D noise functions whenever possible so that you don't have UV distortion, though that effect may be desirable if you're trying to make the poles of your planet stand out more.
 - Combined with your noise functions, use __at least four__ different functions from the Toolbox Functions slides. They should be used to either adjust your noise distribution, or animate elements on your planet's surface.
-- Implement various surface reflection models (e.g. Lambertian, Blinn-Phong,
-Matcap/Lit Sphere, Raytraced Specular Reflection) on the planet's surface to
+- Implement __at least two__ surface reflection model (e.g. Lambertian, Blinn-Phong,
+Matcap/Lit Sphere, Raytraced Specular Reflection) besides on the planet's surface to
 better distinguish the different formations (and perhaps even biomes) on the
 surface of your planet. Make sure your planet has a "day" side and a "night"
 side; you could even place small illuminated areas on the night side to
