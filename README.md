@@ -59,6 +59,7 @@ Please be as detailed as you can; not only will this help you explain your work
 to recruiters, but it helps us understand your project when we grade it!
 
 ## Extra Credit
+Any or All of the following bonus items:
 - Use a 4D noise function to modify the terrain over time, where time is the
 fourth dimension that is updated each frame. A 3D function will work, too, but
 the change in noise will look more "directional" than if you use 4D.
@@ -66,3 +67,4 @@ the change in noise will look more "directional" than if you use 4D.
   brightness of emissive areas, water levels, etc.)
 - Create a background for your planet using a raytraced sky box that includes
 things like the sun, stars, or even nebulae.
+- Add a textured moon that orbits your planet
