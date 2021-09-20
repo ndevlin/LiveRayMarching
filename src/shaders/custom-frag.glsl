@@ -17,19 +17,30 @@ in vec4 fs_Col;
 
 out vec4 out_Col; 
 
-// Takes in a position vec3, returns a vec3, to be used below as a color
-vec3 noise3D( vec3 p ) 
+
+vec3 returnLatitudeAsColor(vec3 p)
 {
-    //float red = fract(sin((dot(p, vec3(127.1, 311.7, 191.999)))) * 43758.5453);
     float red = 0.0f;
-    red += abs(p.y) - 6.0f;
+    red += abs(p.y) * 8.0f - 6.0f;
 
-    float green = abs(p.y) - 6.0f + fract(sin((dot(p, vec3(191.999, 127.1, 311.7)))) * 3758.5453);
+    float green = abs(p.y) * 8.0f - 6.0f;
 
-    //float val3 = fract(sin((dot(p, vec3(311.7, 191.999, 127.1)))) * 758.5453);
     float blue = 1.0f;
 
     return vec3(red, green, blue);
+}
+
+
+// Takes in a position vec3, returns a vec3, to be used below as a color
+vec3 noise3D( vec3 p ) 
+{
+    float val1 = fract(sin((dot(p, vec3(127.1, 311.7, 191.999)))) * 43758.5453);
+
+    float val2 = fract(sin((dot(p, vec3(191.999, 127.1, 311.7)))) * 3758.5453);
+
+    float val3 = fract(sin((dot(p, vec3(311.7, 191.999, 127.1)))) * 758.5453);
+
+    return vec3(val1, val2, val3);
 }
 
 
@@ -104,11 +115,39 @@ void main()
         // Lambert shading
         out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
 
+        vec3 latitudeCol = returnLatitudeAsColor(vec3(fs_Pos[0], fs_Pos[1], fs_Pos[2]));
+
         // Add fbm noise
-        vec3 val = fbm(fs_Pos[0], fs_Pos[1], fs_Pos[2]);
+        vec3 fbmVal = fbm(fs_Pos[0], fs_Pos[1], fs_Pos[2]);
 
-        out_Col += vec4(val, 1.0);
+        fbmVal = clamp(fbmVal, 0.0f, 1.0f);
 
-        //out_Col /= (val[0] + val[1] + val[2]);
+        vec3 greenVal = vec3(0.0f, fbmVal[1], 0.0f);
+
+        float r = latitudeCol.r;
+        float g = latitudeCol.g;
+        float b = latitudeCol.b;
+
+        if(greenVal.g > 0.5f)
+        {
+            b = 0.0f;
+            g = greenVal.g;
+        }
+        else
+        {
+            g = latitudeCol.g;
+        }
+
+        if(abs(fs_Pos[1]) >= 0.82f)
+        {
+            r = latitudeCol.r;
+            g = latitudeCol.g;
+            b = latitudeCol.b;
+        }
+
+        out_Col = vec4(r, g, b, 1.0);
+
+        //out_Col = vec4(latitudeCol, 1.0f);
+
 }
 
