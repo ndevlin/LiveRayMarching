@@ -22,7 +22,7 @@ const controls = {
 // Controller that allows user color input
 const colorObject = 
 {
-  actualColor: [ 255, 0, 0 ], // RGB array
+  actualColor: [ 0, 0, 255 ], // RGB array
 };
 
 let icosphere: Icosphere;
@@ -44,7 +44,7 @@ function loadScene() {
   square.create();
 
   // Cube constructor takes in object origin
-  cube = new Cube(vec3.fromValues(1, 1, 1));
+  cube = new Cube(vec3.fromValues(3, 3, -3));
   cube.create();
 }
 
@@ -131,7 +131,7 @@ function main()
     */
 
     // Render with custom noise-based shader
-    renderer.render(camera, custom, [icosphere],
+    renderer.render(camera, custom, [icosphere, cube],  // Draw Cube as a reference for now
     // Divide by 256 to convert from web RGB to shader 0-1 values
     vec4.fromValues(colorObject.actualColor[0] / 256.0, colorObject.actualColor[1] / 256.0, colorObject.actualColor[2] / 256.0, 1),
     currTick

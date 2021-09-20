@@ -17,16 +17,19 @@ in vec4 fs_Col;
 
 out vec4 out_Col; 
 
-// Takes in a vec3, returns a vec3, to be used below as a color
+// Takes in a position vec3, returns a vec3, to be used below as a color
 vec3 noise3D( vec3 p ) 
 {
-    float val1 = fract(sin((dot(p, vec3(127.1, 311.7, 191.999)))) * 43758.5453);
+    //float red = fract(sin((dot(p, vec3(127.1, 311.7, 191.999)))) * 43758.5453);
+    float red = 0.0f;
+    red += abs(p.y) - 6.0f;
 
-    float val2 = fract(sin((dot(p, vec3(191.999, 127.1, 311.7)))) * 3758.5453);
+    float green = abs(p.y) - 6.0f + fract(sin((dot(p, vec3(191.999, 127.1, 311.7)))) * 3758.5453);
 
-    float val3 = fract(sin((dot(p, vec3(311.7, 191.999, 127.1)))) * 758.5453);
+    //float val3 = fract(sin((dot(p, vec3(311.7, 191.999, 127.1)))) * 758.5453);
+    float blue = 1.0f;
 
-    return vec3(val1, val2, val3);
+    return vec3(red, green, blue);
 }
 
 
@@ -106,6 +109,6 @@ void main()
 
         out_Col += vec4(val, 1.0);
 
-        out_Col /= (val[0] + val[1] + val[2]);
+        //out_Col /= (val[0] + val[1] + val[2]);
 }
 
