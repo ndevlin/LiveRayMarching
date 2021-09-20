@@ -39,15 +39,16 @@ void main()
 
     fs_LightVec = lightPos - modelposition;  // Compute the direction in which the light source lies
 
+    vec4 preFinal = modelposition;
 
-    gl_Position = u_ViewProj * modelposition;   // Final positions of the geometry's vertices
-
-    fs_Pos = vs_Pos;
-
-    gl_Position = u_ViewProj * modelposition;
 
     float toAdd = float(u_Time) / 20.0;
 
-    gl_Position += sin(gl_Position + toAdd) / 20.0;
+    preFinal += sin(preFinal + toAdd) / 20.0;
+
+    fs_Pos = preFinal;
+
+    gl_Position = u_ViewProj * preFinal; // Final positions of the geometry's vertices
+
 }
 

@@ -115,6 +115,12 @@ void main()
         // Lambert shading
         out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
 
+        float surfaceDifference = (length(fs_Pos) - 0.5f) * (length(fs_Pos) - 0.5f);
+
+        out_Col = vec4(vec3(surfaceDifference), 1.0f);
+
+
+        /*
         vec3 latitudeCol = returnLatitudeAsColor(vec3(fs_Pos[0], fs_Pos[1], fs_Pos[2]));
 
         // Add fbm noise
@@ -148,6 +154,9 @@ void main()
         out_Col = vec4(r, g, b, 1.0);
 
         //out_Col = vec4(latitudeCol, 1.0f);
+
+        */
+
 
 }
 
