@@ -34,11 +34,11 @@ vec3 returnLatitudeAsColor(vec3 p)
 // Takes in a position vec3, returns a vec3, to be used below as a color
 vec3 noise3D( vec3 p ) 
 {
-    float val1 = fract(sin((dot(p, vec3(127.1, 311.7, 191.999)))) * 43758.5453);
+    float val1 = fract(sin((dot(p, vec3(127.1, 311.7, 191.999)))) * 4.5453);
 
-    float val2 = fract(sin((dot(p, vec3(191.999, 127.1, 311.7)))) * 3758.5453);
+    float val2 = fract(sin((dot(p, vec3(191.999, 127.1, 311.7)))) * 3.5453);
 
-    float val3 = fract(sin((dot(p, vec3(311.7, 191.999, 127.1)))) * 758.5453);
+    float val3 = fract(sin((dot(p, vec3(311.7, 191.999, 127.1)))) * 7.5453);
 
     return vec3(val1, val2, val3);
 }
@@ -81,16 +81,15 @@ vec3 interpNoise3D(float x, float y, float z)
 
 
 // 3D Fractal Brownian Motion
-vec3 fbm(float x, float y, float z) 
+vec3 fbm(float x, float y, float z, int octaves) 
 {
     vec3 total = vec3(0.f, 0.f, 0.f);
 
     float persistence = 0.5f;
-    int octaves = 8;
 
     for(int i = 1; i <= octaves; i++) 
     {
-        float freq = pow(2.f, float(i));
+        float freq = pow(3.f, float(i));
         float amp = pow(persistence, float(i));
 
         total += interpNoise3D(x * freq, y * freq, z * freq) * amp;
@@ -108,7 +107,9 @@ void main()
         // Calculate the diffuse term for Lambert shading
         float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
 
-        float ambientTerm = 0.3;
+        diffuseTerm = clamp(diffuseTerm, 0.0f, 1.0f);
+
+        float ambientTerm = 0.05;
 
         float lightIntensity = diffuseTerm + ambientTerm;   
 
@@ -133,6 +134,23 @@ void main()
         // Lambert shading
         out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
 
+
+        if(diffuseColor == vec4(0.0f, 1.0f, 0.0f, 1.0f) && lightIntensity <= 0.1f)
+        {            
+            vec3 val = fbm(fs_Pos[0], fs_Pos[1], fs_Pos[2], 8);
+
+            float avg = (val[0] + val[1] + val[2]) / 2.0f;
+
+            avg = avg * avg * avg * avg * avg * avg * avg * avg * avg * avg;
+
+            //out_Col = vec4(avg, avg, avg, 1.0f);
+
+            if(avg > 0.2f)
+            {
+                avg *= 2.0f;
+                out_Col = vec4(avg, avg, 0.0f, 1.0f);
+            }
+        }
 
 
         //out_Col = vec4(vec3(surfaceDifference), 1.0f);
