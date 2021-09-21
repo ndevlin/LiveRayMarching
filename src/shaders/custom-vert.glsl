@@ -12,6 +12,8 @@ uniform mat4 u_ViewProj;    // The matrix that defines the camera's transformati
 
 uniform float u_Time;
 
+uniform vec4 u_CameraPos;
+
 in vec4 vs_Pos;             // The array of vertex positions passed to the shader
 
 in vec4 vs_Nor;             // The array of vertex normals passed to the shader
@@ -163,7 +165,6 @@ void main()
     fs_Pos = alteredPos;
 
     fs_UnalteredPos = worldPos;
-
 
     //gl_Position = u_ViewProj * worldPos; // Final positions of the geometry's vertices
 

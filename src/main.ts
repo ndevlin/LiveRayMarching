@@ -22,7 +22,7 @@ const controls = {
 // Controller that allows user color input
 const colorObject = 
 {
-  actualColor: [ 0, 0, 255 ], // RGB array
+  actualColor: [ 0, 100, 255 ], // RGB array
 };
 
 let icosphere: Icosphere;

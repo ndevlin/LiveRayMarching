@@ -31,6 +31,11 @@ class Camera {
     mat4.perspective(this.projectionMatrix, this.fovy, this.aspectRatio, this.near, this.far);
   }
 
+  getEye()
+  {
+    return this.controls.eye;
+  }
+
   update() {
     this.controls.tick();
     vec3.add(this.target, this.position, this.direction);

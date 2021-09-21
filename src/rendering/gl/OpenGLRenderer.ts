@@ -1,7 +1,7 @@
 
 // Original code by Adam Mally, additions by Nathan Devlin
 
-import {mat4, vec4} from 'gl-matrix';
+import {mat4, vec4, vec3} from 'gl-matrix';
 import Drawable from './Drawable';
 import Camera from '../../Camera';
 import {gl} from '../../globals';
@@ -39,6 +39,9 @@ class OpenGLRenderer
     prog.setGeometryColor(color);
 
     prog.setCurrTick(currTick);
+
+    let cp: vec3 = camera.getEye();
+    prog.setCameraPos([cp[0], cp[1], cp[2], 1]);
 
     for (let drawable of drawables) {
       prog.draw(drawable);

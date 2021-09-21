@@ -8,6 +8,8 @@ precision highp float;
 
 uniform vec4 u_Color; // User input color
 
+uniform vec4 u_CameraPos;
+
 // Interpolated values out of the rasterizer
 in vec4 fs_Pos;
 
@@ -109,9 +111,9 @@ void main()
         // Calculate the diffuse term for Lambert shading
         float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
 
-        diffuseTerm = clamp(diffuseTerm, 0.0f, 1.0f);
+        //diffuseTerm = clamp(diffuseTerm, 0.0f, 1.0f);
 
-        float ambientTerm = 0.05;
+        float ambientTerm = 0.2;
 
         float lightIntensity = diffuseTerm + ambientTerm;   
 
@@ -143,7 +145,7 @@ void main()
 
 
         // Lambert shading
-        out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
+        out_Col = vec4(diffuseColor.rgb * lightIntensity, 1.0f);
 
 
         if(diffuseColor == vec4(0.0f, 1.0f, 0.0f, 1.0f) && lightIntensity <= 0.1f)
@@ -162,6 +164,34 @@ void main()
                 out_Col = vec4(avg, avg, 0.0f, 1.0f);
             }
         }
+
+
+        // Blinn Phong Shading only for ocean
+        if(surfaceDifference <= 0.001f)
+        {
+            
+            vec4 viewVec = u_CameraPos - fs_Pos;
+
+            vec4 posToLight = fs_LightVec - fs_Pos;
+
+            vec4 surfaceNorm = fs_Nor;
+
+            vec4 H = (viewVec + posToLight) / (length(viewVec) + length(posToLight));
+
+            float intensity =  50.0f; // Relative intensity of highlight
+
+            float sharpness = 50.0f; // How sharp or spread out the highlight is
+
+            float specularIntensity = intensity * max(pow(dot(H, surfaceNorm), sharpness), 0.0f);
+
+            float finalIntensity = lightIntensity + specularIntensity;
+            
+            // Compute final shaded color
+            out_Col = vec4(diffuseColor.rgb * finalIntensity, 1.0f);
+
+            //out_Col = u_CameraPos * 1.0f;
+        }
+
 
 
         //out_Col = vec4(vec3(surfaceDifference), 1.0f);
