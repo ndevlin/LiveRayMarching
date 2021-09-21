@@ -149,7 +149,7 @@ void main()
 
     gl_Position = u_ViewProj * alteredPos; // Final positions of the geometry's vertices
 
-
+    fs_Pos = alteredPos;
 
 
     //gl_Position = u_ViewProj * worldPos; // Final positions of the geometry's vertices

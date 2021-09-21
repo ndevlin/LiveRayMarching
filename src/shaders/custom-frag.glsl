@@ -21,9 +21,9 @@ out vec4 out_Col;
 vec3 returnLatitudeAsColor(vec3 p)
 {
     float red = 0.0f;
-    red += abs(p.y) * 8.0f - 6.0f;
+    red += abs(p.y) * 1.0f - 0.2f;
 
-    float green = abs(p.y) * 8.0f - 6.0f;
+    float green = 1.0;
 
     float blue = 1.0f;
 
@@ -112,12 +112,28 @@ void main()
 
         float lightIntensity = diffuseTerm + ambientTerm;   
 
+        vec3 latitudeCol = returnLatitudeAsColor(vec3(fs_Pos[0], fs_Pos[1], fs_Pos[2]));
+
+        
+        float surfaceDifference = (length(fs_Pos) - 1.0f);
+
+
+
+        if(surfaceDifference > 0.45f)
+        {
+            diffuseColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+        }
+
+        if(fs_Pos[1] > 0.85 || fs_Pos[1] < -0.85)
+        {
+            diffuseColor = vec4(latitudeCol, 1.0f);        
+        }
+
+
         // Lambert shading
         out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
 
-        
-        
-        //float surfaceDifference = (length(fs_Pos) - 0.5f) * (length(fs_Pos) - 0.5f);
+
 
         //out_Col = vec4(vec3(surfaceDifference), 1.0f);
 
