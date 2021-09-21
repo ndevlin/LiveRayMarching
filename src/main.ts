@@ -25,6 +25,12 @@ const colorObject =
   actualColor: [ 0, 100, 255 ], // RGB array
 };
 
+// Controller that allows user light direction input
+const lightPosObject = 
+{
+  actualLightPos: [ 5, 5, 5 ], // RGB array
+};
+
 let icosphere: Icosphere;
 
 let square: Square;
@@ -66,6 +72,9 @@ function main()
 
   // Color control; RGB input
   gui.addColor(colorObject, 'actualColor');
+
+  // LightDir control; RGB input
+  gui.addColor(lightPosObject, 'actualLightPos');
 
 
   // get canvas and webgl context
@@ -134,7 +143,8 @@ function main()
     renderer.render(camera, custom, [icosphere, cube],  // Draw Cube as a reference for now
     // Divide by 256 to convert from web RGB to shader 0-1 values
     vec4.fromValues(colorObject.actualColor[0] / 256.0, colorObject.actualColor[1] / 256.0, colorObject.actualColor[2] / 256.0, 1),
-    currTick
+    currTick,
+    vec4.fromValues(lightPosObject.actualLightPos[0] - 127, lightPosObject.actualLightPos[1] - 127, lightPosObject.actualLightPos[2] - 127, 1)
     );
     
     stats.end();

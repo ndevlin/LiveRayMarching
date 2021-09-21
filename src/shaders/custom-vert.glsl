@@ -28,7 +28,7 @@ out vec4 fs_Pos;
 
 out vec4 fs_UnalteredPos;
 
-const vec4 lightPos = vec4(5, 5, 3, 1); //The position of our virtual light
+uniform vec4 u_LightPos;// = vec4(5, 5, 3, 1); //The position of our virtual light
 
 
 
@@ -116,7 +116,7 @@ void main()
 
     vec4 modelposition = u_Model * vs_Pos;   // Temporarily store the transformed vertex positions for use below
 
-    fs_LightVec = lightPos - modelposition;  // Compute the direction in which the light source lies
+    fs_LightVec = u_LightPos - modelposition;  // Compute the direction in which the light source lies
 
     vec4 worldPos = modelposition;
 

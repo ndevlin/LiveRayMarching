@@ -34,6 +34,7 @@ class ShaderProgram {
   unifColor: WebGLUniformLocation;
   unifCameraPos: WebGLUniformLocation;
 
+  unifLightPos: WebGLUniformLocation;
 
   unifCurrTick: WebGLUniformLocation;
 
@@ -57,6 +58,7 @@ class ShaderProgram {
     this.unifColor      = gl.getUniformLocation(this.prog, "u_Color");
     this.unifCameraPos  = gl.getUniformLocation(this.prog, "u_CameraPos");
 
+    this.unifLightPos  = gl.getUniformLocation(this.prog, "u_LightPos");
     
     // currTick is referred to as u_Time in the shaders
     this.unifCurrTick = gl.getUniformLocation(this.prog, "u_Time");
@@ -101,6 +103,13 @@ class ShaderProgram {
     this.use();
     if (this.unifCameraPos !== -1) {
       gl.uniform4fv(this.unifCameraPos, cameraPos);
+    }
+  }
+
+  setLightPos(lightPos: vec4) {
+    this.use();
+    if (this.unifLightPos !== -1) {
+      gl.uniform4fv(this.unifLightPos, lightPos);
     }
   }
 

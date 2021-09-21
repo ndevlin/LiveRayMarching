@@ -26,7 +26,7 @@ class OpenGLRenderer
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
 
-  render(camera: Camera, prog: ShaderProgram, drawables: Array<Drawable>, colorIn: vec4, currTick: number) 
+  render(camera: Camera, prog: ShaderProgram, drawables: Array<Drawable>, colorIn: vec4, currTick: number, lightPos: vec4) 
   {
     let model = mat4.create();
     let viewProj = mat4.create();
@@ -42,6 +42,8 @@ class OpenGLRenderer
 
     let cp: vec3 = camera.getEye();
     prog.setCameraPos([cp[0], cp[1], cp[2], 1]);
+
+    prog.setLightPos([lightPos[0], lightPos[1], lightPos[2], 1]);
 
     for (let drawable of drawables) {
       prog.draw(drawable);
