@@ -115,9 +115,11 @@ void main()
         // Lambert shading
         out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
 
-        float surfaceDifference = (length(fs_Pos) - 0.5f) * (length(fs_Pos) - 0.5f);
+        
+        
+        //float surfaceDifference = (length(fs_Pos) - 0.5f) * (length(fs_Pos) - 0.5f);
 
-        out_Col = vec4(vec3(surfaceDifference), 1.0f);
+        //out_Col = vec4(vec3(surfaceDifference), 1.0f);
 
 
         /*
