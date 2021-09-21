@@ -11,6 +11,8 @@ uniform vec4 u_Color; // User input color
 // Interpolated values out of the rasterizer
 in vec4 fs_Pos;
 
+in vec4 fs_UnalteredPos;
+
 in vec4 fs_Nor;
 in vec4 fs_LightVec;
 in vec4 fs_Col;
@@ -116,13 +118,22 @@ void main()
         vec3 latitudeCol = returnLatitudeAsColor(vec3(fs_Pos[0], fs_Pos[1], fs_Pos[2]));
 
         
-        float surfaceDifference = (length(fs_Pos) - 1.0f);
+        float surfaceDifference = (length(fs_Pos) - length(fs_UnalteredPos));
 
 
 
-        if(surfaceDifference > 0.45f)
+        if(surfaceDifference > 0.1f)
         {
             diffuseColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+
+            if(surfaceDifference < 0.11f)
+            {
+                diffuseColor = vec4(0.8941, 0.8, 0.2706, 1.0);
+            }
+            else if(surfaceDifference > 0.15f)
+            {
+                diffuseColor = vec4(1.0, 1.0, 1.0, 1.0);
+            }
         }
 
         if(fs_Pos[1] > 0.85 || fs_Pos[1] < -0.85)

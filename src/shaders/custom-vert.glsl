@@ -24,7 +24,7 @@ out vec4 fs_Col;            // The color of each vertex.
 
 out vec4 fs_Pos;
 
-out vec4 fs_ScreenPos;
+out vec4 fs_UnalteredPos;
 
 const vec4 lightPos = vec4(5, 5, 3, 1); //The position of our virtual light
 
@@ -136,13 +136,17 @@ void main()
 
     float multiplier = 0.0f;
 
-    if(fbmVal[0] > 0.55f)
+    float height = fbmVal[0] / 5.0f;
+
+    height *= height;
+
+    if(height > 0.001f)
     {
-        multiplier = 0.1f;
+        multiplier = height * 10.0f;
     }
     else
     {
-        multiplier = 0.0f;
+        multiplier = -0.001f;
     }
 
 
@@ -153,7 +157,7 @@ void main()
 
     fs_Pos = alteredPos;
 
-    fs_ScreenPos = gl_Position;
+    fs_UnalteredPos = worldPos;
 
 
     //gl_Position = u_ViewProj * worldPos; // Final positions of the geometry's vertices
