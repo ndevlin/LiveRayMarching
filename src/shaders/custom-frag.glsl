@@ -23,11 +23,11 @@ out vec4 out_Col;
 vec3 returnLatitudeAsColor(vec3 p)
 {
     float red = 0.0f;
-    red += abs(p.y) * 1.0f - 0.2f;
+    red += abs(p.y) * 2.0f - 0.5f;
 
-    float green = 1.0;
+    float green = 2.0;
 
-    float blue = 1.0f;
+    float blue = 2.0f;
 
     return vec3(red, green, blue);
 }
@@ -118,21 +118,21 @@ void main()
         vec3 latitudeCol = returnLatitudeAsColor(vec3(fs_Pos[0], fs_Pos[1], fs_Pos[2]));
 
         
-        float surfaceDifference = (length(fs_Pos) - length(fs_UnalteredPos));
+        float surfaceDifference = length(fs_Pos) - length(fs_UnalteredPos);
 
 
 
-        if(surfaceDifference > 0.1f)
+        if(surfaceDifference > 0.001f)
         {
             diffuseColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
 
-            if(surfaceDifference < 0.11f)
+            if(surfaceDifference < 0.005f)
             {
                 diffuseColor = vec4(0.8941, 0.8, 0.2706, 1.0);
             }
-            else if(surfaceDifference > 0.15f)
+            else if(surfaceDifference > 0.04f)
             {
-                diffuseColor = vec4(1.0, 1.0, 1.0, 1.0);
+                diffuseColor = vec4(1.0, 2.0, 2.0, 1.0);
             }
         }
 

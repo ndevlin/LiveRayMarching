@@ -136,13 +136,18 @@ void main()
 
     float multiplier = 0.0f;
 
-    float height = fbmVal[0] / 5.0f;
+    float height = fbmVal[0] * 1.25f;
 
-    height *= height;
+    height *= (1.0f + abs(vs_Pos[1]) / 3.0f);
+
+    height = (1.0f + height) * height - 1.0f;
 
     if(height > 0.001f)
     {
-        multiplier = height * 10.0f;
+        height /= 50.0f;
+        multiplier = (1.0f + height) * (1.0f + height) * (1.0f + height) * (1.0f + height) - 1.0f;
+
+        
     }
     else
     {
