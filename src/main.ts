@@ -17,9 +17,9 @@ import Cube from './geometry/Cube';
 const controls = {
   tesselations: 6,
   'Load Scene': loadScene, // A function pointer, essentially
-  LightPosX: 5,
-  LightPosY: 5,
-  LightPosZ: 3
+  LightPosTheta: 0,
+  LightPosDistance: 20,
+  LightPosAzimuth: 90
 };
 
 // Controller that allows user color input
@@ -38,6 +38,20 @@ let prevTesselations: number = 6;
 
 // Used as a clock
 let currTick: number = 0.0;
+
+// Takes in spherical coordinates and returns a corresponding vec4 in cartesian coordinates
+function convertSphericalToCartesian(thetaDeg: number, distance: number, azimuthDeg: number) : vec4
+{
+  let theta: number = thetaDeg * 0.01745329252;
+  let azimuth: number = azimuthDeg * 0.01745329252;
+
+  let z: number = distance * Math.sin(azimuth) * Math.cos(theta);
+  let x: number = distance * Math.sin(azimuth) * Math.sin(theta);
+  let y: number = distance * Math.cos(azimuth);
+
+  return vec4.fromValues(x, y, z, 1.0);
+}
+
 
 function loadScene() {
   icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, controls.tesselations);
@@ -68,9 +82,9 @@ function main()
   gui.add(controls, 'Load Scene');
   
 
-  gui.add(controls, 'LightPosX', -10, 10).step(0.1);
-  gui.add(controls, 'LightPosY', -10, 10).step(0.1);
-  gui.add(controls, 'LightPosZ', -10, 10).step(0.1);
+  gui.add(controls, 'LightPosTheta', -720, 720).step(1);
+  gui.add(controls, 'LightPosDistance', 5, 50).step(0.1);
+  gui.add(controls, 'LightPosAzimuth', 10, 170).step(1);
 
   // Color control; RGB input
   gui.addColor(colorObject, 'OceanColor');
@@ -137,12 +151,15 @@ function main()
     );
     */
 
+    // Convert Light Position Spherical Coordinates to CartesianCoordinates
+    let lightPos: vec4 = convertSphericalToCartesian(controls.LightPosTheta, controls.LightPosDistance, controls.LightPosAzimuth);
+
     // Render with custom noise-based shader
     renderer.render(camera, custom, [icosphere, cube],  // Draw Cube as a reference for now
     // Divide by 256 to convert from web RGB to shader 0-1 values
     vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
     currTick,
-    vec4.fromValues(controls.LightPosX, controls.LightPosY, controls.LightPosZ, 1)
+    lightPos
     );
     
     stats.end();
