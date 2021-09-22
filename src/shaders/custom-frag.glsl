@@ -145,12 +145,11 @@ void main()
             diffuseColor = vec4(latitudeCol, 1.0f);        
         }
 
-        diffuseColor *= u_LightColor;
-
+        
         // Lambert shading
         out_Col = vec4(diffuseColor.rgb * lightIntensity, 1.0f);
 
-
+        // Dark Side of the Planet
         if(diffuseColor == vec4(0.0f, 1.0f, 0.0f, 1.0f) && lightIntensity <= 0.1f)
         {            
             vec3 val = fbm(fs_Pos[0], fs_Pos[1], fs_Pos[2], 8);
@@ -166,6 +165,13 @@ void main()
                 avg *= 2.0f;
                 out_Col = vec4(avg, avg, 0.0f, 1.0f);
             }
+        }
+        else
+        {
+            // Add light color
+            diffuseColor *= u_LightColor;
+
+            out_Col = vec4(diffuseColor.rgb * lightIntensity, 1.0f);
         }
 
 
