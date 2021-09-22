@@ -6,7 +6,9 @@
 
 precision highp float;
 
-uniform vec4 u_Color; // User input color
+uniform vec4 u_OceanColor; // User input color for Ocean
+
+uniform vec4 u_LightColor; // User input color for Light
 
 uniform vec4 u_CameraPos;
 
@@ -106,7 +108,7 @@ vec3 fbm(float x, float y, float z, int octaves)
 void main()
 {
         // Material base color (before shading)
-        vec4 diffuseColor = u_Color;
+        vec4 diffuseColor = u_OceanColor;
 
         // Calculate the diffuse term for Lambert shading
         float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
@@ -143,6 +145,7 @@ void main()
             diffuseColor = vec4(latitudeCol, 1.0f);        
         }
 
+        diffuseColor *= u_LightColor;
 
         // Lambert shading
         out_Col = vec4(diffuseColor.rgb * lightIntensity, 1.0f);

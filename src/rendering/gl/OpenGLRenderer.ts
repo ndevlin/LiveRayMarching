@@ -26,17 +26,18 @@ class OpenGLRenderer
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
 
-  render(camera: Camera, prog: ShaderProgram, drawables: Array<Drawable>, colorIn: vec4, currTick: number, lightPos: vec4) 
+  render(camera: Camera, prog: ShaderProgram, drawables: Array<Drawable>, oceanColorIn: vec4, lightColorIn: vec4, currTick: number, lightPos: vec4) 
   {
     let model = mat4.create();
     let viewProj = mat4.create();
-    let color = colorIn;
 
     mat4.identity(model);
     mat4.multiply(viewProj, camera.projectionMatrix, camera.viewMatrix);
     prog.setModelMatrix(model);
     prog.setViewProjMatrix(viewProj);
-    prog.setGeometryColor(color);
+    prog.setGeometryColor(oceanColorIn);
+
+    prog.setLightColor(lightColorIn);
 
     prog.setCurrTick(currTick);
 

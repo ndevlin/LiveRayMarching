@@ -31,7 +31,11 @@ class ShaderProgram {
   unifModel: WebGLUniformLocation;
   unifModelInvTr: WebGLUniformLocation;
   unifViewProj: WebGLUniformLocation;
-  unifColor: WebGLUniformLocation;
+
+  unifOceanColor: WebGLUniformLocation;
+
+  unifLightColor: WebGLUniformLocation;
+  
   unifCameraPos: WebGLUniformLocation;
 
   unifLightPos: WebGLUniformLocation;
@@ -55,7 +59,11 @@ class ShaderProgram {
     this.unifModel      = gl.getUniformLocation(this.prog, "u_Model");
     this.unifModelInvTr = gl.getUniformLocation(this.prog, "u_ModelInvTr");
     this.unifViewProj   = gl.getUniformLocation(this.prog, "u_ViewProj");
-    this.unifColor      = gl.getUniformLocation(this.prog, "u_Color");
+
+    this.unifOceanColor = gl.getUniformLocation(this.prog, "u_OceanColor");
+
+    this.unifLightColor = gl.getUniformLocation(this.prog, "u_LightColor");
+
     this.unifCameraPos  = gl.getUniformLocation(this.prog, "u_CameraPos");
 
     this.unifLightPos  = gl.getUniformLocation(this.prog, "u_LightPos");
@@ -92,21 +100,34 @@ class ShaderProgram {
     }
   }
 
-  setGeometryColor(color: vec4) {
+  setGeometryColor(color: vec4) 
+  {
     this.use();
-    if (this.unifColor !== -1) {
-      gl.uniform4fv(this.unifColor, color);
+    if (this.unifOceanColor !== -1) {
+      gl.uniform4fv(this.unifOceanColor, color);
     }
   }
 
-  setCameraPos(cameraPos: vec4) {
+
+  setLightColor(color: vec4)
+  {
+    this.use();
+    if (this.unifOceanColor !== -1) {
+      gl.uniform4fv(this.unifLightColor, color);
+    }
+  }
+
+
+  setCameraPos(cameraPos: vec4) 
+  {
     this.use();
     if (this.unifCameraPos !== -1) {
       gl.uniform4fv(this.unifCameraPos, cameraPos);
     }
   }
 
-  setLightPos(lightPos: vec4) {
+  setLightPos(lightPos: vec4)
+   {
     this.use();
     if (this.unifLightPos !== -1) {
       gl.uniform4fv(this.unifLightPos, lightPos);

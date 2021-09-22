@@ -25,7 +25,15 @@ const controls = {
 // Controller that allows user color input
 const colorObject = 
 {
+  // Light Blue
   OceanColor: [ 0, 100, 255 ], // RGB array
+};
+
+// Controller that allows user color input
+const lightColor = 
+{
+  // 5000 Kelvin in RGB
+  LightColor: [ 255, 228, 206 ], // RGB array
 };
 
 let icosphere: Icosphere;
@@ -88,6 +96,9 @@ function main()
 
   // Color control; RGB input
   gui.addColor(colorObject, 'OceanColor');
+
+    // Color control; RGB input
+  gui.addColor(lightColor, 'LightColor');
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -158,6 +169,7 @@ function main()
     renderer.render(camera, custom, [icosphere, cube],  // Draw Cube as a reference for now
     // Divide by 256 to convert from web RGB to shader 0-1 values
     vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
+    vec4.fromValues(lightColor.LightColor[0] / 256.0, lightColor.LightColor[1] / 256.0, lightColor.LightColor[2] / 256.0, 1),
     currTick,
     lightPos
     );
