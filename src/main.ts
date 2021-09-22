@@ -17,18 +17,15 @@ import Cube from './geometry/Cube';
 const controls = {
   tesselations: 6,
   'Load Scene': loadScene, // A function pointer, essentially
+  LightPosX: 5,
+  LightPosY: 5,
+  LightPosZ: 3
 };
 
 // Controller that allows user color input
 const colorObject = 
 {
-  actualColor: [ 0, 100, 255 ], // RGB array
-};
-
-// Controller that allows user light direction input
-const lightPosObject = 
-{
-  actualLightPos: [ 5, 5, 5 ], // RGB array
+  OceanColor: [ 0, 100, 255 ], // RGB array
 };
 
 let icosphere: Icosphere;
@@ -69,13 +66,14 @@ function main()
   const gui = new DAT.GUI();
   gui.add(controls, 'tesselations', 0, 8).step(1);
   gui.add(controls, 'Load Scene');
+  
+
+  gui.add(controls, 'LightPosX', -10, 10).step(0.1);
+  gui.add(controls, 'LightPosY', -10, 10).step(0.1);
+  gui.add(controls, 'LightPosZ', -10, 10).step(0.1);
 
   // Color control; RGB input
-  gui.addColor(colorObject, 'actualColor');
-
-  // LightDir control; RGB input
-  gui.addColor(lightPosObject, 'actualLightPos');
-
+  gui.addColor(colorObject, 'OceanColor');
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -142,9 +140,9 @@ function main()
     // Render with custom noise-based shader
     renderer.render(camera, custom, [icosphere, cube],  // Draw Cube as a reference for now
     // Divide by 256 to convert from web RGB to shader 0-1 values
-    vec4.fromValues(colorObject.actualColor[0] / 256.0, colorObject.actualColor[1] / 256.0, colorObject.actualColor[2] / 256.0, 1),
+    vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
     currTick,
-    vec4.fromValues(lightPosObject.actualLightPos[0] - 127, lightPosObject.actualLightPos[1] - 127, lightPosObject.actualLightPos[2] - 127, 1)
+    vec4.fromValues(controls.LightPosX, controls.LightPosY, controls.LightPosZ, 1)
     );
     
     stats.end();
