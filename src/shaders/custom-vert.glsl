@@ -31,6 +31,35 @@ out vec4 fs_UnalteredPos;
 uniform vec4 u_LightPos;// = vec4(5, 5, 3, 1); //The position of our virtual light
 
 
+// Takes in spherical coordinates and returns a corresponding vec4 in cartesian coordinates
+vec4 convertSphericalToCartesian(vec4 sphericalVecIn)
+{
+  float r = sphericalVecIn[0];
+  float theta = sphericalVecIn[1];
+  float phi = sphericalVecIn[2];
+
+  float z = r * sin(phi) * cos(theta);
+  float x = r * sin(phi) * sin(theta);
+  float y = r * cos(phi);
+
+  return vec4(x, y, z, 0.0);
+}
+
+// Takes in cartesian coordinates and returns a correpsonding vector in spherical coordinates
+vec4 convertCartesianToSpherical(vec4 cartesianVecIn)
+{
+    float x = cartesianVecIn[0];
+    float y = cartesianVecIn[1];
+    float z = cartesianVecIn[2];
+
+    float r = sqrt(x * x + y * y + z * z);
+
+    float theta = atan(x / z);
+
+    float phi = atan(sqrt(x * x + z * z));
+
+    return vec4(r, theta, phi, 0.0f);
+}
 
 
 // Takes in a position vec3, returns a vec3, to be used below as a color
@@ -102,6 +131,34 @@ vec3 fbm(float x, float y, float z)
 }
 
 
+float calculateNoiseOffset(vec4 worldPos)
+{
+// Add fbm noise
+    vec3 fbmVal = fbm(worldPos[0], worldPos[1], worldPos[2]);
+
+    vec4 originalNormal = worldPos;
+    originalNormal[3] = 0.0f;
+
+    float multiplier = 0.0f;
+
+    float height = fbmVal[0] * 1.25f;
+
+    height *= (1.0f + abs(vs_Pos[1]) / 3.0f);
+
+    height = (1.0f + height) * height - 1.0f;
+
+    if(height > 0.001f)
+    {
+        height /= 50.0f;
+        multiplier = (1.0f + height) * (1.0f + height) * (1.0f + height) * (1.0f + height) - 1.0f;
+    }
+    else
+    {
+        multiplier = -0.001f;
+    }
+
+    return 2.0f * multiplier;
+}
 
 
 
@@ -120,6 +177,13 @@ void main()
 
     vec4 worldPos = modelposition;
 
+    vec4 originalNormal = worldPos;
+    originalNormal[3] = 0.0f;
+
+
+    float multiplier = calculateNoiseOffset(worldPos);
+
+
 
     // Creates vacillating effect from Original
     /*
@@ -130,31 +194,7 @@ void main()
     fs_Pos = preFinal;
     */
 
-    // Add fbm noise
-    vec3 fbmVal = fbm(worldPos[0], worldPos[1], worldPos[2]);
-
-    vec4 originalNormal = worldPos;
-    originalNormal[3] = 0.0f;
-
-    float multiplier = 0.0f;
-
-    float height = fbmVal[0] * 1.25f;
-
-    height *= (1.0f + abs(vs_Pos[1]) / 3.0f);
-
-    height = (1.0f + height) * height - 1.0f;
-
-    if(height > 0.001f)
-    {
-        height /= 50.0f;
-        multiplier = (1.0f + height) * (1.0f + height) * (1.0f + height) * (1.0f + height) - 1.0f;
-
-        
-    }
-    else
-    {
-        multiplier = -0.001f;
-    }
+    
 
 
     vec4 alteredPos = worldPos + originalNormal * multiplier;
@@ -166,7 +206,50 @@ void main()
 
     fs_UnalteredPos = worldPos;
 
-    //gl_Position = u_ViewProj * worldPos; // Final positions of the geometry's vertices
+
+    // Calculate new normals
+
+    float delta = 0.001;
+
+    vec4 normalSpherical = convertCartesianToSpherical(vs_Nor);
+
+
+    vec4 normalJitterSpherical1 = normalSpherical + vec4(0, delta, 0, 0);
+    vec4 normalJitterSpherical2 = normalSpherical + vec4(0, -delta, 0, 0);
+
+    vec4 normalJitterSpherical3 = normalSpherical + vec4(0, 0, delta, 0);
+    vec4 normalJitterSpherical4 = normalSpherical + vec4(0, 0, -delta, 0);
+
+    vec4 normalJitteredCartesian1 = convertSphericalToCartesian(normalJitterSpherical1);
+    vec4 normalJitteredCartesian2 = convertSphericalToCartesian(normalJitterSpherical2);
+    
+    vec4 normalJitteredCartesian3 = convertSphericalToCartesian(normalJitterSpherical3);
+    vec4 normalJitteredCartesian4 = convertSphericalToCartesian(normalJitterSpherical4);
+
+
+    float xDiff = calculateNoiseOffset(normalJitteredCartesian1) - calculateNoiseOffset(normalJitteredCartesian2);
+    float yDiff = calculateNoiseOffset(normalJitteredCartesian3) - calculateNoiseOffset(normalJitteredCartesian4);
+
+    float z = sqrt(1.0 - xDiff * xDiff - yDiff * yDiff);
+    
+    vec4 localNormal = vec4(xDiff, yDiff, z, 0);
+
+    // Create tangent space to normal space matrix
+    vec3 tangent = cross(vec3(0, 1, 0), vec3(localNormal));
+    vec3 bitangent = cross(vec3(fs_Nor), tangent);
+
+    
+    mat4 tangentToWorld = mat4(tangent.x, bitangent.x, fs_Nor.x, 0,
+                             tangent.y, bitangent.y, fs_Nor.y, 0,
+                             tangent.z, bitangent.z, fs_Nor.z, 0,
+                             0,         0,           0,        1);
+    
+
+    vec4 transformedNormal = tangentToWorld * localNormal;
+
+    fs_Nor = transformedNormal;
+
+    gl_Position = u_ViewProj * alteredPos; // Final positions of the geometry's vertices
 
 }
 
