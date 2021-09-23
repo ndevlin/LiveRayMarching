@@ -243,5 +243,8 @@ void main()
 
         */
 
+        //out_Col = fs_Col;
+
+        //out_Col = fs_UnalteredPos;
 }
 

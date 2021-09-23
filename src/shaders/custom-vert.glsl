@@ -54,9 +54,9 @@ vec4 convertCartesianToSpherical(vec4 cartesianVecIn)
 
     float r = sqrt(x * x + y * y + z * z);
 
-    float theta = atan(x / z);
+    float theta = atan(x, z);
 
-    float phi = atan(sqrt(x * x + z * z));
+    float phi = acos(y / sqrt(x * x + y * y + z * z));
 
     return vec4(r, theta, phi, 0.0f);
 }
@@ -181,7 +181,7 @@ void main()
     originalNormal[3] = 0.0f;
 
 
-    float multiplier = calculateNoiseOffset(worldPos);
+    float multiplier = calculateNoiseOffset(worldPos) * 1.0f;
 
 
 
@@ -207,12 +207,14 @@ void main()
     fs_UnalteredPos = worldPos;
 
 
+
+
+    /*
     // Calculate new normals
 
-    float delta = 0.001;
+    float delta = 0.1f;
 
     vec4 normalSpherical = convertCartesianToSpherical(vs_Nor);
-
 
     vec4 normalJitterSpherical1 = normalSpherical + vec4(0, delta, 0, 0);
     vec4 normalJitterSpherical2 = normalSpherical + vec4(0, -delta, 0, 0);
@@ -228,11 +230,15 @@ void main()
 
 
     float xDiff = calculateNoiseOffset(normalJitteredCartesian1) - calculateNoiseOffset(normalJitteredCartesian2);
-    float yDiff = calculateNoiseOffset(normalJitteredCartesian3) - calculateNoiseOffset(normalJitteredCartesian4);
-
-    float z = sqrt(1.0 - xDiff * xDiff - yDiff * yDiff);
+    //xDiff /= 2.0f;
     
-    vec4 localNormal = vec4(xDiff, yDiff, z, 0);
+    float yDiff = calculateNoiseOffset(normalJitteredCartesian3) - calculateNoiseOffset(normalJitteredCartesian4);
+    //zDiff /= 2.0f;
+
+
+    float z = sqrt(abs(1.0 - xDiff * xDiff - yDiff * yDiff));
+    
+    vec4 localNormal = normalize(vec4(xDiff, yDiff, z, 0));
 
     // Create tangent space to normal space matrix
     vec3 tangent = cross(vec3(0, 1, 0), vec3(localNormal));
@@ -249,7 +255,14 @@ void main()
 
     fs_Nor = transformedNormal;
 
-    gl_Position = u_ViewProj * alteredPos; // Final positions of the geometry's vertices
+
+    fs_Col = vec4(vec3(transformedNormal) * 1.0f, 1.0f);
+    */
+
+
+
+
+    //gl_Position = u_ViewProj * alteredPos; // Final positions of the geometry's vertices
 
 }
 
