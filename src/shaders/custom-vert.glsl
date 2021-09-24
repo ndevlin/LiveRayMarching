@@ -28,7 +28,7 @@ out vec4 fs_Pos;
 
 out vec4 fs_UnalteredPos;
 
-uniform vec4 u_LightPos;// = vec4(5, 5, 3, 1); //The position of our virtual light
+uniform vec4 u_LightPos;
 
 
 // Takes in spherical coordinates and returns a corresponding vec4 in cartesian coordinates
@@ -157,9 +157,8 @@ float calculateNoiseOffset(vec4 worldPos)
         multiplier = -0.001f;
     }
 
-    return 3.0f * multiplier;
+    return multiplier;
 }
-
 
 
 void main()
@@ -184,7 +183,6 @@ void main()
     float multiplier = calculateNoiseOffset(worldPos) * 1.0f;
 
 
-
     // Creates vacillating effect from Original
     /*
     float toAdd = float(u_Time) / 20.0;
@@ -194,9 +192,6 @@ void main()
     fs_Pos = preFinal;
     */
 
-    
-
-
     vec4 alteredPos = worldPos + originalNormal * multiplier;
     
 
@@ -205,105 +200,8 @@ void main()
     fs_Pos = alteredPos;
 
     fs_UnalteredPos = worldPos;
-
-
-
-    /*
-    // Faster attempt to calculate new normals
-    float delta = 0.4f;
-
-
-    vec4 normalSpherical = convertCartesianToSpherical(vs_Pos);
-
-    vec4 normalJitterSpherical1 = normalSpherical + vec4(0, delta, 0, 1);
-    vec4 normalJitterSpherical2 = normalSpherical + vec4(0, -delta, 0, 1);
-
-    vec4 normalJitterSpherical3 = normalSpherical + vec4(0, 0, delta, 1);
-    vec4 normalJitterSpherical4 = normalSpherical + vec4(0, 0, -delta, 1);
-
-    vec4 normalJitteredCartesian1 = convertSphericalToCartesian(normalJitterSpherical1);
-    vec4 normalJitteredCartesian2 = convertSphericalToCartesian(normalJitterSpherical2);
-    
-    vec4 normalJitteredCartesian3 = convertSphericalToCartesian(normalJitterSpherical3);
-    vec4 normalJitteredCartesian4 = convertSphericalToCartesian(normalJitterSpherical4);
-
-
-    vec4 faceTangent1 = normalize(normalJitteredCartesian1 - normalJitteredCartesian2);
-
-    vec3 faceBitangent1 = normalize(cross(vec3(faceTangent1), vec3(normalJitteredCartesian1)));
-
-    vec3 newNormal1 = -normalize(cross(vec3(faceTangent1), faceBitangent1));
-
-
-    vec4 faceTangent2 = normalize(normalJitteredCartesian3 - normalJitteredCartesian4);
-
-    vec3 faceBitangent2 = normalize(cross(vec3(faceTangent2), vec3(normalJitteredCartesian3)));
-
-    vec3 newNormal2 = -normalize(cross(vec3(faceTangent2), faceBitangent2));
-
-    fs_Nor = normalize((vec4(newNormal1, 0) + vec4(newNormal2, 0)));
-    */
-
-
-    /*
-    vec4 sampleVec1 = normalize(fs_Pos + vec4(delta, 0, 0, 1));
-    vec4 sampleVec2 = normalize(fs_Pos + vec4(-delta, 0, 0, 1));
-
-    float sampleHeight1 = calculateNoiseOffset(sampleVec1);
-    float sampleHeight2 = calculateNoiseOffset(sampleVec2);
-
-    sampleVec1 *= sampleHeight1;
-    sampleVec2 *= sampleHeight2;
-
-
-    vec4 faceTangent1 = normalize(sampleVec2 - sampleVec1);
-
-    vec3 faceBitangent1 = normalize(cross(vec3(faceTangent1), vec3(sampleVec2)));
-
-    vec3 newNormal1 = normalize(cross(vec3(faceTangent1), faceBitangent1));
-
-    
-    vec4 sampleVec3 = normalize(fs_Pos + vec4(0, delta, 0, 1));
-    vec4 sampleVec4 = normalize(fs_Pos + vec4(0, -delta, 0, 1));
-
-    float sampleHeight3 = calculateNoiseOffset(sampleVec3);
-    float sampleHeight4 = calculateNoiseOffset(sampleVec4);
-
-    sampleVec3 *= sampleHeight3;
-    sampleVec4 *= sampleHeight4;
-
-    vec4 faceTangent2 = normalize(sampleVec3 - sampleVec4);
-
-    vec3 faceBitangent2 = normalize(cross(vec3(faceTangent2), vec3(sampleVec3)));
-
-    vec3 newNormal2 = normalize(cross(vec3(faceTangent2), faceBitangent2));
-
-    
-    vec4 sampleVec5 = normalize(fs_Pos + vec4(0, 0, delta, 1));
-    vec4 sampleVec6 = normalize(fs_Pos + vec4(0, 0, -delta, 1));
-
-    float sampleHeight5 = calculateNoiseOffset(sampleVec5);
-    float sampleHeight6 = calculateNoiseOffset(sampleVec5);
-
-    sampleVec5 *= sampleHeight5;
-    sampleVec6 *= sampleHeight6;
-
-    vec4 faceTangent3 = normalize(sampleVec5 - sampleVec6);
-
-    vec3 faceBitangent3 = normalize(cross(vec3(faceTangent3), vec3(sampleVec5)));
-
-    vec3 newNormal3 = normalize(cross(vec3(faceTangent3), faceBitangent3));
-    */
-
-
-    //fs_Nor = normalize((vec4(newNormal1, 0) + vec4(newNormal2, 0) + vec4(newNormal3, 0) + vs_Nor) / 4.0f);
-    //fs_Nor = normalize((vec4(newNormal1, 0) + vs_Nor) / 2.0f);
-
-
     
     // Calculate new normals
-
-    
     float delta = 0.005f;
 
     vec4 normalSpherical = convertCartesianToSpherical(vs_Nor);
@@ -320,15 +218,14 @@ void main()
     vec4 normalJitteredCartesian3 = convertSphericalToCartesian(normalJitterSpherical3);
     vec4 normalJitteredCartesian4 = convertSphericalToCartesian(normalJitterSpherical4);
 
-
     float xDiff = calculateNoiseOffset(normalJitteredCartesian1) - calculateNoiseOffset(normalJitteredCartesian2);
-    //xDiff /= 2.0f;
     
     float yDiff = calculateNoiseOffset(normalJitteredCartesian3) - calculateNoiseOffset(normalJitteredCartesian4);
-    //zDiff /= 2.0f;
 
-    xDiff *= 2.0f;
-    yDiff *= 2.0f;
+    float normalHighlightingMultiplier = 2.0f;
+
+    xDiff *= normalHighlightingMultiplier;
+    yDiff *= normalHighlightingMultiplier;
 
     float z = sqrt(1.0 - xDiff * xDiff - yDiff * yDiff);
     
@@ -338,32 +235,16 @@ void main()
     vec3 tangent = -cross(vec3(0, 1, 0), vec3(localNormal));
     vec3 bitangent = cross(vec3(fs_Nor), tangent);
 
-    
     mat4 tangentToWorld = mat4(tangent.x, bitangent.x, fs_Nor.x, 0,
                              tangent.y, bitangent.y, fs_Nor.y, 0,
                              tangent.z, bitangent.z, fs_Nor.z, 0,
                              0,         0,           0,        1);
     
-
     vec4 transformedNormal = tangentToWorld * localNormal;
 
     transformedNormal[0] = vs_Nor[0];
 
-
     fs_Nor = transformedNormal;
     
-
-
-    vec4 testVal = fs_Nor;
-    testVal = vec4(vec3(testVal) - vec3(normalize(vs_Nor)), 1.0f);
-    testVal[0] = (testVal[0] + 1.0f) / 2.0f;
-    fs_Col = testVal * 1.0f;
-    
-
-
-
-
-    //gl_Position = u_ViewProj * alteredPos; // Final positions of the geometry's vertices
-
 }
 

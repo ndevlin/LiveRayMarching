@@ -136,7 +136,7 @@ void main()
             }
             else if(surfaceDifference > 0.04f)
             {
-                //diffuseColor = vec4(1.0, 2.0, 2.0, 1.0);
+                diffuseColor = vec4(1.0, 2.0, 2.0, 1.0);
             }
         }
 
@@ -157,8 +157,6 @@ void main()
             float avg = (val[0] + val[1] + val[2]) / 2.0f;
 
             avg = avg * avg * avg * avg * avg * avg * avg * avg * avg * avg;
-
-            //out_Col = vec4(avg, avg, avg, 1.0f);
 
             if(avg > 0.2f)
             {
@@ -196,55 +194,10 @@ void main()
             float finalIntensity = lightIntensity + specularIntensity;
             
             // Compute final shaded color
-            //out_Col = vec4(diffuseColor.rgb * finalIntensity, 1.0f);
-
-            //out_Col = u_CameraPos * 1.0f;
+            out_Col = vec4(diffuseColor.rgb * finalIntensity, 1.0f);
         }
-
-
-
-        //out_Col = vec4(vec3(surfaceDifference), 1.0f);
-
-
-        /*
-        vec3 latitudeCol = returnLatitudeAsColor(vec3(fs_Pos[0], fs_Pos[1], fs_Pos[2]));
-
-        // Add fbm noise
-        vec3 fbmVal = fbm(fs_Pos[0], fs_Pos[1], fs_Pos[2]);
-
-        fbmVal = clamp(fbmVal, 0.0f, 1.0f);
-
-        vec3 greenVal = vec3(0.0f, fbmVal[1], 0.0f);
-
-        float r = latitudeCol.r;
-        float g = latitudeCol.g;
-        float b = latitudeCol.b;
-
-        if(greenVal.g > 0.5f)
-        {
-            b = 0.0f;
-            g = greenVal.g;
-        }
-        else
-        {
-            g = latitudeCol.g;
-        }
-
-        if(abs(fs_Pos[1]) >= 0.82f)
-        {
-            r = latitudeCol.r;
-            g = latitudeCol.g;
-            b = latitudeCol.b;
-        }
-
-        out_Col = vec4(r, g, b, 1.0);
-
-        //out_Col = vec4(latitudeCol, 1.0f);
-
-        */
 
         //out_Col = fs_Col;
 
-        //out_Col = fs_UnalteredPos;
 }
 
