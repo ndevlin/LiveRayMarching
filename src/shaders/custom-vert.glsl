@@ -157,7 +157,7 @@ float calculateNoiseOffset(vec4 worldPos)
         multiplier = -0.001f;
     }
 
-    return 2.0f * multiplier;
+    return multiplier;
 }
 
 
@@ -208,6 +208,30 @@ void main()
 
 
 
+
+    // Faster attempt to calculate new normals
+
+    
+    float delta = 0.001f;
+
+    
+    vec4 sampleVec1 = normalize(fs_Pos + vec4(delta, 0, 0, 1));
+    vec4 sampleVec2 = normalize(fs_Pos + vec4(-delta, 0, 0, 1));
+
+    float sampleHeight1 = calculateNoiseOffset(sampleVec1);
+    float sampleHeight2 = calculateNoiseOffset(sampleVec2);
+
+    sampleVec1 *= sampleHeight1;
+    sampleVec2 *= sampleHeight2;
+
+    vec4 faceTangent = normalize(sampleVec1 - sampleVec2);
+
+    vec3 faceBitangent = normalize(cross(vec3(faceTangent), vec3(sampleVec2)));
+
+    vec3 newNormal = normalize(cross(vec3(faceTangent), faceBitangent));
+
+    fs_Nor = normalize(vec4(newNormal, 0) + vs_Nor * 50.0f);
+    
 
     /*
     // Calculate new normals
