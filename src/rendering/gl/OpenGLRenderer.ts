@@ -26,7 +26,14 @@ class OpenGLRenderer
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
 
-  render(camera: Camera, prog: ShaderProgram, drawables: Array<Drawable>, oceanColorIn: vec4, lightColorIn: vec4, currTick: number, lightPos: vec4) 
+  render(camera: Camera, 
+    prog: ShaderProgram, 
+    drawables: Array<Drawable>, 
+    oceanColorIn: vec4, 
+    lightColorIn: vec4, 
+    currTick: number, 
+    lightPos: vec4,
+    bpmIn: number) 
   {
     let model = mat4.create();
     let viewProj = mat4.create();
@@ -45,6 +52,8 @@ class OpenGLRenderer
     prog.setCameraPos([cp[0], cp[1], cp[2], 1]);
 
     prog.setLightPos([lightPos[0], lightPos[1], lightPos[2], 1]);
+
+    prog.setBPM(bpmIn);
 
     for (let drawable of drawables) {
       prog.draw(drawable);

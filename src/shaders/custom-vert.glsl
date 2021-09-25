@@ -30,6 +30,8 @@ out vec4 fs_UnalteredPos;
 
 uniform vec4 u_LightPos;
 
+uniform float u_bpm;
+
 
 // Takes in spherical coordinates and returns a corresponding vec4 in cartesian coordinates
 vec4 convertSphericalToCartesian(vec4 sphericalVecIn)
@@ -154,7 +156,7 @@ float calculateNoiseOffset(vec4 worldPos)
     }
     else
     {
-        multiplier = -0.001f;
+        multiplier = 0.001f;
     }
 
     return multiplier;
@@ -180,7 +182,7 @@ void main()
     originalNormal[3] = 0.0f;
 
 
-    float multiplier = calculateNoiseOffset(worldPos) * 1.0f;
+    float noiseMultiplier = calculateNoiseOffset(worldPos) * 1.0f;
 
 
     // Creates vacillating effect from Original
@@ -192,7 +194,9 @@ void main()
     fs_Pos = preFinal;
     */
 
-    vec4 alteredPos = worldPos + originalNormal * multiplier;
+    float timeBPM_Multiplier = u_bpm / 150.0f;
+
+    vec4 alteredPos = worldPos + originalNormal * pow(noiseMultiplier, 1.0f / timeBPM_Multiplier);
     
 
     gl_Position = u_ViewProj * alteredPos; // Final positions of the geometry's vertices

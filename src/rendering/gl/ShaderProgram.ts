@@ -40,6 +40,8 @@ class ShaderProgram {
 
   unifLightPos: WebGLUniformLocation;
 
+  unifBPM: WebGLUniformLocation;
+
   unifCurrTick: WebGLUniformLocation;
 
   constructor(shaders: Array<Shader>) {
@@ -67,6 +69,8 @@ class ShaderProgram {
     this.unifCameraPos  = gl.getUniformLocation(this.prog, "u_CameraPos");
 
     this.unifLightPos  = gl.getUniformLocation(this.prog, "u_LightPos");
+
+    this.unifBPM  = gl.getUniformLocation(this.prog, "u_bpm");
     
     // currTick is referred to as u_Time in the shaders
     this.unifCurrTick = gl.getUniformLocation(this.prog, "u_Time");
@@ -134,6 +138,14 @@ class ShaderProgram {
     }
   }
 
+  setBPM(bpm: number)
+  {
+    this.use();
+    if(this.unifBPM !== -1)
+    {
+      gl.uniform1f(this.unifBPM, bpm);
+    }
+  }
 
   setCurrTick(currTick: number)
   {

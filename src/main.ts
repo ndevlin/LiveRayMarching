@@ -19,7 +19,8 @@ const controls = {
   'Load Scene': loadScene, // A function pointer, essentially
   LightPosTheta: 0,
   LightPosDistance: 20,
-  LightPosAzimuth: 90
+  LightPosAzimuth: 90,
+  BPM: 80
 };
 
 // Controller that allows user color input
@@ -93,6 +94,8 @@ function main()
   gui.add(controls, 'LightPosTheta', -720, 720).step(1);
   gui.add(controls, 'LightPosDistance', 5, 50).step(0.1);
   gui.add(controls, 'LightPosAzimuth', 10, 170).step(1);
+  gui.add(controls, 'BPM', 0, 150).step(1);
+
 
   // Color control; RGB input
   gui.addColor(colorObject, 'OceanColor');
@@ -171,7 +174,8 @@ function main()
     vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
     vec4.fromValues(lightColor.LightColor[0] / 256.0, lightColor.LightColor[1] / 256.0, lightColor.LightColor[2] / 256.0, 1),
     currTick,
-    lightPos
+    lightPos,
+    controls.BPM
     );
     
     stats.end();
