@@ -20,7 +20,7 @@ const controls = {
   LightPosTheta: 0,
   LightPosDistance: 20,
   LightPosAzimuth: 90,
-  BPM: 80
+  BPM: 0
 };
 
 // Controller that allows user color input

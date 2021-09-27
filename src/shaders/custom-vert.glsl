@@ -182,7 +182,7 @@ void main()
     originalNormal[3] = 0.0f;
 
 
-    float noiseMultiplier = calculateNoiseOffset(worldPos) * 1.0f;
+    float noiseMultiplier = calculateNoiseOffset(worldPos) * 5.0f;
 
 
     // Creates vacillating effect from Original
@@ -217,11 +217,11 @@ void main()
 
     vec4 normalSpherical = convertCartesianToSpherical(vs_Nor);
 
-    vec4 normalJitterSpherical1 = normalSpherical + vec4(0, delta, 0, 0);
-    vec4 normalJitterSpherical2 = normalSpherical + vec4(0, -delta, 0, 0);
+    vec4 normalJitterSpherical1 = normalize(normalSpherical + vec4(0, delta, 0, 0));
+    vec4 normalJitterSpherical2 = normalize(normalSpherical + vec4(0, -delta, 0, 0));
 
-    vec4 normalJitterSpherical3 = normalSpherical + vec4(0, 0, delta, 0);
-    vec4 normalJitterSpherical4 = normalSpherical + vec4(0, 0, -delta, 0);
+    vec4 normalJitterSpherical3 = normalize(normalSpherical + vec4(0, 0, delta, 0));
+    vec4 normalJitterSpherical4 = normalize(normalSpherical + vec4(0, 0, -delta, 0));
 
     vec4 normalJitteredCartesian1 = convertSphericalToCartesian(normalJitterSpherical1);
     vec4 normalJitteredCartesian2 = convertSphericalToCartesian(normalJitterSpherical2);
@@ -229,33 +229,45 @@ void main()
     vec4 normalJitteredCartesian3 = convertSphericalToCartesian(normalJitterSpherical3);
     vec4 normalJitteredCartesian4 = convertSphericalToCartesian(normalJitterSpherical4);
 
-    float xDiff = calculateNoiseOffset(normalJitteredCartesian1) - calculateNoiseOffset(normalJitteredCartesian2);
+    float thetaDiff = calculateNoiseOffset(normalJitteredCartesian1) - calculateNoiseOffset(normalJitteredCartesian2);
     
-    float yDiff = calculateNoiseOffset(normalJitteredCartesian3) - calculateNoiseOffset(normalJitteredCartesian4);
+    float phiDiff = calculateNoiseOffset(normalJitteredCartesian3) - calculateNoiseOffset(normalJitteredCartesian4);
 
-    float normalHighlightingMultiplier = 2.0f;
+    float normalHighlightingMultiplier = 25.0f;
 
-    xDiff *= normalHighlightingMultiplier;
-    yDiff *= normalHighlightingMultiplier;
+    thetaDiff *= normalHighlightingMultiplier;
+    phiDiff *= normalHighlightingMultiplier;
 
-    float z = sqrt(1.0 - xDiff * xDiff - yDiff * yDiff);
-    
-    vec4 localNormal = normalize(vec4(xDiff, yDiff, z, 0));
+    float z = sqrt(1.0 - thetaDiff * thetaDiff - phiDiff * phiDiff);
+
+    vec4 localNormal = vec4(thetaDiff, phiDiff, z, 0);
+
+    //localNormal = normalize(localNormal);
 
     // Create tangent space to normal space matrix
-    vec3 tangent = -cross(vec3(0, 1, 0), vec3(localNormal));
-    vec3 bitangent = cross(vec3(fs_Nor), tangent);
+    vec3 tangent = normalize(cross(vec3(0, 1, 0), vec3(vs_Nor)));
+    vec3 bitangent = normalize(cross(vec3(vs_Nor), tangent));
 
-    mat4 tangentToWorld = mat4(tangent.x, bitangent.x, fs_Nor.x, 0,
-                             tangent.y, bitangent.y, fs_Nor.y, 0,
-                             tangent.z, bitangent.z, fs_Nor.z, 0,
+    vec4 now = vec4(vec3(bitangent) * 1.0f, 1.0f);
+
+
+    mat4 tangentToWorld = mat4(tangent.x, tangent.y, tangent.z, 0,
+                             bitangent.x, bitangent.y, bitangent.z, 0,
+                             vs_Nor.x, vs_Nor.y, vs_Nor.z, 0,
                              0,         0,           0,        1);
     
     vec4 transformedNormal = tangentToWorld * localNormal;
 
-    transformedNormal[0] = vs_Nor[0];
+    //transformedNormal[0] *= -1.0f;
+
+    transformedNormal = normalize(transformedNormal);
 
     fs_Nor = transformedNormal;
+
+    fs_Col = vec4(vec3(vs_Nor - fs_Nor) * 10.0f, 1.0f);
+
+    //fs_Col = vec4(vec3(now) * 1.0f, 1.0f);
+
     
 }
 

@@ -136,7 +136,7 @@ void main()
             }
             else if(surfaceDifference > 0.04f)
             {
-                diffuseColor = vec4(1.0, 2.0, 2.0, 1.0);
+                //diffuseColor = vec4(1.0, 2.0, 2.0, 1.0);
             }
         }
 
@@ -197,7 +197,7 @@ void main()
             out_Col = vec4(diffuseColor.rgb * finalIntensity, 1.0f);
         }
 
-        //out_Col = fs_Col;
+        out_Col = fs_Col;
 
 }
 
