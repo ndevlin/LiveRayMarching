@@ -109,6 +109,25 @@ vec3 palette(float t, vec3 a, vec3 b, vec3 c, vec3 d)
     return a + b * cos( 6.28318 * (c * t + d));
 }
 
+float bias(float b, float t)
+{
+    return pow(t, log(b) / log(0.5f));
+}
+
+
+float gain(float g, float t)
+{
+    if(t < 0.5f)
+    {
+        return bias(1.0f - g, 2.0f * t) / 2.0f;
+    }
+    else
+    {
+        return 1.0f - bias(1.0f - g, 2.0f - 2.0f * t) / 2.0f;
+    }
+}
+
+
 void main()
 {
         // Material base color (before shading)
@@ -128,9 +147,11 @@ void main()
         
         float surfaceDifference = length(fs_Pos) - length(fs_UnalteredPos);
 
-        float normalizedSurfaceDifference = surfaceDifference * 20.0f;
+        float modifiedSurDiff = pow(surfaceDifference, 0.65f);
+
+        float normalizedSurDiff = modifiedSurDiff * 8.0f;
     
-        if(surfaceDifference > 0.001f)
+        if(surfaceDifference > 0.0001f)
         {
             /*
             diffuseColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
@@ -150,16 +171,20 @@ void main()
             vec3 c = vec3(0.78, 0.608, 0.698);
             vec3 d = vec3(0.588, 0.228, 0.178);
 
-            diffuseColor = vec4(vec3(palette(normalizedSurfaceDifference, a, b, c, d)), 1.0f);
+            diffuseColor = vec4(vec3(palette(normalizedSurDiff, a, b, c, d)), 1.0f);
+            
+            float mult = (normalizedSurDiff / 2.0f);
+            diffuseColor += vec4(vec3(mult * mult), 0.0f);
         }
 
 
         
+        float latitude = abs(fs_Pos[1]);
 
-
-        if(fs_Pos[1] > 0.85 || fs_Pos[1] < -0.85)
+        if(latitude > 0.85)
         {
-            diffuseColor = vec4(latitudeCol, 1.0f);        
+            float t = (latitude - 0.85f) / 0.15f;
+            diffuseColor = mix(diffuseColor, vec4(latitudeCol, 1.0f), gain(0.999, t));        
         }
 
         
