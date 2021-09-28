@@ -130,15 +130,13 @@ float gain(float g, float t)
 
 void main()
 {
-        // Material base color (before shading)
-        vec4 diffuseColor = u_OceanColor;
 
         // Calculate the diffuse term for Lambert shading
         float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
 
         //diffuseTerm = clamp(diffuseTerm, 0.0f, 1.0f);
 
-        float ambientTerm = 0.2;
+        float ambientTerm = 0.0;
 
         float lightIntensity = diffuseTerm + ambientTerm;   
 
@@ -151,68 +149,64 @@ void main()
 
         float normalizedSurDiff = modifiedSurDiff * 8.0f;
     
-        if(surfaceDifference > 0.0001f)
+
+        /*
+        diffuseColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+
+        if(surfaceDifference < 0.005f)
         {
-            /*
-            diffuseColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
-
-            if(surfaceDifference < 0.005f)
-            {
-                diffuseColor = vec4(0.8941, 0.8, 0.2706, 1.0);
-            }
-            else if(surfaceDifference > 0.04f)
-            {
-                diffuseColor = vec4(1.0, 2.0, 2.0, 1.0);
-            }
-            */
-
-            vec3 a = vec3(0.378, 1.008, 0.468);
-            vec3 b = vec3(-0.762, 0.228, 0.718);
-            vec3 c = vec3(0.78, 0.608, 0.698);
-            vec3 d = vec3(0.588, 0.228, 0.178);
-
-            diffuseColor = vec4(vec3(palette(normalizedSurDiff, a, b, c, d)), 1.0f);
-            
-            float mult = (normalizedSurDiff / 2.0f);
-            diffuseColor += vec4(vec3(mult * mult), 0.0f);
+            diffuseColor = vec4(0.8941, 0.8, 0.2706, 1.0);
         }
+        else if(surfaceDifference > 0.04f)
+        {
+            diffuseColor = vec4(1.0, 2.0, 2.0, 1.0);
+        }
+        */
 
+        vec3 a = vec3(0.378, 1.008, 0.468);
+        vec3 b = vec3(-0.762, 0.228, 0.718);
+        vec3 c = vec3(0.78, 0.608, 0.698);
+        vec3 d = vec3(0.588, 0.228, 0.178);
+
+        vec4 landColor = vec4(vec3(palette(normalizedSurDiff, a, b, c, d)), 1.0f);
+        
+        float mult = (normalizedSurDiff / 1.0f);
+        landColor += vec4(vec3(mult * mult * mult), 0.0f);
+
+        landColor = clamp(landColor, 0.0f, 2.0f);
+
+        bool isLand = surfaceDifference > 0.0001f;
+        vec4 diffuseColor = isLand ? landColor : u_OceanColor;
 
         
         float latitude = abs(fs_Pos[1]);
 
-        if(latitude > 0.85)
-        {
-            float t = (latitude - 0.85f) / 0.15f;
-            diffuseColor = mix(diffuseColor, vec4(latitudeCol, 1.0f), gain(0.999, t));        
-        }
+        float t = (latitude - 0.85f) / 0.15f;
+        vec4 iceCapColor = mix(diffuseColor, vec4(latitudeCol, 1.0f), gain(0.999, t));        
+
+        bool isIceCap = latitude > 0.85;
+        diffuseColor = isIceCap ? iceCapColor : diffuseColor;
 
         
         // Lambert shading
-        out_Col = vec4(diffuseColor.rgb * lightIntensity, 1.0f);
+        out_Col = vec4(diffuseColor.rgb * u_LightColor.rgb * lightIntensity, 1.0f);
 
         // Dark Side of the Planet
-        if(diffuseColor == vec4(0.0f, 1.0f, 0.0f, 1.0f) && lightIntensity <= 0.1f)
-        {            
-            vec3 val = fbm(fs_Pos[0], fs_Pos[1], fs_Pos[2], 8);
+       
+        vec3 val = fbm(fs_Pos[0], fs_Pos[1], fs_Pos[2], 8);
 
-            float avg = (val[0] + val[1] + val[2]) / 2.0f;
+        float avg = (val[0] + val[1] + val[2]) / 2.0f;
 
-            avg = avg * avg * avg * avg * avg * avg * avg * avg * avg * avg;
+        avg = avg * avg * avg * avg * avg * avg * avg * avg * avg * avg;
 
-            if(avg > 0.2f)
-            {
-                avg *= 2.0f;
-                out_Col = vec4(avg, avg, 0.0f, 1.0f);
-            }
-        }
-        else
-        {
-            // Add light color
-            diffuseColor *= u_LightColor;
 
-            out_Col = vec4(diffuseColor.rgb * lightIntensity, 1.0f);
-        }
+        bool nightTime = lightIntensity <= 0.0001f;
+
+        bool cityLights = avg > 0.2f && isLand && !isIceCap;
+
+        vec4 nightColor = cityLights ? vec4(avg * 2.0f, avg * 2.0f, 0.0f, 1.0f) : vec4(diffuseColor.rgb * lightIntensity, 1.0f);
+
+        out_Col = nightTime ? nightColor : vec4(diffuseColor.rgb * u_LightColor.rgb * lightIntensity, 1.0f);
 
 
         // Blinn Phong Shading only for ocean
@@ -236,7 +230,7 @@ void main()
             float finalIntensity = lightIntensity + specularIntensity;
             
             // Compute final shaded color
-            out_Col = vec4(diffuseColor.rgb * finalIntensity, 1.0f);
+            out_Col = vec4(diffuseColor.rgb * u_LightColor.rgb * finalIntensity, 1.0f);
         }
 
         //out_Col = fs_Col;
