@@ -12,7 +12,7 @@ uniform mat4 u_ViewProj;    // The matrix that defines the camera's transformati
 
 uniform float u_CurrTick;
 
-uniform float u_Time;
+uniform float u_Time;   // deci-seconds since 09/29/2021 7PM
 
 uniform vec4 u_CameraPos;
 
@@ -199,9 +199,12 @@ void main()
 
     float extraOffset = -1.f;
     float amplitude = 100.0f / 100.0f;
-    float frequency = u_bpm / 5000.0f;
 
-    float timeBPM_Multiplier = extraOffset + amplitude * (sin(2.0f * 3.14159f * (frequency * u_Time * 1000000.0f)) + 1.0f);
+    // frequency in Hz, divided by 2 to have a high point on the beat
+    float frequency = ((u_bpm * 10.0f) / 60.0f) / 2.0f; 
+
+    float timeBPM_Multiplier = extraOffset + amplitude * 
+        (sin(2.0f * 3.14159f * (frequency * fract(u_Time))) + 1.0f);
 
     clamp(timeBPM_Multiplier, 0.0f, 2.0f);
 

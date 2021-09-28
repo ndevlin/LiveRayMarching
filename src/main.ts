@@ -181,7 +181,8 @@ function main()
     let lightPos: vec4 = convertSphericalToCartesian(controls.LightPosTheta, controls.LightPosDistance, controls.LightPosAzimuth);
 
     // 1632869657277 = 09/29/2021 7PM
-    let currTime: number = (Date.now() - 1632869657277.0) / 100000.0;
+    // seconds since the above time
+    let currTime: number = (Date.now() - 1632869657277.0) / 10000.0;
 
     console.log(currTime);
 
