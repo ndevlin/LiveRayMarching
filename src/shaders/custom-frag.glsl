@@ -104,6 +104,10 @@ vec3 fbm(float x, float y, float z, int octaves)
     return total;
 }
 
+vec3 palette(float t, vec3 a, vec3 b, vec3 c, vec3 d)
+{
+    return a + b * cos( 6.28318 * (c * t + d));
+}
 
 void main()
 {
@@ -124,10 +128,11 @@ void main()
         
         float surfaceDifference = length(fs_Pos) - length(fs_UnalteredPos);
 
-
-
+        float normalizedSurfaceDifference = surfaceDifference * 20.0f;
+    
         if(surfaceDifference > 0.001f)
         {
+            /*
             diffuseColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
 
             if(surfaceDifference < 0.005f)
@@ -138,7 +143,19 @@ void main()
             {
                 diffuseColor = vec4(1.0, 2.0, 2.0, 1.0);
             }
+            */
+
+            vec3 a = vec3(0.378, 1.008, 0.468);
+            vec3 b = vec3(-0.762, 0.228, 0.718);
+            vec3 c = vec3(0.78, 0.608, 0.698);
+            vec3 d = vec3(0.588, 0.228, 0.178);
+
+            diffuseColor = vec4(vec3(palette(normalizedSurfaceDifference, a, b, c, d)), 1.0f);
         }
+
+
+        
+
 
         if(fs_Pos[1] > 0.85 || fs_Pos[1] < -0.85)
         {
