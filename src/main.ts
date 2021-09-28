@@ -39,6 +39,8 @@ const lightColor =
 
 let icosphere: Icosphere;
 
+let moon: Icosphere;
+
 let square: Square;
 
 let cube: Cube;
@@ -66,11 +68,14 @@ function loadScene() {
   icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, controls.tesselations);
   icosphere.create();
 
+  moon = new Icosphere(vec3.fromValues(3, 3, -3), 0.25, controls.tesselations);
+  moon.create();
+
   square = new Square(vec3.fromValues(0, 0, 0));
   square.create();
 
   // Cube constructor takes in object origin
-  cube = new Cube(vec3.fromValues(3, 3, -3));
+  cube = new Cube(vec3.fromValues(-3, 3, -3));
   cube.create();
 }
 
@@ -151,7 +156,14 @@ function main()
       prevTesselations = controls.tesselations;
       icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, prevTesselations);
       icosphere.create();
+
     }
+    
+    let moonPos: vec4 = convertSphericalToCartesian(currTick, 2, 90);
+    
+    // Create moon
+    moon = new Icosphere(vec3.fromValues(moonPos[0], moonPos[1], moonPos[2]), 0.3, Math.ceil(controls.tesselations / 2.0));
+    moon.create();
 
     // Render with lambert shader
     /*
@@ -169,7 +181,7 @@ function main()
     let lightPos: vec4 = convertSphericalToCartesian(controls.LightPosTheta, controls.LightPosDistance, controls.LightPosAzimuth);
 
     // Render with custom noise-based shader
-    renderer.render(camera, custom, [icosphere, cube],  // Draw Cube as a reference for now
+    renderer.render(camera, custom, [icosphere, cube, moon],  // Draw Cube as a reference for now
     // Divide by 256 to convert from web RGB to shader 0-1 values
     vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
     vec4.fromValues(lightColor.LightColor[0] / 256.0, lightColor.LightColor[1] / 256.0, lightColor.LightColor[2] / 256.0, 1),
