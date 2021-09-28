@@ -26,12 +26,11 @@ out vec4 out_Col;
 
 vec3 returnLatitudeAsColor(vec3 p)
 {
-    float red = 0.0f;
-    red += abs(p.y) * 2.0f - 0.5f;
+    float red = 2.5f;
 
-    float green = 2.0f;
+    float green = 3.0f;
 
-    float blue = 2.0f;
+    float blue = 3.0f;
 
     return vec3(red, green, blue);
 }
@@ -232,8 +231,11 @@ void main()
         // Compute final shaded color
         out_Col = surfaceDifference <= 0.0001f ? blinnPhong : out_Col;
 
+        
+        out_Col = clamp(out_Col, 0.0f, 1.0f);
 
-        //out_Col = vec4(vec3(t), 1.0f);
+
+        //out_Col = fs_Col;
 
 }
 

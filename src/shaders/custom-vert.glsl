@@ -194,16 +194,20 @@ void main()
     fs_Pos = preFinal;
     */
 
-    //float timeBPM_Multiplier = sin((u_bpm / 50.0f) * u_Time / 100.0f) + 1.0f;
 
-    float extraOffset = -0.03f;
-    float amplitude = 1.0f / 100.0f;
+    float extraOffset = -1.f;
+    float amplitude = 100.0f / 100.0f;
     float frequency = u_bpm / 5000.0f;
 
-    float timeBPM_Multiplier = extraOffset + amplitude * (cos(2.0f * 3.14159f * (frequency * u_Time)) + 1.0f);
+    float timeBPM_Multiplier = extraOffset + amplitude * (sin(2.0f * 3.14159f * (frequency * u_Time)) + 1.0f);
 
+    clamp(timeBPM_Multiplier, 0.0f, 2.0f);
 
-    vec4 alteredPos = worldPos + originalNormal * (noiseMultiplier + timeBPM_Multiplier);
+    timeBPM_Multiplier = pow(timeBPM_Multiplier, 4.0f);
+
+    noiseMultiplier -= 0.005f;
+
+    vec4 alteredPos = worldPos + originalNormal * (noiseMultiplier * (1.0f + timeBPM_Multiplier));
     
 
     gl_Position = u_ViewProj * alteredPos; // Final positions of the geometry's vertices
@@ -259,7 +263,7 @@ void main()
 
 
 
-    //fs_Col = vec4(vec3(vs_Nor - fs_Nor) * 10.0f, 1.0f);
+    //fs_Col = vec4(vec3(timeBPM_Multiplier) * 10.0f, 1.0f);
     
 }
 
