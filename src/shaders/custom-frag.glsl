@@ -29,7 +29,7 @@ vec3 returnLatitudeAsColor(vec3 p)
     float red = 0.0f;
     red += abs(p.y) * 2.0f - 0.5f;
 
-    float green = 2.0;
+    float green = 2.0f;
 
     float blue = 2.0f;
 
@@ -151,7 +151,7 @@ void main()
     
 
         /*
-        diffuseColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+        vec4 diffuseColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
 
         if(surfaceDifference < 0.005f)
         {
@@ -161,6 +161,9 @@ void main()
         {
             diffuseColor = vec4(1.0, 2.0, 2.0, 1.0);
         }
+
+        if(surfaceDifference < 0.001f)
+            diffuseColor = u_OceanColor;
         */
 
         vec3 a = vec3(0.378, 1.008, 0.468);
@@ -182,9 +185,10 @@ void main()
         float latitude = abs(fs_Pos[1]);
 
         float t = (latitude - 0.85f) / 0.15f;
+        t = clamp(t, 0.0f, 1.0f);
         vec4 iceCapColor = mix(diffuseColor, vec4(latitudeCol, 1.0f), gain(0.999, t));        
 
-        bool isIceCap = latitude > 0.85;
+        bool isIceCap = latitude > 0.9;
         diffuseColor = isIceCap ? iceCapColor : diffuseColor;
 
         
@@ -200,40 +204,36 @@ void main()
         avg = avg * avg * avg * avg * avg * avg * avg * avg * avg * avg;
 
 
-        bool nightTime = lightIntensity <= 0.0001f;
+        bool nightTime = avg > 0.2f && isLand && !isIceCap && lightIntensity <= 0.00001f;
 
-        bool cityLights = avg > 0.2f && isLand && !isIceCap;
-
-        vec4 nightColor = cityLights ? vec4(avg * 2.0f, avg * 2.0f, 0.0f, 1.0f) : vec4(diffuseColor.rgb * lightIntensity, 1.0f);
-
-        out_Col = nightTime ? nightColor : vec4(diffuseColor.rgb * u_LightColor.rgb * lightIntensity, 1.0f);
+        out_Col = nightTime ? vec4(avg * 2.0f, avg * 2.0f, 0.0f, 1.0f) : vec4(diffuseColor.rgb * u_LightColor.rgb * lightIntensity, 1.0f);
 
 
         // Blinn Phong Shading only for ocean
-        if(surfaceDifference <= 0.001f)
-        {
-            
-            vec4 viewVec = u_CameraPos - fs_Pos;
 
-            vec4 posToLight = fs_LightVec - fs_Pos;
+        vec4 viewVec = u_CameraPos - fs_Pos;
 
-            vec4 surfaceNorm = fs_Nor;
+        vec4 posToLight = fs_LightVec - fs_Pos;
 
-            vec4 H = (viewVec + posToLight) / (length(viewVec) + length(posToLight));
+        vec4 surfaceNorm = fs_Nor;
 
-            float intensity =  50.0f; // Relative intensity of highlight
+        vec4 H = (viewVec + posToLight) / (length(viewVec) + length(posToLight));
 
-            float sharpness = 50.0f; // How sharp or spread out the highlight is
+        float intensity =  50.0f; // Relative intensity of highlight
 
-            float specularIntensity = intensity * max(pow(dot(H, surfaceNorm), sharpness), 0.0f);
+        float sharpness = 50.0f; // How sharp or spread out the highlight is
 
-            float finalIntensity = lightIntensity + specularIntensity;
-            
-            // Compute final shaded color
-            out_Col = vec4(diffuseColor.rgb * u_LightColor.rgb * finalIntensity, 1.0f);
-        }
+        float specularIntensity = intensity * max(pow(dot(H, surfaceNorm), sharpness), 0.0f);
 
-        //out_Col = fs_Col;
+        float finalIntensity = lightIntensity + specularIntensity;
+
+        vec4 blinnPhong = vec4(diffuseColor.rgb * u_LightColor.rgb * finalIntensity, 1.0f);
+
+        // Compute final shaded color
+        out_Col = surfaceDifference <= 0.0001f ? blinnPhong : out_Col;
+
+
+        //out_Col = vec4(vec3(t), 1.0f);
 
 }
 
