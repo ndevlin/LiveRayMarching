@@ -265,7 +265,7 @@ void main()
 
 
 
-    //fs_Col = vec4(vec3(timeBPM_Multiplier) * 10.0f, 1.0f);
+    //fs_Col = vec4(vec3(timeBPM_Multiplier) / 1.0f, 1.0f);
     
 }
 

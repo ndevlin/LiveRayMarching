@@ -180,7 +180,10 @@ function main()
     // Convert Light Position Spherical Coordinates to CartesianCoordinates
     let lightPos: vec4 = convertSphericalToCartesian(controls.LightPosTheta, controls.LightPosDistance, controls.LightPosAzimuth);
 
-    let currTime: number = Date.now();
+    // 1632869657277 = 09/29/2021 7PM
+    let currTime: number = (Date.now() - 1632869657277.0) / 100000.0;
+
+    console.log(currTime);
 
     // Render with custom noise-based shader
     renderer.render(camera, custom, [icosphere, cube, moon],  // Draw Cube as a reference for now
