@@ -180,12 +180,15 @@ function main()
     // Convert Light Position Spherical Coordinates to CartesianCoordinates
     let lightPos: vec4 = convertSphericalToCartesian(controls.LightPosTheta, controls.LightPosDistance, controls.LightPosAzimuth);
 
+    let currTime: number = Date.now();
+
     // Render with custom noise-based shader
     renderer.render(camera, custom, [icosphere, cube, moon],  // Draw Cube as a reference for now
     // Divide by 256 to convert from web RGB to shader 0-1 values
     vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
     vec4.fromValues(lightColor.LightColor[0] / 256.0, lightColor.LightColor[1] / 256.0, lightColor.LightColor[2] / 256.0, 1),
     currTick,
+    currTime,
     lightPos,
     controls.BPM
     );

@@ -32,6 +32,7 @@ class OpenGLRenderer
     oceanColorIn: vec4, 
     lightColorIn: vec4, 
     currTick: number, 
+    currTime: number,
     lightPos: vec4,
     bpmIn: number) 
   {
@@ -47,6 +48,8 @@ class OpenGLRenderer
     prog.setLightColor(lightColorIn);
 
     prog.setCurrTick(currTick);
+
+    prog.setCurrTime(currTime);
 
     let cp: vec3 = camera.getEye();
     prog.setCameraPos([cp[0], cp[1], cp[2], 1]);

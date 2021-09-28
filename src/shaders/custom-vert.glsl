@@ -10,6 +10,8 @@ uniform mat4 u_ModelInvTr;  // The inverse transpose of the model matrix.
 
 uniform mat4 u_ViewProj;    // The matrix that defines the camera's transformation.
 
+uniform float u_CurrTick;
+
 uniform float u_Time;
 
 uniform vec4 u_CameraPos;
@@ -199,7 +201,7 @@ void main()
     float amplitude = 100.0f / 100.0f;
     float frequency = u_bpm / 5000.0f;
 
-    float timeBPM_Multiplier = extraOffset + amplitude * (sin(2.0f * 3.14159f * (frequency * u_Time)) + 1.0f);
+    float timeBPM_Multiplier = extraOffset + amplitude * (sin(2.0f * 3.14159f * (frequency * u_Time * 1000000.0f)) + 1.0f);
 
     clamp(timeBPM_Multiplier, 0.0f, 2.0f);
 
