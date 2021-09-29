@@ -11,6 +11,8 @@
 // position, light position, and vertex color.
 precision highp float;
 
+uniform vec4 u_LightPos;
+
 // These are the interpolated values out of the rasterizer, so you can't know
 // their specific values without knowing the vertices that contributed to them
 in vec4 fs_Nor;
@@ -110,7 +112,7 @@ void main()
         diffuseColor = vec4(vec3(val[0] - 0.1f * val[1], val[0] - 0.3f * val[2], val[0] - 0.3f * (val[1] + val[2])), 1.0f);
 
         // Calculate the diffuse term for Lambert shading
-        float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
+        float diffuseTerm = dot(normalize(fs_Nor), normalize(u_LightPos));
         // Avoid negative lighting values
         // diffuseTerm = clamp(diffuseTerm, 0, 1);
 

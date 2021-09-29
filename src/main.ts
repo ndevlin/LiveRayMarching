@@ -178,7 +178,7 @@ function main()
     // deci-seconds since the above time
     let currTime: number = (Date.now() - 1632869657277.0) / 10000.0;
 
-    // Render with custom noise-based shader
+    // Render with lambert shader
     renderer.render(camera, lambert, [moon],  // Draw Cube as a reference for now
     // Divide by 256 to convert from web RGB to shader 0-1 values
     vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
