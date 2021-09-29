@@ -13,7 +13,7 @@ import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
 import Cube from './geometry/Cube';
 
 // Define an object with application parameters and button callbacks
-// This will be referred to by dat.GUI's functions that add GUI elements.
+// Utilizes dat.GUI
 const controls = {
   tesselations: 6,
   'Load Scene': loadScene, // A function pointer, essentially
@@ -25,17 +25,17 @@ const controls = {
   TerrainSeed: 0
 };
 
-// Controller that allows user color input
+// Controller that allows user color input for ocean
 const colorObject = 
 {
   // Light Blue
   OceanColor: [ 0, 100, 255 ], // RGB array
 };
 
-// Controller that allows user color input
+// Controller that allows user color input for light color
 const lightColor = 
 {
-  // 5000 Kelvin in RGB
+  // 5000 Kelvin in RGB; warm lighting
   LightColor: [ 255, 228, 206 ], // RGB array
 };
 
@@ -96,8 +96,6 @@ function main()
   const gui = new DAT.GUI();
   gui.add(controls, 'tesselations', 0, 8).step(1);
   gui.add(controls, 'Load Scene');
-  
-
   gui.add(controls, 'LightPosTheta', -720, 720).step(1);
   gui.add(controls, 'LightPosDistance', 5, 50).step(0.1);
   gui.add(controls, 'LightPosAzimuth', 10, 170).step(1);
@@ -105,11 +103,10 @@ function main()
   gui.add(controls, 'AltitudeMultiplier', 0.1, 5.0).step(0.1);
   gui.add(controls, 'TerrainSeed', 0, 10.0).step(0.1);
 
-
-  // Color control; RGB input
+  // Color control for ocean; RGB input
   gui.addColor(colorObject, 'OceanColor');
 
-    // Color control; RGB input
+    // Color control for sun; RGB input
   gui.addColor(lightColor, 'LightColor');
 
   // get canvas and webgl context
@@ -129,7 +126,7 @@ function main()
 
   const renderer = new OpenGLRenderer(canvas);
 
-  renderer.setClearColor(0.2, 0.2, 0.2, 1);
+  renderer.setClearColor(0.01, 0.01, 0.01, 1);
 
   gl.enable(gl.DEPTH_TEST);
 
