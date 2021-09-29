@@ -101,7 +101,7 @@ function main()
   gui.add(controls, 'LightPosTheta', -720, 720).step(1);
   gui.add(controls, 'LightPosDistance', 5, 50).step(0.1);
   gui.add(controls, 'LightPosAzimuth', 10, 170).step(1);
-  gui.add(controls, 'BPM', 0, 150).step(1);
+  gui.add(controls, 'BPM', 0, 180).step(1);
   gui.add(controls, 'AltitudeMultiplier', 0.1, 5.0).step(0.1);
   gui.add(controls, 'TerrainSeed', 0, 10.0).step(0.1);
 
@@ -163,22 +163,13 @@ function main()
     }
     
     let moonPos: vec4 = convertSphericalToCartesian(currTick, 2, 90);
-    
+    //let moonPos: vec4 = convertSphericalToCartesian(2, 2, 90);
+
+
     // Create moon
     moon = new Icosphere(vec3.fromValues(moonPos[0], moonPos[1], moonPos[2]), 0.3, Math.ceil(controls.tesselations / 2.0));
+    
     moon.create();
-
-    // Render with lambert shader
-    /*
-    renderer.render(camera, lambert, [
-      icosphere,
-      cube,
-    ],
-    // Divide by 256 to convert from web RGB to shader 0-1 values
-    vec4.fromValues(colorObject.actualColor[0] / 256.0, colorObject.actualColor[1] / 256.0, colorObject.actualColor[2] / 256.0, 1),
-    currTick
-    );
-    */
 
     // Convert Light Position Spherical Coordinates to CartesianCoordinates
     let lightPos: vec4 = convertSphericalToCartesian(controls.LightPosTheta, controls.LightPosDistance, controls.LightPosAzimuth);
@@ -188,7 +179,20 @@ function main()
     let currTime: number = (Date.now() - 1632869657277.0) / 10000.0;
 
     // Render with custom noise-based shader
-    renderer.render(camera, custom, [icosphere, cube, moon],  // Draw Cube as a reference for now
+    renderer.render(camera, lambert, [moon],  // Draw Cube as a reference for now
+    // Divide by 256 to convert from web RGB to shader 0-1 values
+    vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
+    vec4.fromValues(lightColor.LightColor[0] / 256.0, lightColor.LightColor[1] / 256.0, lightColor.LightColor[2] / 256.0, 1),
+    currTick,
+    currTime,
+    lightPos,
+    controls.BPM,
+    controls.AltitudeMultiplier,
+    controls.TerrainSeed
+    );
+
+    // Render with custom noise-based shader
+    renderer.render(camera, custom, [icosphere, cube],  // Draw Cube as a reference for now
     // Divide by 256 to convert from web RGB to shader 0-1 values
     vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
     vec4.fromValues(lightColor.LightColor[0] / 256.0, lightColor.LightColor[1] / 256.0, lightColor.LightColor[2] / 256.0, 1),
