@@ -43,8 +43,11 @@ class OpenGLRenderer
 
     mat4.identity(model);
     mat4.multiply(viewProj, camera.projectionMatrix, camera.viewMatrix);
+    
     prog.setModelMatrix(model);
+    
     prog.setViewProjMatrix(viewProj);
+    
     prog.setGeometryColor(oceanColorIn);
 
     prog.setLightColor(lightColorIn);

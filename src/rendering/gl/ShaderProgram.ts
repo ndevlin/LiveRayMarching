@@ -29,7 +29,9 @@ class ShaderProgram {
   attrCol: number;
 
   unifModel: WebGLUniformLocation;
+  
   unifModelInvTr: WebGLUniformLocation;
+  
   unifViewProj: WebGLUniformLocation;
 
   unifOceanColor: WebGLUniformLocation;
@@ -61,30 +63,35 @@ class ShaderProgram {
       throw gl.getProgramInfoLog(this.prog);
     }
 
-    this.attrPos = gl.getAttribLocation(this.prog, "vs_Pos");
-    this.attrNor = gl.getAttribLocation(this.prog, "vs_Nor");
-    this.attrCol = gl.getAttribLocation(this.prog, "vs_Col");
-    this.unifModel      = gl.getUniformLocation(this.prog, "u_Model");
-    this.unifModelInvTr = gl.getUniformLocation(this.prog, "u_ModelInvTr");
-    this.unifViewProj   = gl.getUniformLocation(this.prog, "u_ViewProj");
+    this.attrPos          = gl.getAttribLocation(this.prog, "vs_Pos");
+    
+    this.attrNor          = gl.getAttribLocation(this.prog, "vs_Nor");
+    
+    this.attrCol          = gl.getAttribLocation(this.prog, "vs_Col");
+    
+    this.unifModel        = gl.getUniformLocation(this.prog, "u_Model");
+    
+    this.unifModelInvTr   = gl.getUniformLocation(this.prog, "u_ModelInvTr");
+    
+    this.unifViewProj     = gl.getUniformLocation(this.prog, "u_ViewProj");
 
-    this.unifOceanColor = gl.getUniformLocation(this.prog, "u_OceanColor");
+    this.unifOceanColor   = gl.getUniformLocation(this.prog, "u_OceanColor");
 
-    this.unifLightColor = gl.getUniformLocation(this.prog, "u_LightColor");
+    this.unifLightColor   = gl.getUniformLocation(this.prog, "u_LightColor");
 
-    this.unifCameraPos  = gl.getUniformLocation(this.prog, "u_CameraPos");
+    this.unifCameraPos    = gl.getUniformLocation(this.prog, "u_CameraPos");
 
-    this.unifLightPos  = gl.getUniformLocation(this.prog, "u_LightPos");
+    this.unifLightPos     = gl.getUniformLocation(this.prog, "u_LightPos");
 
-    this.unifBPM  = gl.getUniformLocation(this.prog, "u_bpm");
+    this.unifBPM          = gl.getUniformLocation(this.prog, "u_bpm");
 
-    this.unifAltitudeMult  = gl.getUniformLocation(this.prog, "u_AltitudeMult");
+    this.unifAltitudeMult = gl.getUniformLocation(this.prog, "u_AltitudeMult");
 
     this.unifTerrainSeed  = gl.getUniformLocation(this.prog, "u_TerrainSeed");
     
-    this.unifCurrTick = gl.getUniformLocation(this.prog, "u_CurrTick");
+    this.unifCurrTick     = gl.getUniformLocation(this.prog, "u_CurrTick");
 
-    this.unifCurrTime = gl.getUniformLocation(this.prog, "u_Time");
+    this.unifCurrTime     = gl.getUniformLocation(this.prog, "u_Time");
   }
 
   use() {
@@ -123,7 +130,6 @@ class ShaderProgram {
     }
   }
 
-
   setLightColor(color: vec4)
   {
     this.use();
@@ -131,7 +137,6 @@ class ShaderProgram {
       gl.uniform4fv(this.unifLightColor, color);
     }
   }
-
 
   setCameraPos(cameraPos: vec4) 
   {
@@ -158,7 +163,6 @@ class ShaderProgram {
     }
   }
 
-
   setAltitudeMultiplier(altitudeMult: number)
   {
     this.use();
@@ -167,7 +171,6 @@ class ShaderProgram {
       gl.uniform1f(this.unifAltitudeMult, altitudeMult);
     }
   }
-
 
   setTerrainSeed(terrainSeed: number)
   {
@@ -178,7 +181,6 @@ class ShaderProgram {
     }
   }
 
-
   setCurrTick(currTick: number)
   {
     this.use();
@@ -187,7 +189,6 @@ class ShaderProgram {
       gl.uniform1f(this.unifCurrTick, currTick);
     }
   }
-
 
   setCurrTime(currTime: number)
   {
