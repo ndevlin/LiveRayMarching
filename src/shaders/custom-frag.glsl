@@ -12,6 +12,10 @@ uniform vec4 u_LightColor; // User input color for Light
 
 uniform vec4 u_CameraPos;
 
+uniform float u_AltitudeMult;
+
+uniform float u_TerrainSeed;
+
 // Interpolated values out of the rasterizer
 in vec4 fs_Pos;
 
@@ -142,14 +146,12 @@ void main()
     float lightIntensity = diffuseTerm + ambientTerm;   
 
     vec3 latitudeCol = returnLatitudeAsColor(vec3(fs_Pos[0], fs_Pos[1], fs_Pos[2]));
-
     
     float surfaceDifference = length(fs_Pos) - length(fs_UnalteredPos);
 
-    float modifiedSurDiff = pow(surfaceDifference, 0.65f);
+    float modifiedSurDiff = pow(surfaceDifference, 0.65f) / u_AltitudeMult;
 
-    float normalizedSurDiff = modifiedSurDiff * 8.0f;
-
+    float normalizedSurDiff = modifiedSurDiff * 4.0f * u_AltitudeMult;
 
     /*
     vec4 diffuseColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
@@ -174,14 +176,13 @@ void main()
 
     vec4 landColor = vec4(vec3(palette(normalizedSurDiff, a, b, c, d)), 1.0f);
     
-    float mult = (normalizedSurDiff / 1.0f);
+    float mult = (normalizedSurDiff);
     landColor += vec4(vec3(mult * mult * mult), 0.0f);
 
     landColor = clamp(landColor, 0.0f, 2.0f);
 
     landColor -= u_OceanColor;
 
-    
     // Chooses landColor if surfaceDifference > 0.0001f, u_OceanColor otherwise
     float isLand = float(surfaceDifference > 0.0001f);
     diffuseColor = isLand * landColor + u_OceanColor;
@@ -203,7 +204,7 @@ void main()
     
     // Dark Side of the Planet
     
-    vec3 val = fbm(fs_Pos[0], fs_Pos[1], fs_Pos[2], 8);
+    vec3 val = fbm(fs_Pos[0] + u_TerrainSeed, fs_Pos[1] + u_TerrainSeed, fs_Pos[2] + u_TerrainSeed, 8);
 
     float avg = (val[0] + val[1] + val[2]) / 2.0f;
 
@@ -242,7 +243,7 @@ void main()
     blinnPhong = clamp(blinnPhong, 0.0f, 1.0f);
 
 
-    // out_Col = surfaceDifference <= 0.0001f ? blinnPhong : out_Col;
+    // Same as out_Col = surfaceDifference <= 0.0001f ? blinnPhong : out_Col;
     // Compute final shaded color
     float isOcean = float(surfaceDifference <= 0.0001f);
     

@@ -2,19 +2,13 @@
 
 // Written by Nathan Devlin, based on reference by Adam Mally
 
-// Vertex Shader to create an organic undulating effect
-
 uniform mat4 u_Model;       // Model matrix
 
 uniform mat4 u_ModelInvTr;  // The inverse transpose of the model matrix.
 
 uniform mat4 u_ViewProj;    // The matrix that defines the camera's transformation.
 
-uniform float u_CurrTick;
-
 uniform float u_Time;   // deci-seconds since 09/29/2021 7PM
-
-uniform vec4 u_CameraPos;
 
 in vec4 vs_Pos;             // The array of vertex positions passed to the shader
 
@@ -37,7 +31,6 @@ uniform float u_bpm;
 uniform float u_AltitudeMult;
 
 uniform float u_TerrainSeed;
-
 
 // Takes in spherical coordinates and returns a corresponding vec4 in cartesian coordinates
 vec4 convertSphericalToCartesian(vec4 sphericalVecIn)
@@ -141,7 +134,7 @@ vec3 fbm(float x, float y, float z)
 
 float calculateNoiseOffset(vec4 worldPos, float seed)
 {
-// Add fbm noise
+    // Add fbm noise
     vec3 fbmVal = fbm(worldPos[0] + seed, worldPos[1] + seed, worldPos[2] + seed);
 
     vec4 originalNormal = worldPos;
@@ -199,24 +192,12 @@ void main()
     vec4 originalNormal = worldPos;
     originalNormal[3] = 0.0f;
 
-
     float noiseMultiplier = calculateNoiseOffset(worldPos, u_TerrainSeed) * u_AltitudeMult;
-
-
-    // Creates vacillating effect from Original
-    /*
-    float toAdd = float(u_Time) / 20.0;
-
-    preFinal += sin(preFinal + toAdd) / 20.0;
-
-    fs_Pos = preFinal;
-    */
-
 
     float extraOffset = -1.f;
     float amplitude = 1.0f;
-
-    // frequency in Hz, divided by 2 to have a high point on the beat
+    // frequency in Hz (cycles / second) - u_bpm is deci-seconds since 09/28/2021 7PM
+    // Divided by 2 to have a high point on the beat
     float frequency = ((u_bpm * 10.0f) / 60.0f) / 2.0f; 
 
     float timeBPM_Multiplier = extraOffset + amplitude * 
