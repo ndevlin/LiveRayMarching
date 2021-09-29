@@ -35,7 +35,8 @@ class OpenGLRenderer
     currTime: number,
     lightPos: vec4,
     bpmIn: number,
-    altitudeMultiplier: number) 
+    altitudeMultiplier: number,
+    terrainSeed: number) 
   {
     let model = mat4.create();
     let viewProj = mat4.create();
@@ -60,6 +61,8 @@ class OpenGLRenderer
     prog.setBPM(bpmIn);
 
     prog.setAltitudeMultiplier(altitudeMultiplier);
+
+    prog.setTerrainSeed(terrainSeed);
 
     for (let drawable of drawables) {
       prog.draw(drawable);

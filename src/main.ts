@@ -21,7 +21,8 @@ const controls = {
   LightPosDistance: 20,
   LightPosAzimuth: 90,
   BPM: 100,
-  AltitudeMultiplier: 1
+  AltitudeMultiplier: 1,
+  TerrainSeed: 0
 };
 
 // Controller that allows user color input
@@ -102,6 +103,7 @@ function main()
   gui.add(controls, 'LightPosAzimuth', 10, 170).step(1);
   gui.add(controls, 'BPM', 0, 150).step(1);
   gui.add(controls, 'AltitudeMultiplier', 0.1, 5.0).step(0.1);
+  gui.add(controls, 'TerrainSeed', 0, 10.0).step(0.1);
 
 
   // Color control; RGB input
@@ -194,7 +196,8 @@ function main()
     currTime,
     lightPos,
     controls.BPM,
-    controls.AltitudeMultiplier
+    controls.AltitudeMultiplier,
+    controls.TerrainSeed
     );
     
     stats.end();

@@ -36,6 +36,8 @@ uniform float u_bpm;
 
 uniform float u_AltitudeMult;
 
+uniform float u_TerrainSeed;
+
 
 // Takes in spherical coordinates and returns a corresponding vec4 in cartesian coordinates
 vec4 convertSphericalToCartesian(vec4 sphericalVecIn)
@@ -137,10 +139,10 @@ vec3 fbm(float x, float y, float z)
 }
 
 
-float calculateNoiseOffset(vec4 worldPos)
+float calculateNoiseOffset(vec4 worldPos, float seed)
 {
 // Add fbm noise
-    vec3 fbmVal = fbm(worldPos[0], worldPos[1], worldPos[2]);
+    vec3 fbmVal = fbm(worldPos[0] + seed, worldPos[1] + seed, worldPos[2] + seed);
 
     vec4 originalNormal = worldPos;
     originalNormal[3] = 0.0f;
@@ -153,7 +155,7 @@ float calculateNoiseOffset(vec4 worldPos)
 
     height = (1.0f + height) * height - 1.0f;
 
-    if(height > 0.001f)
+    if(height > 0.0001f)
     {
         height /= 50.0f;
         multiplier = (1.0f + height) * (1.0f + height) * (1.0f + height) * (1.0f + height) - 1.0f;
@@ -164,6 +166,11 @@ float calculateNoiseOffset(vec4 worldPos)
     }
 
     return multiplier;
+}
+
+float calculateNoiseOffset(vec4 worldPos)
+{
+    return calculateNoiseOffset(worldPos, 0.0f);
 }
 
 
@@ -193,7 +200,7 @@ void main()
     originalNormal[3] = 0.0f;
 
 
-    float noiseMultiplier = calculateNoiseOffset(worldPos) * u_AltitudeMult;
+    float noiseMultiplier = calculateNoiseOffset(worldPos, u_TerrainSeed) * u_AltitudeMult;
 
 
     // Creates vacillating effect from Original
