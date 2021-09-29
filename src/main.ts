@@ -20,7 +20,8 @@ const controls = {
   LightPosTheta: 0,
   LightPosDistance: 20,
   LightPosAzimuth: 90,
-  BPM: 0
+  BPM: 100,
+  AltitudeMultiplier: 1
 };
 
 // Controller that allows user color input
@@ -100,6 +101,7 @@ function main()
   gui.add(controls, 'LightPosDistance', 5, 50).step(0.1);
   gui.add(controls, 'LightPosAzimuth', 10, 170).step(1);
   gui.add(controls, 'BPM', 0, 150).step(1);
+  gui.add(controls, 'AltitudeMultiplier', 0.1, 5.0).step(0.1);
 
 
   // Color control; RGB input
@@ -156,7 +158,6 @@ function main()
       prevTesselations = controls.tesselations;
       icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, prevTesselations);
       icosphere.create();
-
     }
     
     let moonPos: vec4 = convertSphericalToCartesian(currTick, 2, 90);
@@ -181,10 +182,8 @@ function main()
     let lightPos: vec4 = convertSphericalToCartesian(controls.LightPosTheta, controls.LightPosDistance, controls.LightPosAzimuth);
 
     // 1632869657277 = 09/29/2021 7PM
-    // seconds since the above time
+    // deci-seconds since the above time
     let currTime: number = (Date.now() - 1632869657277.0) / 10000.0;
-
-    console.log(currTime);
 
     // Render with custom noise-based shader
     renderer.render(camera, custom, [icosphere, cube, moon],  // Draw Cube as a reference for now
@@ -194,7 +193,8 @@ function main()
     currTick,
     currTime,
     lightPos,
-    controls.BPM
+    controls.BPM,
+    controls.AltitudeMultiplier
     );
     
     stats.end();

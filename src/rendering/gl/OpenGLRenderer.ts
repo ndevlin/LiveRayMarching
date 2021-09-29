@@ -34,7 +34,8 @@ class OpenGLRenderer
     currTick: number, 
     currTime: number,
     lightPos: vec4,
-    bpmIn: number) 
+    bpmIn: number,
+    altitudeMultiplier: number) 
   {
     let model = mat4.create();
     let viewProj = mat4.create();
@@ -57,6 +58,8 @@ class OpenGLRenderer
     prog.setLightPos([lightPos[0], lightPos[1], lightPos[2], 1]);
 
     prog.setBPM(bpmIn);
+
+    prog.setAltitudeMultiplier(altitudeMultiplier);
 
     for (let drawable of drawables) {
       prog.draw(drawable);

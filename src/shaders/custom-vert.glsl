@@ -34,6 +34,8 @@ uniform vec4 u_LightPos;
 
 uniform float u_bpm;
 
+uniform float u_AltitudeMult;
+
 
 // Takes in spherical coordinates and returns a corresponding vec4 in cartesian coordinates
 vec4 convertSphericalToCartesian(vec4 sphericalVecIn)
@@ -165,6 +167,13 @@ float calculateNoiseOffset(vec4 worldPos)
 }
 
 
+float impulse(float k, float x)
+{
+    float h = k * x;
+    return h * exp(1.0f - h);
+}
+
+
 void main()
 {
     fs_Col = vs_Col;                         // Pass the vertex colors to the fragment shader for interpolation
@@ -184,7 +193,7 @@ void main()
     originalNormal[3] = 0.0f;
 
 
-    float noiseMultiplier = calculateNoiseOffset(worldPos) * 1.0f;
+    float noiseMultiplier = calculateNoiseOffset(worldPos) * u_AltitudeMult;
 
 
     // Creates vacillating effect from Original
@@ -198,7 +207,7 @@ void main()
 
 
     float extraOffset = -1.f;
-    float amplitude = 100.0f / 100.0f;
+    float amplitude = 1.0f;
 
     // frequency in Hz, divided by 2 to have a high point on the beat
     float frequency = ((u_bpm * 10.0f) / 60.0f) / 2.0f; 

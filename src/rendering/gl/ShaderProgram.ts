@@ -42,6 +42,8 @@ class ShaderProgram {
 
   unifBPM: WebGLUniformLocation;
 
+  unifAltitudeMult: WebGLUniformLocation;
+
   unifCurrTick: WebGLUniformLocation;
 
   unifCurrTime: WebGLUniformLocation;
@@ -73,6 +75,8 @@ class ShaderProgram {
     this.unifLightPos  = gl.getUniformLocation(this.prog, "u_LightPos");
 
     this.unifBPM  = gl.getUniformLocation(this.prog, "u_bpm");
+
+    this.unifAltitudeMult  = gl.getUniformLocation(this.prog, "u_AltitudeMult");
     
     this.unifCurrTick = gl.getUniformLocation(this.prog, "u_CurrTick");
 
@@ -149,6 +153,17 @@ class ShaderProgram {
       gl.uniform1f(this.unifBPM, bpm);
     }
   }
+
+
+  setAltitudeMultiplier(altitudeMult: number)
+  {
+    this.use();
+    if(this.unifAltitudeMult !== -1)
+    {
+      gl.uniform1f(this.unifAltitudeMult, altitudeMult);
+    }
+  }
+
 
   setCurrTick(currTick: number)
   {
