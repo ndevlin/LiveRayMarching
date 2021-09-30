@@ -5,23 +5,27 @@ import {vec4, mat4} from 'gl-matrix';
 import Drawable from './Drawable';
 import {gl} from '../../globals';
 
-var activeProgram: WebGLProgram = null;
+let activeProgram: WebGLProgram = null;
 
-export class Shader {
+export class Shader 
+{
   shader: WebGLShader;
 
-  constructor(type: number, source: string) {
+  constructor(type: number, source: string) 
+  {
     this.shader = gl.createShader(type);
     gl.shaderSource(this.shader, source);
     gl.compileShader(this.shader);
 
-    if (!gl.getShaderParameter(this.shader, gl.COMPILE_STATUS)) {
+    if (!gl.getShaderParameter(this.shader, gl.COMPILE_STATUS)) 
+    {
       throw gl.getShaderInfoLog(this.shader);
     }
   }
 };
 
-class ShaderProgram {
+class ShaderProgram 
+{
   prog: WebGLProgram;
 
   attrPos: number;
@@ -52,14 +56,17 @@ class ShaderProgram {
 
   unifCurrTime: WebGLUniformLocation;
 
-  constructor(shaders: Array<Shader>) {
+  constructor(shaders: Array<Shader>) 
+  {
     this.prog = gl.createProgram();
 
-    for (let shader of shaders) {
+    for (let shader of shaders) 
+    {
       gl.attachShader(this.prog, shader.shader);
     }
     gl.linkProgram(this.prog);
-    if (!gl.getProgramParameter(this.prog, gl.LINK_STATUS)) {
+    if (!gl.getProgramParameter(this.prog, gl.LINK_STATUS)) 
+    {
       throw gl.getProgramInfoLog(this.prog);
     }
 
@@ -94,20 +101,25 @@ class ShaderProgram {
     this.unifCurrTime     = gl.getUniformLocation(this.prog, "u_Time");
   }
 
-  use() {
-    if (activeProgram !== this.prog) {
+  use() 
+  {
+    if (activeProgram !== this.prog) 
+    {
       gl.useProgram(this.prog);
       activeProgram = this.prog;
     }
   }
 
-  setModelMatrix(model: mat4) {
+  setModelMatrix(model: mat4) 
+  {
     this.use();
-    if (this.unifModel !== -1) {
+    if (this.unifModel !== -1) 
+    {
       gl.uniformMatrix4fv(this.unifModel, false, model);
     }
 
-    if (this.unifModelInvTr !== -1) {
+    if (this.unifModelInvTr !== -1) 
+    {
       let modelinvtr: mat4 = mat4.create();
       mat4.transpose(modelinvtr, model);
       mat4.invert(modelinvtr, modelinvtr);
@@ -115,9 +127,11 @@ class ShaderProgram {
     }
   }
 
-  setViewProjMatrix(vp: mat4) {
+  setViewProjMatrix(vp: mat4) 
+  {
     this.use();
-    if (this.unifViewProj !== -1) {
+    if (this.unifViewProj !== -1) 
+    {
       gl.uniformMatrix4fv(this.unifViewProj, false, vp);
     }
   }
@@ -125,7 +139,8 @@ class ShaderProgram {
   setGeometryColor(color: vec4) 
   {
     this.use();
-    if (this.unifOceanColor !== -1) {
+    if (this.unifOceanColor !== -1) 
+    {
       gl.uniform4fv(this.unifOceanColor, color);
     }
   }
@@ -133,7 +148,8 @@ class ShaderProgram {
   setLightColor(color: vec4)
   {
     this.use();
-    if (this.unifOceanColor !== -1) {
+    if (this.unifOceanColor !== -1) 
+    {
       gl.uniform4fv(this.unifLightColor, color);
     }
   }
@@ -141,7 +157,8 @@ class ShaderProgram {
   setCameraPos(cameraPos: vec4) 
   {
     this.use();
-    if (this.unifCameraPos !== -1) {
+    if (this.unifCameraPos !== -1) 
+    {
       gl.uniform4fv(this.unifCameraPos, cameraPos);
     }
   }
@@ -149,7 +166,8 @@ class ShaderProgram {
   setLightPos(lightPos: vec4)
    {
     this.use();
-    if (this.unifLightPos !== -1) {
+    if (this.unifLightPos !== -1)
+    {
       gl.uniform4fv(this.unifLightPos, lightPos);
     }
   }
@@ -200,15 +218,18 @@ class ShaderProgram {
   }
 
 
-  draw(d: Drawable) {
+  draw(d: Drawable) 
+  {
     this.use();
 
-    if (this.attrPos != -1 && d.bindPos()) {
+    if (this.attrPos != -1 && d.bindPos()) 
+    {
       gl.enableVertexAttribArray(this.attrPos);
       gl.vertexAttribPointer(this.attrPos, 4, gl.FLOAT, false, 0, 0);
     }
 
-    if (this.attrNor != -1 && d.bindNor()) {
+    if (this.attrNor != -1 && d.bindNor()) 
+    {
       gl.enableVertexAttribArray(this.attrNor);
       gl.vertexAttribPointer(this.attrNor, 4, gl.FLOAT, false, 0, 0);
     }

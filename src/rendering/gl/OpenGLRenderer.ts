@@ -10,19 +10,22 @@ import ShaderProgram from './ShaderProgram';
 // In this file, `gl` is accessible because it is imported above
 class OpenGLRenderer 
 {
-  constructor(public canvas: HTMLCanvasElement) {
-  }
+  constructor(public canvas: HTMLCanvasElement) 
+  {}
 
-  setClearColor(r: number, g: number, b: number, a: number) {
+  setClearColor(r: number, g: number, b: number, a: number) 
+  {
     gl.clearColor(r, g, b, a);
   }
 
-  setSize(width: number, height: number) {
+  setSize(width: number, height: number) 
+  {
     this.canvas.width = width;
     this.canvas.height = height;
   }
 
-  clear() {
+  clear() 
+  {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
 
@@ -67,7 +70,8 @@ class OpenGLRenderer
 
     prog.setTerrainSeed(terrainSeed);
 
-    for (let drawable of drawables) {
+    for (let drawable of drawables) 
+    {
       prog.draw(drawable);
     }
   }

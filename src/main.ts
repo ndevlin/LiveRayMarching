@@ -14,7 +14,8 @@ import Cube from './geometry/Cube';
 
 // Define an object with application parameters and button callbacks
 // Utilizes dat.GUI
-const controls = {
+const controls = 
+{
   tesselations: 6,
   'Load Scene': loadScene, // A function pointer, essentially
   LightPosTheta: 0,
@@ -66,7 +67,8 @@ function convertSphericalToCartesian(thetaDeg: number, distance: number, azimuth
 }
 
 
-function loadScene() {
+function loadScene() 
+{
   icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, controls.tesselations);
   icosphere.create();
 
@@ -112,7 +114,8 @@ function main()
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
   const gl = <WebGL2RenderingContext> canvas.getContext('webgl2');
-  if (!gl) {
+  if (!gl) 
+  {
     alert('WebGL 2 not supported!');
   }
   // `setGL` is a function imported above which sets the value of `gl` in the `globals.ts` module.
@@ -173,7 +176,9 @@ function main()
     let currTime: number = (Date.now() - 1632869657277.0) / 10000.0;
 
     // Render with lambert shader
-    renderer.render(camera, lambert, [moon],
+    renderer.render(camera, 
+    lambert, 
+    [moon],
     // Divide by 256 to convert from web RGB to shader 0-1 values
     vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
     vec4.fromValues(lightColor.LightColor[0] / 256.0, lightColor.LightColor[1] / 256.0, lightColor.LightColor[2] / 256.0, 1),
@@ -186,7 +191,9 @@ function main()
     );
 
     // Render with custom noise-based shader
-    renderer.render(camera, custom, [icosphere], 
+    renderer.render(camera, 
+    custom, 
+    [icosphere], 
     // Divide by 256 to convert from web RGB to shader 0-1 values
     vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
     vec4.fromValues(lightColor.LightColor[0] / 256.0, lightColor.LightColor[1] / 256.0, lightColor.LightColor[2] / 256.0, 1),
@@ -204,7 +211,8 @@ function main()
     requestAnimationFrame(tick);
   }
 
-  window.addEventListener('resize', function() {
+  window.addEventListener('resize', function() 
+  {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.setAspectRatio(window.innerWidth / window.innerHeight);
     camera.updateProjectionMatrix();
