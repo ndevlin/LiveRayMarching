@@ -131,94 +131,100 @@ void main()
 
     float lightIntensity = diffuseTerm + ambientTerm;   
 
-    vec3 latitudeCol = vec3(2.5, 3.0, 3.0); // Extra-bright white for Arctic Tundra
-    
+    float isIceCap = 0.0;
     float surfaceDifference = length(fs_Pos) - length(fs_UnalteredPos);
-
-    float modifiedSurDiff = pow(surfaceDifference, 0.65f) / u_AltitudeMult;
-
-    float normalizedSurDiff = modifiedSurDiff * 4.0f * u_AltitudeMult;
-
-    // Inputs for Cosine color pallete
-    vec3 a = vec3(0.378, 1.008, 0.468);
-    vec3 b = vec3(-0.762, 0.228, 0.718);
-    vec3 c = vec3(0.78, 0.608, 0.698);
-    vec3 d = vec3(0.588, 0.228, 0.178);
-
-    vec4 landColor = vec4(vec3(palette(normalizedSurDiff, a, b, c, d)), 1.0f);
-    
-    float mult = (normalizedSurDiff);
-    landColor += vec4(vec3(mult * mult * mult), 0.0f);
-
-    landColor = clamp(landColor, 0.0f, 2.0f);
-
-    landColor -= u_OceanColor;
-
-    // Chooses landColor if surfaceDifference > 0.0001f, u_OceanColor otherwise
     float isLand = float(surfaceDifference > 0.0001f);
-    diffuseColor = isLand * landColor + u_OceanColor;
-    
-    float latitude = abs(fs_Pos[1]);
 
-    float t = (latitude - 0.9f) / 0.11f;
-    t = clamp(t, 0.0f, 1.0f);
-    vec4 iceCapColor = mix(diffuseColor, vec4(latitudeCol, 1.0f), gain(0.999, t));   
-    iceCapColor -= diffuseColor;     
 
-    float isIceCap = float(latitude > 0.9);
-    diffuseColor += isIceCap * iceCapColor;
-    diffuseColor[3] = 1.0f;
+    // Note: Emperically tested if/else statements to test whether branching
+    // was worth the extra computation. Have kept if/else statements that
+    // improve performance
+    if(lightIntensity >= 0.00001)
+    {
+        vec3 latitudeCol = vec3(2.5, 3.0, 3.0); // Extra-bright white for Arctic Tundra
+        
+        if(isLand > 0.0)
+        {
+            float modifiedSurDiff = pow(surfaceDifference, 0.65f) / u_AltitudeMult;
 
-    
-    // Lambert shading
-    out_Col = vec4(diffuseColor.rgb * u_LightColor.rgb * lightIntensity, 1.0f);
-    
+            float normalizedSurDiff = modifiedSurDiff * 4.0f * u_AltitudeMult;
 
-    // Dark Side of the Planet
-    vec3 val = fbm(fs_Pos[0] + u_TerrainSeed, fs_Pos[1] + u_TerrainSeed, fs_Pos[2] + u_TerrainSeed, 8);
+            // Inputs for Cosine color pallete
+            vec3 a = vec3(0.378, 1.008, 0.468);
+            vec3 b = vec3(-0.762, 0.228, 0.718);
+            vec3 c = vec3(0.78, 0.608, 0.698);
+            vec3 d = vec3(0.588, 0.228, 0.178);
 
-    float avg = (val[0] + val[1] + val[2]) / 2.0f;
+            vec4 landColor = vec4(vec3(palette(normalizedSurDiff, a, b, c, d)), 1.0f);
+            
+            float mult = (normalizedSurDiff);
+            landColor += vec4(vec3(mult * mult * mult), 0.0f);
 
-    avg = avg * avg * avg * avg * avg * avg * avg * avg * avg * avg;
+            diffuseColor = clamp(landColor, 0.0f, 2.0f);
+        }
+        
+        float latitude = abs(fs_Pos[1]);
 
-    float nightTime = float(avg > 0.2f) * isLand * (1.0f - isIceCap) * float(lightIntensity <= 0.00001f);
+        float t = (latitude - 0.9f) / 0.11f;
+        t = clamp(t, 0.0f, 1.0f);
+        vec4 iceCapColor = mix(diffuseColor, vec4(latitudeCol, 1.0f), gain(0.999, t));   
+        iceCapColor -= diffuseColor;     
 
-    vec4 sunLit = vec4(diffuseColor.rgb * u_LightColor.rgb * lightIntensity, 1.0f);
-    
-    out_Col = sunLit;
+        isIceCap = float(latitude > 0.9);
+        diffuseColor += isIceCap * iceCapColor;
+        diffuseColor[3] = 1.0f;
 
-    out_Col += nightTime * (vec4(avg * 2.0f, avg * 2.0f, 0.0f, 1.0f) - sunLit);
+        
+        // Lambert shading
+        out_Col = vec4(diffuseColor.rgb * u_LightColor.rgb * lightIntensity, 1.0f);
+        
+        
+        // Blinn Phong Shading only for ocean
+        vec4 viewVec = u_CameraPos - fs_Pos;
+
+        vec4 posToLight = fs_LightVec - fs_Pos;
+
+        vec4 surfaceNorm = fs_Nor;
+
+        vec4 H = (viewVec + posToLight) / (length(viewVec) + length(posToLight));
+
+        float intensity =  10.0f; // Relative intensity of highlight
+
+        float sharpness = 50.0f; // How sharp or spread out the highlight is
+
+        float specularIntensity = intensity * max(pow(dot(H, surfaceNorm), sharpness), 0.0f);
+
+        float finalIntensity = lightIntensity + specularIntensity;
+
+        vec4 blinnPhong = vec4(diffuseColor.rgb * u_LightColor.rgb * finalIntensity, 1.0f);
+
+        blinnPhong = clamp(blinnPhong, 0.0f, 1.0f);
+
+        // Below is same as out_Col = surfaceDifference <= 0.0001f ? blinnPhong : out_Col
+        // without the branching
+        float isOcean = float(surfaceDifference <= 0.0001f);
+        
+        out_Col += isOcean * (blinnPhong - out_Col);
+    }
+    else
+    {
+        // Dark Side of the Planet
+        vec3 val = fbm(fs_Pos[0] + u_TerrainSeed, fs_Pos[1] + u_TerrainSeed, fs_Pos[2] + u_TerrainSeed, 8);
+
+        float avg = (val[0] + val[1] + val[2]) / 2.0f;
+
+        avg = avg * avg * avg * avg * avg * avg * avg * avg * avg * avg;
+
+        float nightTime = float(avg > 0.2f) * isLand * (1.0f - isIceCap) * float(lightIntensity <= 0.00001f);
+
+        vec4 sunLit = vec4(diffuseColor.rgb * u_LightColor.rgb * lightIntensity, 1.0f);
+        
+        out_Col = sunLit;
+
+        out_Col += nightTime * (vec4(avg * 2.0f, avg * 2.0f, 0.0f, 1.0f) - sunLit);
+    }
+
     out_Col[3] = 1.0f;
-    
-
-    // Blinn Phong Shading only for ocean
-    vec4 viewVec = u_CameraPos - fs_Pos;
-
-    vec4 posToLight = fs_LightVec - fs_Pos;
-
-    vec4 surfaceNorm = fs_Nor;
-
-    vec4 H = (viewVec + posToLight) / (length(viewVec) + length(posToLight));
-
-    float intensity =  10.0f; // Relative intensity of highlight
-
-    float sharpness = 50.0f; // How sharp or spread out the highlight is
-
-    float specularIntensity = intensity * max(pow(dot(H, surfaceNorm), sharpness), 0.0f);
-
-    float finalIntensity = lightIntensity + specularIntensity;
-
-    vec4 blinnPhong = vec4(diffuseColor.rgb * u_LightColor.rgb * finalIntensity, 1.0f);
-
-    blinnPhong = clamp(blinnPhong, 0.0f, 1.0f);
-
-    // Below is same as out_Col = surfaceDifference <= 0.0001f ? blinnPhong : out_Col
-    // without the branching
-    float isOcean = float(surfaceDifference <= 0.0001f);
-    
-    out_Col += isOcean * (blinnPhong - out_Col);
-    out_Col[3] = 1.0f;
-    
     out_Col = clamp(out_Col, 0.0f, 1.0f);
 
 }
