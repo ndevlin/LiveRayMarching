@@ -134,7 +134,7 @@ float calculateNoiseOffset(vec4 worldPos, float seed)
     vec4 originalNormal = worldPos;
     originalNormal[3] = 0.0f;
 
-    float multiplier = 0.0f;
+    float multiplier = 0.001f;
 
     float height = fbmVal[0] * 1.25f;
 
@@ -142,15 +142,10 @@ float calculateNoiseOffset(vec4 worldPos, float seed)
 
     height = (1.0f + height) * height - 1.0f;
 
-    if(height > 0.0001f)
-    {
-        height /= 50.0f;
-        multiplier = (1.0f + height) * (1.0f + height) * (1.0f + height) * (1.0f + height) - 1.0f;
-    }
-    else
-    {
-        multiplier = 0.001f;
-    }
+    height /= 50.0f;
+    float landMultiplier = (1.0f + height) * (1.0f + height) * (1.0f + height) * (1.0f + height) - 1.0f;
+    float isLand = float(height > 0.0001f);
+    multiplier += isLand * landMultiplier;
 
     return multiplier;
 }
@@ -166,6 +161,71 @@ float impulse(float k, float x)
 {
     float h = k * x;
     return h * exp(1.0f - h);
+}
+
+// Re-aligns the normals to more accurately reflect the noisy terrain
+void transformNormals()
+{
+    // Don't compute new normals near pole, since cant cross with
+    // (0, 1, 0) near poles
+    if(abs(vs_Nor[1]) < 0.999)
+    {
+        float delta = 0.001f;
+
+        vec4 normalSpherical = convertCartesianToSpherical(vs_Nor);
+
+        vec4 normalJitterSpherical1 = normalize(normalSpherical + vec4(0, delta, 0, 0));
+        vec4 normalJitterSpherical2 = normalize(normalSpherical + vec4(0, -delta, 0, 0));
+
+        vec4 normalJitterSpherical3 = normalize(normalSpherical + vec4(0, 0, delta, 0));
+        vec4 normalJitterSpherical4 = normalize(normalSpherical + vec4(0, 0, -delta, 0));
+
+        vec4 normalJitteredCartesian1 = convertSphericalToCartesian(normalJitterSpherical1);
+        vec4 normalJitteredCartesian2 = convertSphericalToCartesian(normalJitterSpherical2);
+        
+        vec4 normalJitteredCartesian3 = convertSphericalToCartesian(normalJitterSpherical3);
+        vec4 normalJitteredCartesian4 = convertSphericalToCartesian(normalJitterSpherical4);
+
+        float thetaDiff = calculateNoiseOffset(normalJitteredCartesian1) - calculateNoiseOffset(normalJitteredCartesian2);
+        
+        float phiDiff = calculateNoiseOffset(normalJitteredCartesian3) - calculateNoiseOffset(normalJitteredCartesian4);
+
+        float normalHighlightingMultiplier = 50.0f;
+
+        thetaDiff *= normalHighlightingMultiplier;
+        phiDiff *= normalHighlightingMultiplier;
+
+        float z = sqrt(1.0 - thetaDiff * thetaDiff - phiDiff * phiDiff);
+
+        vec4 localNormal = vec4(thetaDiff, phiDiff, z, 0);
+
+        // Create tangent space to normal space matrix
+        vec3 tangent = normalize(cross(vec3(0, 1, 0), vec3(vs_Nor)));
+        vec3 bitangent = normalize(cross(vec3(vs_Nor), tangent));
+
+        mat4 tangentToWorld = mat4(tangent.x, tangent.y, tangent.z, 0,
+                                bitangent.x, bitangent.y, bitangent.z, 0,
+                                vs_Nor.x, vs_Nor.y, vs_Nor.z, 0,
+                                0,         0,           0,        1);
+        
+        vec4 transformedNormal = tangentToWorld * localNormal;
+
+        transformedNormal = normalize(transformedNormal);
+
+        /*
+        float isNearPole = float(abs(vs_Nor[1]) > 0.8);
+
+        transformedNormal += isNearPole * (vs_Nor - transformedNormal);    
+
+        transformedNormal[3] = 0.0;   
+        */
+
+        fs_Nor = transformedNormal;
+    }
+    else
+    {
+        fs_Nor = vs_Nor;
+    }
 }
 
 
@@ -211,51 +271,7 @@ void main()
     fs_Pos = alteredPos;
 
     fs_UnalteredPos = worldPos;
-    
-    // Calculate new normals
-    float delta = 0.001f;
 
-    vec4 normalSpherical = convertCartesianToSpherical(vs_Nor);
-
-    vec4 normalJitterSpherical1 = normalize(normalSpherical + vec4(0, delta, 0, 0));
-    vec4 normalJitterSpherical2 = normalize(normalSpherical + vec4(0, -delta, 0, 0));
-
-    vec4 normalJitterSpherical3 = normalize(normalSpherical + vec4(0, 0, delta, 0));
-    vec4 normalJitterSpherical4 = normalize(normalSpherical + vec4(0, 0, -delta, 0));
-
-    vec4 normalJitteredCartesian1 = convertSphericalToCartesian(normalJitterSpherical1);
-    vec4 normalJitteredCartesian2 = convertSphericalToCartesian(normalJitterSpherical2);
-    
-    vec4 normalJitteredCartesian3 = convertSphericalToCartesian(normalJitterSpherical3);
-    vec4 normalJitteredCartesian4 = convertSphericalToCartesian(normalJitterSpherical4);
-
-    float thetaDiff = calculateNoiseOffset(normalJitteredCartesian1) - calculateNoiseOffset(normalJitteredCartesian2);
-    
-    float phiDiff = calculateNoiseOffset(normalJitteredCartesian3) - calculateNoiseOffset(normalJitteredCartesian4);
-
-    float normalHighlightingMultiplier = 50.0f;
-
-    thetaDiff *= normalHighlightingMultiplier;
-    phiDiff *= normalHighlightingMultiplier;
-
-    float z = sqrt(1.0 - thetaDiff * thetaDiff - phiDiff * phiDiff);
-
-    vec4 localNormal = vec4(thetaDiff, phiDiff, z, 0);
-
-    // Create tangent space to normal space matrix
-    vec3 tangent = normalize(cross(vec3(0, 1, 0), vec3(vs_Nor)));
-    vec3 bitangent = normalize(cross(vec3(vs_Nor), tangent));
-
-    mat4 tangentToWorld = mat4(tangent.x, tangent.y, tangent.z, 0,
-                             bitangent.x, bitangent.y, bitangent.z, 0,
-                             vs_Nor.x, vs_Nor.y, vs_Nor.z, 0,
-                             0,         0,           0,        1);
-    
-    vec4 transformedNormal = tangentToWorld * localNormal;
-
-    transformedNormal = normalize(transformedNormal);
-
-    fs_Nor = transformedNormal;
-
+    transformNormals();
 }
 

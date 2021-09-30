@@ -160,7 +160,7 @@ void main()
     
     float latitude = abs(fs_Pos[1]);
 
-    float t = (latitude - 0.85f) / 0.15f;
+    float t = (latitude - 0.9f) / 0.11f;
     t = clamp(t, 0.0f, 1.0f);
     vec4 iceCapColor = mix(diffuseColor, vec4(latitudeCol, 1.0f), gain(0.999, t));   
     iceCapColor -= diffuseColor;     

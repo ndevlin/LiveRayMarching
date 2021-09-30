@@ -125,7 +125,7 @@ function main()
   // Initial call to load scene
   loadScene();
 
-  const camera = new Camera(vec3.fromValues(0, 0, 5), vec3.fromValues(0, 0, 0));
+  const camera = new Camera(vec3.fromValues(0, 0, 3), vec3.fromValues(0, 0, 0));
 
   const renderer = new OpenGLRenderer(canvas);
 
@@ -165,11 +165,14 @@ function main()
     let moonPos: vec4 = convertSphericalToCartesian(currTick, 2, 90);
 
     // Create moon
-    moon = new Icosphere(vec3.fromValues(moonPos[0], moonPos[1], moonPos[2]), 0.3, Math.ceil(controls.tesselations / 2.0));
+    moon = new Icosphere(vec3.fromValues(moonPos[0], moonPos[1], moonPos[2]), 
+                                         0.3, Math.ceil(controls.tesselations / 2.0));
     moon.create();
 
     // Convert Light Position Spherical Coordinates to CartesianCoordinates
-    let lightPos: vec4 = convertSphericalToCartesian(controls.LightPosTheta, controls.LightPosDistance, controls.LightPosAzimuth);
+    let lightPos: vec4 = convertSphericalToCartesian(controls.LightPosTheta, 
+                                                     controls.LightPosDistance, 
+                                                     controls.LightPosAzimuth);
 
     // 1632869657277 = 09/29/2021 7PM
     // deci-seconds since the above time
@@ -180,8 +183,12 @@ function main()
     lambert, 
     [moon],
     // Divide by 256 to convert from web RGB to shader 0-1 values
-    vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
-    vec4.fromValues(lightColor.LightColor[0] / 256.0, lightColor.LightColor[1] / 256.0, lightColor.LightColor[2] / 256.0, 1),
+    vec4.fromValues(colorObject.OceanColor[0] / 256.0, 
+                    colorObject.OceanColor[1] / 256.0, 
+                    colorObject.OceanColor[2] / 256.0, 1),
+    vec4.fromValues(lightColor.LightColor[0] / 256.0, 
+                    lightColor.LightColor[1] / 256.0, 
+                    lightColor.LightColor[2] / 256.0, 1),
     currTick,
     currTime,
     lightPos,
@@ -195,8 +202,12 @@ function main()
     custom, 
     [icosphere], 
     // Divide by 256 to convert from web RGB to shader 0-1 values
-    vec4.fromValues(colorObject.OceanColor[0] / 256.0, colorObject.OceanColor[1] / 256.0, colorObject.OceanColor[2] / 256.0, 1),
-    vec4.fromValues(lightColor.LightColor[0] / 256.0, lightColor.LightColor[1] / 256.0, lightColor.LightColor[2] / 256.0, 1),
+    vec4.fromValues(colorObject.OceanColor[0] / 256.0, 
+                    colorObject.OceanColor[1] / 256.0, 
+                    colorObject.OceanColor[2] / 256.0, 1),
+    vec4.fromValues(lightColor.LightColor[0] / 256.0, 
+                    lightColor.LightColor[1] / 256.0, 
+                    lightColor.LightColor[2] / 256.0, 1),
     currTick,
     currTime,
     lightPos,
