@@ -18,26 +18,12 @@ uniform float u_TerrainSeed;
 
 // Interpolated values out of the rasterizer
 in vec4 fs_Pos;
-
 in vec4 fs_UnalteredPos;
-
 in vec4 fs_Nor;
 in vec4 fs_LightVec;
 in vec4 fs_Col;
 
 out vec4 out_Col; 
-
-
-vec3 returnLatitudeAsColor(vec3 p)
-{
-    float red = 2.5f;
-
-    float green = 3.0f;
-
-    float blue = 3.0f;
-
-    return vec3(red, green, blue);
-}
 
 
 // Takes in a position vec3, returns a vec3, to be used below as a color
@@ -51,7 +37,6 @@ vec3 noise3D( vec3 p )
 
     return vec3(val1, val2, val3);
 }
-
 
 // Interpolate in 3 dimensions
 vec3 interpNoise3D(float x, float y, float z) 
@@ -88,7 +73,6 @@ vec3 interpNoise3D(float x, float y, float z)
     return i7;
 }
 
-
 // 3D Fractal Brownian Motion
 vec3 fbm(float x, float y, float z, int octaves) 
 {
@@ -107,17 +91,19 @@ vec3 fbm(float x, float y, float z, int octaves)
     return total;
 }
 
+// Cosine color pallete
 vec3 palette(float t, vec3 a, vec3 b, vec3 c, vec3 d)
 {
     return a + b * cos( 6.28318 * (c * t + d));
 }
 
+// Toolbox Bias function
 float bias(float b, float t)
 {
     return pow(t, log(b) / log(0.5f));
 }
 
-
+// Toolbox Gain function
 float gain(float g, float t)
 {
     if(t < 0.5f)
@@ -139,13 +125,13 @@ void main()
     // Calculate the diffuse term for Lambert shading
     float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
 
-    //diffuseTerm = clamp(diffuseTerm, 0.0f, 1.0f);
+    diffuseTerm = clamp(diffuseTerm, 0.0f, 1.0f);
 
-    float ambientTerm = 0.0;
+    float ambientTerm = 0.0;    // No ambient lighting
 
     float lightIntensity = diffuseTerm + ambientTerm;   
 
-    vec3 latitudeCol = returnLatitudeAsColor(vec3(fs_Pos[0], fs_Pos[1], fs_Pos[2]));
+    vec3 latitudeCol = vec3(2.5, 3.0, 3.0); // Extra-bright white for Arctic Tundra
     
     float surfaceDifference = length(fs_Pos) - length(fs_UnalteredPos);
 
@@ -153,22 +139,7 @@ void main()
 
     float normalizedSurDiff = modifiedSurDiff * 4.0f * u_AltitudeMult;
 
-    /*
-    vec4 diffuseColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
-
-    if(surfaceDifference < 0.005f)
-    {
-        diffuseColor = vec4(0.8941, 0.8, 0.2706, 1.0);
-    }
-    else if(surfaceDifference > 0.04f)
-    {
-        diffuseColor = vec4(1.0, 2.0, 2.0, 1.0);
-    }
-
-    if(surfaceDifference < 0.001f)
-        diffuseColor = u_OceanColor;
-    */
-
+    // Inputs for Cosine color pallete
     vec3 a = vec3(0.378, 1.008, 0.468);
     vec3 b = vec3(-0.762, 0.228, 0.718);
     vec3 c = vec3(0.78, 0.608, 0.698);
@@ -202,8 +173,8 @@ void main()
     // Lambert shading
     out_Col = vec4(diffuseColor.rgb * u_LightColor.rgb * lightIntensity, 1.0f);
     
+
     // Dark Side of the Planet
-    
     vec3 val = fbm(fs_Pos[0] + u_TerrainSeed, fs_Pos[1] + u_TerrainSeed, fs_Pos[2] + u_TerrainSeed, 8);
 
     float avg = (val[0] + val[1] + val[2]) / 2.0f;
@@ -221,7 +192,6 @@ void main()
     
 
     // Blinn Phong Shading only for ocean
-
     vec4 viewVec = u_CameraPos - fs_Pos;
 
     vec4 posToLight = fs_LightVec - fs_Pos;
@@ -230,7 +200,7 @@ void main()
 
     vec4 H = (viewVec + posToLight) / (length(viewVec) + length(posToLight));
 
-    float intensity =  50.0f; // Relative intensity of highlight
+    float intensity =  10.0f; // Relative intensity of highlight
 
     float sharpness = 50.0f; // How sharp or spread out the highlight is
 
@@ -242,18 +212,14 @@ void main()
 
     blinnPhong = clamp(blinnPhong, 0.0f, 1.0f);
 
-
-    // Same as out_Col = surfaceDifference <= 0.0001f ? blinnPhong : out_Col;
-    // Compute final shaded color
+    // Below is same as out_Col = surfaceDifference <= 0.0001f ? blinnPhong : out_Col
+    // without the branching
     float isOcean = float(surfaceDifference <= 0.0001f);
     
     out_Col += isOcean * (blinnPhong - out_Col);
     out_Col[3] = 1.0f;
     
     out_Col = clamp(out_Col, 0.0f, 1.0f);
-
-
-    //out_Col = fs_Col;
 
 }
 

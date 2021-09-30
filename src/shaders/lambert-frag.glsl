@@ -9,7 +9,6 @@ uniform vec4 u_LightPos;
 in vec4 fs_Nor;
 in vec4 fs_LightVec;
 in vec4 fs_Col;
-
 in vec4 fs_Pos;
 
 out vec4 out_Col;
@@ -93,25 +92,26 @@ vec3 fbm(float x, float y, float z, int octaves)
 
 void main()
 {
-    // Material base color (before shading)
-        vec4 diffuseColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-        float rad = sqrt(fs_Pos[0] * fs_Pos[0] * .0694 + fs_Pos[2] * fs_Pos[2] * .0694);
-        vec3 val = fbm(fs_Pos[1] * 10.04923, rad, rad, 2);
+    // Material base color
+    vec4 diffuseColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    
+    float radiusNoise = sqrt(fs_Pos[0] * fs_Pos[0] * 0.0694 + fs_Pos[2] * fs_Pos[2] * 0.0694);
+    vec3 colorVal = fbm(fs_Pos[1] * 10.04923, radiusNoise, radiusNoise, 2);
 
-        diffuseColor = vec4(vec3(val[0] - 0.1f * val[1], val[0] - 0.3f * val[2], val[0] - 0.3f * (val[1] + val[2])), 1.0f);
+    diffuseColor = vec4(vec3(colorVal[0] - 0.1f * colorVal[1], 
+                             colorVal[0] - 0.3f * colorVal[2], 
+                            colorVal[0] - 0.3f * (colorVal[1] + colorVal[2])), 1.0f);
 
-        // Calculate the diffuse term for Lambert shading
-        float diffuseTerm = dot(normalize(fs_Nor), normalize(u_LightPos));
-        
-        diffuseTerm = clamp(diffuseTerm, 0.0f, 1.0f);
+    // Calculate the diffuse term for Lambert shading
+    float diffuseTerm = dot(normalize(fs_Nor), normalize(u_LightPos));
+    
+    diffuseTerm = clamp(diffuseTerm, 0.0f, 1.0f);
 
-        float ambientTerm = 0.2;
+    float ambientTerm = 0.1;
 
-        float lightIntensity = diffuseTerm + ambientTerm;  
+    float lightIntensity = diffuseTerm + ambientTerm;  
 
-        // Compute final shaded color
-        out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
-
-        out_Col = vec4(diffuseColor.rgb * lightIntensity, 1.0f);
+    // Compute final shaded color
+    out_Col = vec4(diffuseColor.rgb * lightIntensity, 1.0f);
 }
 

@@ -10,27 +10,24 @@ uniform mat4 u_ViewProj;    // The matrix that defines the camera's transformati
 
 uniform float u_Time;   // deci-seconds since 09/29/2021 7PM
 
+uniform vec4 u_LightPos;    // Position of the light
+
+uniform float u_bpm;       // User input Beats Per Minute Value
+
+uniform float u_AltitudeMult;   // User input altitude multiplier
+
+uniform float u_TerrainSeed;    // User input offset for terrain noise
+
 in vec4 vs_Pos;             // The array of vertex positions passed to the shader
-
 in vec4 vs_Nor;             // The array of vertex normals passed to the shader
-
 in vec4 vs_Col;             // The array of vertex colors passed to the shader.
 
 out vec4 fs_Nor;            // The array of normals that has been transformed by u_ModelInvTr
 out vec4 fs_LightVec;       // The direction in which our virtual light lies, relative to each vertex. 
 out vec4 fs_Col;            // The color of each vertex. 
+out vec4 fs_Pos;            // The position of this fragment
+out vec4 fs_UnalteredPos;   // The position this fragment had prior to modification in vertex shader
 
-out vec4 fs_Pos;
-
-out vec4 fs_UnalteredPos;
-
-uniform vec4 u_LightPos;
-
-uniform float u_bpm;
-
-uniform float u_AltitudeMult;
-
-uniform float u_TerrainSeed;
 
 // Takes in spherical coordinates and returns a corresponding vec4 in cartesian coordinates
 vec4 convertSphericalToCartesian(vec4 sphericalVecIn)
@@ -62,7 +59,6 @@ vec4 convertCartesianToSpherical(vec4 cartesianVecIn)
     return vec4(r, theta, phi, 0.0f);
 }
 
-
 // Takes in a position vec3, returns a vec3, to be used below as a color
 vec3 noise3D( vec3 p ) 
 {
@@ -74,7 +70,6 @@ vec3 noise3D( vec3 p )
 
     return vec3(val1, val2, val3);
 }
-
 
 // Interpolate in 3 dimensions
 vec3 interpNoise3D(float x, float y, float z) 
@@ -111,7 +106,6 @@ vec3 interpNoise3D(float x, float y, float z)
     return i7;
 }
 
-
 // 3D Fractal Brownian Motion
 vec3 fbm(float x, float y, float z) 
 {
@@ -131,7 +125,7 @@ vec3 fbm(float x, float y, float z)
     return total;
 }
 
-
+// Takes in a position and an offset("seed"), returns a noise-based float
 float calculateNoiseOffset(vec4 worldPos, float seed)
 {
     // Add fbm noise
@@ -161,12 +155,13 @@ float calculateNoiseOffset(vec4 worldPos, float seed)
     return multiplier;
 }
 
+// Overload to allow single parameter calling of this function
 float calculateNoiseOffset(vec4 worldPos)
 {
     return calculateNoiseOffset(worldPos, 0.0f);
 }
 
-
+// Toolbox impulse function
 float impulse(float k, float x)
 {
     float h = k * x;
@@ -211,7 +206,6 @@ void main()
 
     vec4 alteredPos = worldPos + originalNormal * (noiseMultiplier * (1.0f + timeBPM_Multiplier));
     
-
     gl_Position = u_ViewProj * alteredPos; // Final positions of the geometry's vertices
 
     fs_Pos = alteredPos;
@@ -263,9 +257,5 @@ void main()
 
     fs_Nor = transformedNormal;
 
-
-
-    //fs_Col = vec4(vec3(timeBPM_Multiplier) / 1.0f, 1.0f);
-    
 }
 
