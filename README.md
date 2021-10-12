@@ -4,7 +4,7 @@
 
 ## Live Demo
 View a live WebGL Demo here!:
-https://ndevlin.github.io/hw01-noisy-planet/
+https://ndevlin.github.io/noisy-planet/
 
 ## User Info
 - Created by Nathan Devlin (ndevlin), based on original code by Adam Mally
