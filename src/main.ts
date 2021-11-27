@@ -69,18 +69,8 @@ function convertSphericalToCartesian(thetaDeg: number, distance: number, azimuth
 
 function loadScene() 
 {
-  icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, controls.tesselations);
-  icosphere.create();
-
-  moon = new Icosphere(vec3.fromValues(3, 3, -3), 0.25, controls.tesselations);
-  moon.create();
-
   square = new Square(vec3.fromValues(0, 0, 0));
   square.create();
-
-  // Cube constructor takes in object origin
-  cube = new Cube(vec3.fromValues(-3, 3, -3));
-  cube.create();
 }
 
 
@@ -125,24 +115,17 @@ function main()
   // Initial call to load scene
   loadScene();
 
-  const camera = new Camera(vec3.fromValues(0, 0, 3), vec3.fromValues(0, 0, 0));
+  const camera = new Camera(vec3.fromValues(0, 0, 5), vec3.fromValues(0, 0, 0));
 
   const renderer = new OpenGLRenderer(canvas);
 
-  renderer.setClearColor(0.01, 0.01, 0.01, 1);
+  renderer.setClearColor(164.0 / 255.0, 233.0 / 255.0, 1.0, 1);
 
   gl.enable(gl.DEPTH_TEST);
 
-  // Standard lambert shader
-  const lambert = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require('./shaders/lambert-vert.glsl')),
-    new Shader(gl.FRAGMENT_SHADER, require('./shaders/lambert-frag.glsl')),
-  ]);
-
-  // Noise-based vertex and fragment shaders
-  const custom = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require('./shaders/custom-vert.glsl')),
-    new Shader(gl.FRAGMENT_SHADER, require('./shaders/custom-frag.glsl')),
+  const flat = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require('./shaders/flat-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/flat-frag.glsl')),
   ]);
 
   // This function will be called every frame
@@ -155,19 +138,6 @@ function main()
     stats.begin();
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
-    if(controls.tesselations != prevTesselations)
-    {
-      prevTesselations = controls.tesselations;
-      icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, prevTesselations);
-      icosphere.create();
-    }
-    
-    let moonPos: vec4 = convertSphericalToCartesian(currTick, 2, 90);
-
-    // Create moon
-    moon = new Icosphere(vec3.fromValues(moonPos[0], moonPos[1], moonPos[2]), 
-                                         0.3, Math.ceil(controls.tesselations / 2.0));
-    moon.create();
 
     // Convert Light Position Spherical Coordinates to CartesianCoordinates
     let lightPos: vec4 = convertSphericalToCartesian(controls.LightPosTheta, 
@@ -178,29 +148,10 @@ function main()
     // deci-seconds since the above time
     let currTime: number = (Date.now() - 1632869657277.0) / 10000.0;
 
-    // Render with lambert shader
-    renderer.render(camera, 
-    lambert, 
-    [moon],
-    // Divide by 256 to convert from web RGB to shader 0-1 values
-    vec4.fromValues(colorObject.OceanColor[0] / 256.0, 
-                    colorObject.OceanColor[1] / 256.0, 
-                    colorObject.OceanColor[2] / 256.0, 1),
-    vec4.fromValues(lightColor.LightColor[0] / 256.0, 
-                    lightColor.LightColor[1] / 256.0, 
-                    lightColor.LightColor[2] / 256.0, 1),
-    currTick,
-    currTime,
-    lightPos,
-    controls.BPM,
-    controls.AltitudeMultiplier,
-    controls.TerrainSeed
-    );
-
     // Render with custom noise-based shader
     renderer.render(camera, 
-    custom, 
-    [icosphere], 
+    flat, 
+    [square], 
     // Divide by 256 to convert from web RGB to shader 0-1 values
     vec4.fromValues(colorObject.OceanColor[0] / 256.0, 
                     colorObject.OceanColor[1] / 256.0, 
@@ -227,11 +178,15 @@ function main()
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.setAspectRatio(window.innerWidth / window.innerHeight);
     camera.updateProjectionMatrix();
+    flat.setDimensions(window.innerWidth, window.innerHeight);
+
   }, false);
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.setAspectRatio(window.innerWidth / window.innerHeight);
   camera.updateProjectionMatrix();
+  flat.setDimensions(window.innerWidth, window.innerHeight);
+
 
   // Start the render loop
   tick();
