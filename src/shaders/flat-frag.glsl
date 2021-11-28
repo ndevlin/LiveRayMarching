@@ -7,6 +7,8 @@ uniform float u_Time;
 
 uniform float u_AO;
 
+uniform vec4 u_LightPos;
+
 in vec2 fs_Pos;
 out vec4 out_Col;
 
@@ -22,7 +24,9 @@ const float AMBIENT = 0.05;
 
 const float FLOOR_HEIGHT = -2.1;
 
-const vec3 LIGHT1_DIR = vec3(-1.0, 1.0, 2.0);
+
+// Replaced by Light Dir input
+//const vec3 LIGHT1_DIR = vec3(-1.0, 1.0, 2.0);
 float light1_OutputIntensity = 0.9;
 vec3 light1_Color = vec3(1.0, 1.0, 1.0); // Full Daylight
 
@@ -550,7 +554,7 @@ vec3 getSceneColor(vec2 uv)
 
         // First Light
 
-        float diffuse1Term = dot(intersection.normal, normalize(LIGHT1_DIR));
+        float diffuse1Term = dot(intersection.normal, normalize(vec3(u_LightPos)));
         
         diffuse1Term = clamp(diffuse1Term, 0.0f, 1.0f);
 
@@ -559,7 +563,7 @@ vec3 getSceneColor(vec2 uv)
         if(blinnPhong)
         {
             vec3 viewVec = u_Eye - intersection.position;
-            vec3 posToLight = LIGHT1_DIR - intersection.position;
+            vec3 posToLight = vec3(u_LightPos) - intersection.position;
             vec3 H = (viewVec + posToLight) / (length(viewVec) + length(posToLight));
             float intensity = 1.0f;
             float sharpness = 5.0f;
@@ -607,7 +611,7 @@ vec3 getSceneColor(vec2 uv)
         }
 
         // Compute shadow from light1
-        float shadowFactor = hardShadow(intersection.position, normalize(LIGHT1_DIR), EPSILON * 1000.0, 100.0);
+        float shadowFactor = hardShadow(intersection.position, normalize(vec3(u_LightPos)), EPSILON * 1000.0, 100.0);
         light1Intensity *= shadowFactor;
 
 

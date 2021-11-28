@@ -19,7 +19,7 @@ const controls =
   tesselations: 6,
   //'Load Scene': loadScene, // A function pointer, essentially
   LightPosTheta: 0,
-  LightPosDistance: 20,
+  LightPosDistance: 1,
   LightPosAzimuth: 90,
   AO_Amount: 3.5,
   AltitudeMultiplier: 1,
