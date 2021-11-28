@@ -17,11 +17,11 @@ import Cube from './geometry/Cube';
 const controls = 
 {
   tesselations: 6,
-  'Load Scene': loadScene, // A function pointer, essentially
+  //'Load Scene': loadScene, // A function pointer, essentially
   LightPosTheta: 0,
   LightPosDistance: 20,
   LightPosAzimuth: 90,
-  BPM: 100,
+  AO_Amount: 3.5,
   AltitudeMultiplier: 1,
   TerrainSeed: 0
 };
@@ -40,13 +40,7 @@ const lightColor =
   LightColor: [ 255, 228, 206 ], // RGB array
 };
 
-let icosphere: Icosphere;
-
-let moon: Icosphere;
-
 let square: Square;
-
-let cube: Cube;
 
 let prevTesselations: number = 6;
 
@@ -87,11 +81,11 @@ function main()
   // Add controls to the gui
   const gui = new DAT.GUI();
   gui.add(controls, 'tesselations', 0, 8).step(1);
-  gui.add(controls, 'Load Scene');
+  //gui.add(controls, 'Load Scene');
   gui.add(controls, 'LightPosTheta', -720, 720).step(1);
   gui.add(controls, 'LightPosDistance', 5, 50).step(0.1);
   gui.add(controls, 'LightPosAzimuth', 10, 170).step(1);
-  gui.add(controls, 'BPM', 0, 180).step(1);
+  gui.add(controls, 'AO_Amount', 0, 5).step(0.1);
   gui.add(controls, 'AltitudeMultiplier', 0.1, 5.0).step(0.1);
   gui.add(controls, 'TerrainSeed', 0, 10.0).step(0.1);
 
@@ -162,7 +156,7 @@ function main()
     currTick,
     currTime,
     lightPos,
-    controls.BPM,
+    controls.AO_Amount,
     controls.AltitudeMultiplier,
     controls.TerrainSeed
     );

@@ -5,6 +5,8 @@ uniform vec3 u_Eye, u_Ref, u_Up;
 uniform vec2 u_Dimensions;
 uniform float u_Time;
 
+uniform float u_AO;
+
 in vec2 fs_Pos;
 out vec4 out_Col;
 
@@ -678,7 +680,7 @@ vec3 getSceneColor(vec2 uv)
 
         // Add Ambient Occlusion
         float aoShadowing = occlusionShadowFactor(intersection.position, intersection.normal, 
-                                                    3.5, 5.0, 0.2);
+                                                    u_AO, 5.0, 0.2);
 
         finalColor *= 1.0 - aoShadowing;
 

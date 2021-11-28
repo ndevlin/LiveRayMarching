@@ -53,7 +53,7 @@ class ShaderProgram
 
   unifLightPos: WebGLUniformLocation;
 
-  unifBPM: WebGLUniformLocation;
+  unifAO: WebGLUniformLocation;
 
   unifAltitudeMult: WebGLUniformLocation;
 
@@ -102,7 +102,7 @@ class ShaderProgram
 
     this.unifLightPos     = gl.getUniformLocation(this.prog, "u_LightPos");
 
-    this.unifBPM          = gl.getUniformLocation(this.prog, "u_bpm");
+    this.unifAO           = gl.getUniformLocation(this.prog, "u_AO");
 
     this.unifAltitudeMult = gl.getUniformLocation(this.prog, "u_AltitudeMult");
 
@@ -212,12 +212,12 @@ class ShaderProgram
     }
   }
 
-  setBPM(bpm: number)
+  setAO(ao: number)
   {
     this.use();
-    if(this.unifBPM !== -1)
+    if(this.unifAO !== -1)
     {
-      gl.uniform1f(this.unifBPM, bpm);
+      gl.uniform1f(this.unifAO, ao);
     }
   }
 

@@ -37,7 +37,7 @@ class OpenGLRenderer
     currTick: number, 
     currTime: number,
     lightPos: vec4,
-    bpmIn: number,
+    aoIn: number,
     altitudeMultiplier: number,
     terrainSeed: number) 
   {
@@ -66,7 +66,7 @@ class OpenGLRenderer
 
     prog.setLightPos([lightPos[0], lightPos[1], lightPos[2], 1]);
 
-    prog.setBPM(bpmIn);
+    prog.setAO(aoIn);
 
     prog.setAltitudeMultiplier(altitudeMultiplier);
 
