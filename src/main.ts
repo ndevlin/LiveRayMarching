@@ -18,9 +18,9 @@ const controls =
 {
   tesselations: 6,
   //'Load Scene': loadScene, // A function pointer, essentially
-  LightPosTheta: 0,
-  LightPosDistance: 1,
-  LightPosAzimuth: 90,
+  LightPosTheta: -30,
+  LightPosDistance: 2,
+  LightPosAzimuth: 60,
   AO_Amount: 3.5,
   AltitudeMultiplier: 1,
   TerrainSeed: 0
@@ -82,9 +82,9 @@ function main()
   const gui = new DAT.GUI();
   gui.add(controls, 'tesselations', 0, 8).step(1);
   //gui.add(controls, 'Load Scene');
-  gui.add(controls, 'LightPosTheta', -720, 720).step(1);
-  gui.add(controls, 'LightPosDistance', 5, 50).step(0.1);
-  gui.add(controls, 'LightPosAzimuth', 10, 170).step(1);
+  gui.add(controls, 'LightPosTheta', -180, 180).step(1);
+  gui.add(controls, 'LightPosDistance', 0, 50).step(0.1);
+  gui.add(controls, 'LightPosAzimuth', 0, 90).step(0.1);
   gui.add(controls, 'AO_Amount', 0, 5).step(0.1);
   gui.add(controls, 'AltitudeMultiplier', 0.1, 5.0).step(0.1);
   gui.add(controls, 'TerrainSeed', 0, 10.0).step(0.1);
