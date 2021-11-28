@@ -1,6 +1,6 @@
 # Nathan Design Doc
 
-## View a live WebGL Demo here!: https://ndevlin.github.io/RealtimeRayMarching/
+## View a live WebGL Demo here!: https://ndevlin.github.io/LiveRayMarching/
 
 ## Milestone #2:
 
