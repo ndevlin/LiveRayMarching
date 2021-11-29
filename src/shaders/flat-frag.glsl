@@ -11,6 +11,8 @@ uniform vec4 u_LightPos;
 
 uniform vec4 u_LightColor;
 
+uniform vec4 u_RobotColor; // User input color for body
+
 in vec2 fs_Pos;
 out vec4 out_Col;
 
@@ -319,7 +321,7 @@ vec2 sceneSDF(vec3 queryPos)
         float leftWheel = sdfTorus(leftWheelPos, 0.18, 0.07);
 
         // Smooth blend the lower leg and the foot/wheel
-        matID = 3.0;
+        matID = 1.0;
         vec2 leftLegAndWheel = vec2(smin(leftLowerLeg.x, leftWheel, 0.1), matID);
 
         closestPointDistance = unionSDF(leftLegAndWheel, closestPointDistance);
@@ -653,7 +655,8 @@ vec3 getSceneColor(vec2 uv)
 
         if(intersection.material_id == 1)
         {
-            diffuseColor = vec3(0.7, 0.7, 0.7);
+            diffuseColor = vec3(u_RobotColor);
+;
         }
 
         if(intersection.material_id == 2)

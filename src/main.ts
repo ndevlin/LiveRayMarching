@@ -16,11 +16,11 @@ import Cube from './geometry/Cube';
 // Utilizes dat.GUI
 const controls = 
 {
-  tesselations: 6,
+  //tesselations: 6,
   //'Load Scene': loadScene, // A function pointer, essentially
   LightPosTheta: -30,
-  LightPosDistance: 2,
   LightPosAzimuth: 60,
+  LightPosDistance: 2,
   AO_Amount: 3.5,
   AltitudeMultiplier: 1,
   TerrainSeed: 0
@@ -29,8 +29,8 @@ const controls =
 // Controller that allows user color input for ocean
 const colorObject = 
 {
-  // Light Blue
-  OceanColor: [ 0, 100, 255 ], // RGB array
+  // Grey
+  RobotColor: [ 180, 180, 180 ], // RGB array
 };
 
 // Controller that allows user color input for light color
@@ -42,7 +42,7 @@ const lightColor =
 
 let square: Square;
 
-let prevTesselations: number = 6;
+//let prevTesselations: number = 6;
 
 // Used as a clock
 let currTick: number = 0.0;
@@ -80,17 +80,17 @@ function main()
 
   // Add controls to the gui
   const gui = new DAT.GUI();
-  gui.add(controls, 'tesselations', 0, 8).step(1);
+  //gui.add(controls, 'tesselations', 0, 8).step(1);
   //gui.add(controls, 'Load Scene');
   gui.add(controls, 'LightPosTheta', -180, 180).step(1);
-  gui.add(controls, 'LightPosDistance', 0, 50).step(0.1);
   gui.add(controls, 'LightPosAzimuth', 0, 90).step(0.1);
+  gui.add(controls, 'LightPosDistance', 0, 50).step(0.1);
   gui.add(controls, 'AO_Amount', 0, 5).step(0.1);
   gui.add(controls, 'AltitudeMultiplier', 0.1, 5.0).step(0.1);
   gui.add(controls, 'TerrainSeed', 0, 10.0).step(0.1);
 
   // Color control for ocean; RGB input
-  gui.addColor(colorObject, 'OceanColor');
+  gui.addColor(colorObject, 'RobotColor');
 
     // Color control for sun; RGB input
   gui.addColor(lightColor, 'LightColor');
@@ -135,7 +135,7 @@ function main()
 
     // Convert Light Position Spherical Coordinates to CartesianCoordinates
     let lightPos: vec4 = convertSphericalToCartesian(controls.LightPosTheta, 
-                                                     controls.LightPosDistance, 
+                                                     10, 
                                                      controls.LightPosAzimuth);
 
     // 1632869657277 = 09/29/2021 7PM
@@ -147,9 +147,9 @@ function main()
     flat, 
     [square], 
     // Divide by 256 to convert from web RGB to shader 0-1 values
-    vec4.fromValues(colorObject.OceanColor[0] / 256.0, 
-                    colorObject.OceanColor[1] / 256.0, 
-                    colorObject.OceanColor[2] / 256.0, 1),
+    vec4.fromValues(colorObject.RobotColor[0] / 256.0, 
+                    colorObject.RobotColor[1] / 256.0, 
+                    colorObject.RobotColor[2] / 256.0, 1),
     vec4.fromValues(lightColor.LightColor[0] / 256.0, 
                     lightColor.LightColor[1] / 256.0, 
                     lightColor.LightColor[2] / 256.0, 1),

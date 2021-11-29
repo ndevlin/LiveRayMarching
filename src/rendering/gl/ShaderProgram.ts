@@ -45,7 +45,7 @@ class ShaderProgram
   
   unifViewProj: WebGLUniformLocation;
 
-  unifOceanColor: WebGLUniformLocation;
+  unifRobotColor: WebGLUniformLocation;
 
   unifLightColor: WebGLUniformLocation;
   
@@ -94,7 +94,7 @@ class ShaderProgram
     
     this.unifViewProj     = gl.getUniformLocation(this.prog, "u_ViewProj");
 
-    this.unifOceanColor   = gl.getUniformLocation(this.prog, "u_OceanColor");
+    this.unifRobotColor   = gl.getUniformLocation(this.prog, "u_RobotColor");
 
     this.unifLightColor   = gl.getUniformLocation(this.prog, "u_LightColor");
 
@@ -179,16 +179,16 @@ class ShaderProgram
   setGeometryColor(color: vec4) 
   {
     this.use();
-    if (this.unifOceanColor !== -1) 
+    if (this.unifRobotColor !== -1) 
     {
-      gl.uniform4fv(this.unifOceanColor, color);
+      gl.uniform4fv(this.unifRobotColor, color);
     }
   }
 
   setLightColor(color: vec4)
   {
     this.use();
-    if (this.unifOceanColor !== -1) 
+    if (this.unifLightColor !== -1) 
     {
       gl.uniform4fv(this.unifLightColor, color);
     }

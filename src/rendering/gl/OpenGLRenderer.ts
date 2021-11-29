@@ -32,7 +32,7 @@ class OpenGLRenderer
   render(camera: Camera, 
     prog: ShaderProgram, 
     drawables: Array<Drawable>, 
-    oceanColorIn: vec4, 
+    robotColorIn: vec4, 
     lightColorIn: vec4, 
     currTick: number, 
     currTime: number,
@@ -53,7 +53,7 @@ class OpenGLRenderer
     
     prog.setViewProjMatrix(viewProj);
     
-    prog.setGeometryColor(oceanColorIn);
+    prog.setGeometryColor(robotColorIn);
 
     prog.setLightColor(lightColorIn);
 
