@@ -726,7 +726,7 @@ vec3 getSceneColor(vec2 uv)
 
         finalColor *= apertureExposurePercent;
 
-        finalColor *= u_Exposure / 100.0;
+        finalColor *= u_Exposure * u_Exposure;
 
         return finalColor;
 

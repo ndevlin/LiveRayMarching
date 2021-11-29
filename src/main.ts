@@ -22,7 +22,7 @@ const controls =
   LightPosAzimuth: 60,
   FocalLength: 2.0,
   Aperture: 1.0,
-  Exposure: 100,
+  Exposure: 1.0,
   AO_Amount: 3.5,
 };
 
@@ -86,7 +86,7 @@ function main()
   gui.add(controls, 'LightPosAzimuth', 0, 90).step(0.1);
   gui.add(controls, 'FocalLength', 0.1, 10.0).step(0.01);
   gui.add(controls, 'Aperture', 1.0, 22.0).step(0.1);
-  gui.add(controls, 'Exposure', 10.0, 10000.0).step(10.0);
+  gui.add(controls, 'Exposure', 0.0, 22.0).step(0.2);
   gui.add(controls, 'AO_Amount', 0, 5).step(0.1);
 
   // Color control for ocean; RGB input
