@@ -2,6 +2,25 @@
 
 ## View a live WebGL Demo here!: https://ndevlin.github.io/LiveRayMarching/
 
+## Milestone #3:
+- Implemented Reflections
+- Implemented SubSurface Scattering
+- Added ability to change Key Light Position
+- Added ability to change color of Key Light
+- Added ability to change Robot Albedo
+- Added User-modifiable sliders. User can now change:
+    - Light Position
+    - Focal Length
+    - Aperture
+    - Exposure (Brightness)
+    - Amount of Ambient Occlusion
+    - Color of Robot
+    - Color of Key Light
+
+I am still having trouble with the Depth of Field because it requires creating a separate framebuffer and then processing again on a second pass, but I will plan to have that working by next week.
+
+Currently, the only material in the scene that uses SSS is the Robot's eyes. I added a toggle to make all materials use SSS so that the viewer can more easily see the effect of this material.
+
 ## Milestone #2:
 
 - Make progress on algorithms

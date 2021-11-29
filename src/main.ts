@@ -24,6 +24,7 @@ const controls =
   Aperture: 1.0,
   Exposure: 1.0,
   AO_Amount: 3.5,
+  SSS_All: 0.0
 };
 
 // Controller that allows user color input for ocean
@@ -88,6 +89,7 @@ function main()
   gui.add(controls, 'Aperture', 1.0, 22.0).step(0.1);
   gui.add(controls, 'Exposure', 0.0, 22.0).step(0.2);
   gui.add(controls, 'AO_Amount', 0, 5).step(0.1);
+  gui.add(controls, 'SSS_All', 0, 1).step(1);
 
   // Color control for ocean; RGB input
   gui.addColor(colorObject, 'RobotColor');
@@ -159,7 +161,8 @@ function main()
     controls.AO_Amount,
     controls.Aperture,
     controls.Exposure,
-    controls.FocalLength
+    controls.FocalLength,
+    controls.SSS_All
     );
     
     stats.end();

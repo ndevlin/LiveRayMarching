@@ -40,7 +40,8 @@ class OpenGLRenderer
     aoIn: number,
     aperture: number,
     exposure: number,
-    focalLength: number) 
+    focalLength: number,
+    SSS_All: number) 
   {
     let model = mat4.create();
     let viewProj = mat4.create();
@@ -72,6 +73,8 @@ class OpenGLRenderer
     prog.setAperture(aperture);
 
     prog.setExposure(exposure);
+
+    prog.setSSSall(SSS_All);
 
     for (let drawable of drawables) 
     {

@@ -59,6 +59,8 @@ class ShaderProgram
 
   unifExposure: WebGLUniformLocation;
 
+  unifSSSall: WebGLUniformLocation;
+
   unifCurrTick: WebGLUniformLocation;
 
   unifCurrTime: WebGLUniformLocation;
@@ -107,6 +109,8 @@ class ShaderProgram
     this.unifAperture     = gl.getUniformLocation(this.prog, "u_Aperture");
 
     this.unifExposure     = gl.getUniformLocation(this.prog, "u_Exposure");
+
+    this.unifSSSall     = gl.getUniformLocation(this.prog, "u_SSSall");
     
     this.unifCurrTick     = gl.getUniformLocation(this.prog, "u_CurrTick");
 
@@ -236,6 +240,15 @@ class ShaderProgram
     if(this.unifExposure !== -1)
     {
       gl.uniform1f(this.unifExposure, exposure);
+    }
+  }
+
+  setSSSall(sssAll: number)
+  {
+    this.use();
+    if(this.unifSSSall !== -1)
+    {
+      gl.uniform1f(this.unifSSSall, sssAll);
     }
   }
 

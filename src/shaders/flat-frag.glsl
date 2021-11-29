@@ -13,9 +13,11 @@ uniform vec4 u_LightColor;
 
 uniform vec4 u_RobotColor; // User input color for body
 
-uniform float u_Exposure;   // Percentage of total exposure, 10% to 1000%
+uniform float u_Exposure;   // Inversely corresponds to F-Stop
 
 uniform float u_Aperture;
+
+uniform float u_SSSall;
 
 in vec2 fs_Pos;
 out vec4 out_Col;
@@ -551,9 +553,10 @@ vec3 getSceneColor(vec2 uv)
 
 
         // Turn on blinnPhong for shiny objects
-        if(intersection.material_id == 0 || intersection.material_id == 1 ||
+        if((intersection.material_id == 0 || intersection.material_id == 1 ||
             intersection.material_id == 3 || intersection.material_id == 4
             || intersection.material_id == 5)
+            && u_SSSall < 0.5)
         {
             blinnPhong = true;
         }
@@ -678,7 +681,7 @@ vec3 getSceneColor(vec2 uv)
         }
 
         // Translucent Material Surface Color
-        if(intersection.material_id == 5)
+        if(intersection.material_id == 5 || u_SSSall > 0.5)
         {
             diffuseColor = vec3(0.85, 0.9, 0.9);
         }
@@ -697,20 +700,47 @@ vec3 getSceneColor(vec2 uv)
         vec3 sssColor = vec3(0.0);
 
         // Add SSS if applicable
-        if(intersection.material_id == 5)
+        if(intersection.material_id == 5 || u_SSSall > 0.5)
         {
-
-            float thickness = 1.0 - occlusionShadowFactor(intersection.position, 
-                                                            -intersection.normal, 
-                                                            4.0, 5.0, 0.1);
 
             vec3 subSurfaceColor = vec3(1.0, 0.85, 0.75);
 
-            float subSurfaceLight = subSurface(LIGHT4_POS - intersection.position, 
+            // Default values for SSS in head
+            float aoK = 4.0;
+            float numSamples = 5.0;
+            float sampleDist = 0.1;
+
+            vec3 sss_Light = LIGHT4_POS;
+            float distortion = 0.47;
+            float glowAmount = 1.0;
+            float scaleFactor = 4.0;
+            float sssAmbient = 0.01;
+
+            // Values for universal SSS
+            if(u_SSSall > 0.5)
+            {
+                sss_Light = vec3(u_LightPos);
+                distortion = 0.2;
+                glowAmount = 1.0;
+                scaleFactor = 0.5;
+                sssAmbient = 0.4;
+            }
+
+
+            float thickness = 1.0 - occlusionShadowFactor(intersection.position, 
+                                                            -intersection.normal, 
+                                                            aoK, 
+                                                            numSamples,
+                                                            sampleDist);
+
+            float subSurfaceLight = subSurface(sss_Light - intersection.position, 
                                                 intersection.normal, 
                                                 u_Eye - intersection.position, 
                                                 thickness, 
-                                                0.47, 1.0, 4.0, 0.01);
+                                                distortion, 
+                                                glowAmount, 
+                                                scaleFactor, 
+                                                sssAmbient);
 
             //subSurfaceLight = clamp(subSurfaceLight, 0.0, 1.0);
 
