@@ -719,7 +719,12 @@ vec3 getSceneColor(vec2 uv)
             // Values for universal SSS
             if(u_SSSall > 0.5)
             {
+                // Use User controlled Light
                 sss_Light = vec3(u_LightPos);
+
+                // Mix Light Color with SSS Color
+                subSurfaceColor *= vec3(u_LightColor);
+
                 distortion = 0.2;
                 glowAmount = 1.0;
                 scaleFactor = 0.5;

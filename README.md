@@ -2,6 +2,10 @@
 
 ## View a live WebGL Demo here!: https://ndevlin.github.io/LiveRayMarching/
 
+
+![](UserControls.png)
+
+
 ## Milestone #3:
 - Implemented Reflections
 - Implemented SubSurface Scattering
@@ -20,6 +24,12 @@
 I am still having trouble with the Depth of Field because it requires creating a separate framebuffer and then processing again on a second pass, but I will plan to have that working by next week.
 
 Currently, the only material in the scene that uses SSS is the Robot's eyes. I added a toggle to make all materials use SSS so that the viewer can more easily see the effect of this material.
+
+![](Reflections.png)
+
+![](SSS.png)
+
+![](ColorChange.png)
 
 
 ## Milestone #2:
