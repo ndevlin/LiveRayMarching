@@ -55,9 +55,9 @@ class ShaderProgram
 
   unifAO: WebGLUniformLocation;
 
-  unifAltitudeMult: WebGLUniformLocation;
+  unifAperture: WebGLUniformLocation;
 
-  unifTerrainSeed: WebGLUniformLocation;
+  unifExposure: WebGLUniformLocation;
 
   unifCurrTick: WebGLUniformLocation;
 
@@ -79,9 +79,9 @@ class ShaderProgram
 
     this.attrPos          = gl.getAttribLocation(this.prog, "vs_Pos");
     
-    this.unifEye   = gl.getUniformLocation(this.prog, "u_Eye");
-    this.unifRef   = gl.getUniformLocation(this.prog, "u_Ref");
-    this.unifUp   = gl.getUniformLocation(this.prog, "u_Up");
+    this.unifEye          = gl.getUniformLocation(this.prog, "u_Eye");
+    this.unifRef          = gl.getUniformLocation(this.prog, "u_Ref");
+    this.unifUp           = gl.getUniformLocation(this.prog, "u_Up");
     this.unifDimensions   = gl.getUniformLocation(this.prog, "u_Dimensions");
 
     this.attrNor          = gl.getAttribLocation(this.prog, "vs_Nor");
@@ -104,9 +104,9 @@ class ShaderProgram
 
     this.unifAO           = gl.getUniformLocation(this.prog, "u_AO");
 
-    this.unifAltitudeMult = gl.getUniformLocation(this.prog, "u_AltitudeMult");
+    this.unifAperture     = gl.getUniformLocation(this.prog, "u_Aperture");
 
-    this.unifTerrainSeed  = gl.getUniformLocation(this.prog, "u_TerrainSeed");
+    this.unifExposure     = gl.getUniformLocation(this.prog, "u_Exposure");
     
     this.unifCurrTick     = gl.getUniformLocation(this.prog, "u_CurrTick");
 
@@ -221,21 +221,21 @@ class ShaderProgram
     }
   }
 
-  setAltitudeMultiplier(altitudeMult: number)
+  setAperture(aperture: number)
   {
     this.use();
-    if(this.unifAltitudeMult !== -1)
+    if(this.unifAperture !== -1)
     {
-      gl.uniform1f(this.unifAltitudeMult, altitudeMult);
+      gl.uniform1f(this.unifAperture, aperture);
     }
   }
 
-  setTerrainSeed(terrainSeed: number)
+  setExposure(exposure: number)
   {
     this.use();
-    if(this.unifTerrainSeed !== -1)
+    if(this.unifExposure !== -1)
     {
-      gl.uniform1f(this.unifTerrainSeed, terrainSeed);
+      gl.uniform1f(this.unifExposure, exposure);
     }
   }
 

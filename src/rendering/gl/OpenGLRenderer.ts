@@ -38,8 +38,9 @@ class OpenGLRenderer
     currTime: number,
     lightPos: vec4,
     aoIn: number,
-    altitudeMultiplier: number,
-    terrainSeed: number) 
+    aperture: number,
+    exposure: number,
+    focalLength: number) 
   {
     let model = mat4.create();
     let viewProj = mat4.create();
@@ -68,9 +69,9 @@ class OpenGLRenderer
 
     prog.setAO(aoIn);
 
-    prog.setAltitudeMultiplier(altitudeMultiplier);
+    prog.setAperture(aperture);
 
-    prog.setTerrainSeed(terrainSeed);
+    prog.setExposure(exposure);
 
     for (let drawable of drawables) 
     {

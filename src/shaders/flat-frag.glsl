@@ -13,6 +13,10 @@ uniform vec4 u_LightColor;
 
 uniform vec4 u_RobotColor; // User input color for body
 
+uniform float u_Exposure;   // Percentage of total exposure, 10% to 1000%
+
+uniform float u_Aperture;
+
 in vec2 fs_Pos;
 out vec4 out_Col;
 
@@ -656,7 +660,6 @@ vec3 getSceneColor(vec2 uv)
         if(intersection.material_id == 1)
         {
             diffuseColor = vec3(u_RobotColor);
-;
         }
 
         if(intersection.material_id == 2)
@@ -716,7 +719,14 @@ vec3 getSceneColor(vec2 uv)
 
         finalColor = finalColor + sssColor;
 
+        // Add exposure effects to final brightness
 
+        // Exposure based on F-Stop
+        float apertureExposurePercent = 1.0 / (u_Aperture * u_Aperture);
+
+        finalColor *= apertureExposurePercent;
+
+        finalColor *= u_Exposure / 100.0;
 
         return finalColor;
 
