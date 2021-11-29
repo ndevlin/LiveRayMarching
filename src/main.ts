@@ -37,7 +37,7 @@ const colorObject =
 const lightColor = 
 {
   // 5000 Kelvin in RGB; warm lighting
-  LightColor: [ 255, 228, 206 ], // RGB array
+  LightColor: [ 255, 255, 255 ], // RGB array
 };
 
 let square: Square;

@@ -9,6 +9,8 @@ uniform float u_AO;
 
 uniform vec4 u_LightPos;
 
+uniform vec4 u_LightColor;
+
 in vec2 fs_Pos;
 out vec4 out_Col;
 
@@ -530,9 +532,7 @@ vec3 getSceneColor(vec2 uv)
 {
     Intersection intersection = getRaymarchedIntersection(uv);
     
-    // Note that I flipped the camera to be at (0, 0, 3) instead of (0, 0, -10)
-    // So that we are closer to the scene and so that positive blue normals face towards camera
-    //return 0.5 * (getRay(uv).direction + vec3(1.0, 1.0, 1.0));
+    light1_Color = vec3(u_LightColor);
 
     if (intersection.distance_t > 0.0)
     { 
