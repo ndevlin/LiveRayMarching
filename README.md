@@ -21,6 +21,7 @@ I am still having trouble with the Depth of Field because it requires creating a
 
 Currently, the only material in the scene that uses SSS is the Robot's eyes. I added a toggle to make all materials use SSS so that the viewer can more easily see the effect of this material.
 
+
 ## Milestone #2:
 
 - Make progress on algorithms

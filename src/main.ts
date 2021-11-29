@@ -4,13 +4,11 @@
 import {vec3, vec4} from 'gl-matrix';
 const Stats = require('stats-js');
 import * as DAT from 'dat.gui';
-import Icosphere from './geometry/Icosphere';
 import Square from './geometry/Square';
 import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
 import Camera from './Camera';
 import {setGL} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
-import Cube from './geometry/Cube';
 
 // Define an object with application parameters and button callbacks
 // Utilizes dat.GUI
