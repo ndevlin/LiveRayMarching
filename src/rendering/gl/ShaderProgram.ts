@@ -110,7 +110,7 @@ class ShaderProgram
 
     this.unifExposure     = gl.getUniformLocation(this.prog, "u_Exposure");
 
-    this.unifSSSall     = gl.getUniformLocation(this.prog, "u_SSSall");
+    this.unifSSSall       = gl.getUniformLocation(this.prog, "u_SSSall");
     
     this.unifCurrTick     = gl.getUniformLocation(this.prog, "u_CurrTick");
 

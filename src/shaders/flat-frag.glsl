@@ -5,6 +5,8 @@ uniform vec3 u_Eye, u_Ref, u_Up;
 uniform vec2 u_Dimensions;
 uniform float u_Time;
 
+uniform float u_CurrTick;
+
 uniform float u_AO;
 
 uniform vec4 u_LightPos;
@@ -246,7 +248,7 @@ vec2 sceneSDF(vec3 queryPos)
         vec3 shiftedFace = queryPos - vec3(-0.13, 1.3, 0.6);
         shiftedFace = rotateAboutX(shiftedFace, PI / 2.0);
         // Make robot abruptly turn head to look at camera
-        shiftedFace = rotateAboutZ(shiftedFace, PI / 5.0 - quaImpulse(2.0, clamp(sin(u_Time * 0.05), 0.0, 1.0)) / 2.0);
+        shiftedFace = rotateAboutZ(shiftedFace, PI / 5.0 - quaImpulse(2.0, clamp(sin(u_CurrTick * 0.05), 0.0, 1.0)) / 2.0);
 
         vec2 scubaMask = vec2(sdfRoundedCylinder(shiftedFace, 0.2, 0.1, 0.2), matID);
         float negMask = sdfRoundedCylinder(shiftedFace, 0.15, 0.05, 0.5);
@@ -347,8 +349,8 @@ vec2 sceneSDF(vec3 queryPos)
 
         // Add antenna ball
         vec3 antennaPos = vec3(0.0, 1.0, 0.0);
-        antennaPos = rotateAboutX(antennaPos, cos(u_Time * 0.4) / 10.0 + 0.1);
-        antennaPos = rotateAboutZ(antennaPos, cos(u_Time * 0.4) / 10.0 + 0.1);
+        antennaPos = rotateAboutX(antennaPos, cos(u_CurrTick * 0.4) / 10.0 + 0.1);
+        antennaPos = rotateAboutZ(antennaPos, cos(u_CurrTick * 0.4) / 10.0 + 0.1);
         antennaPos += vec3(0.0, 1.3, 0.4);
 
         matID = 1.0;
