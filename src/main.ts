@@ -7,7 +7,7 @@ import * as DAT from 'dat.gui';
 import Square from './geometry/Square';
 import OpenGLRenderer from './rendering/gl/OpenGLRenderer';
 import Camera from './Camera';
-import {setGL} from './globals';
+import {setGL, gl} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
 
 // Define an object with application parameters and button callbacks
@@ -106,6 +106,43 @@ function main()
   // Later, we can import `gl` from `globals.ts` to access it
   setGL(gl);
 
+
+  // WebGL rendering to a texture methodology from 
+  // https://webglfundamentals.org/webgl/lessons/webgl-render-to-texture.html
+  
+  const textureWidth: number = window.innerWidth;
+  const textureHeight: number = window.innerHeight;
+
+  const sceneTexture: WebGLTexture = gl.createTexture();
+
+  gl.bindTexture(gl.TEXTURE_2D, sceneTexture);
+
+  const level: number = 0;
+  const internalFormat: number = gl.RGBA;
+  const border: number = 0;
+  const format: number = gl.RGBA;
+  const type: number = gl.UNSIGNED_BYTE;
+  const data: any = null;
+
+  gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, textureWidth, textureHeight, border, 
+                format, type, data);
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+  const frameBuff: WebGLFramebuffer = gl.createFramebuffer();
+
+  gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuff);
+
+
+  const attachmentPoint: number = gl.COLOR_ATTACHMENT0;
+
+
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, sceneTexture, level);
+
+
+
   // Initial call to load scene
   loadScene();
 
@@ -122,9 +159,28 @@ function main()
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/flat-frag.glsl')),
   ]);
 
+
+  const postProcess = new ShaderProgram([
+    new Shader(gl.VERTEX_SHADER, require('./shaders/noOp-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/noOp-frag.glsl')),
+  ]);
+
+
   // This function will be called every frame
   function tick() 
   {
+
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuff);
+
+    gl.bindTexture(gl.TEXTURE_2D, sceneTexture);
+
+
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, sceneTexture, level);
+      
+
+
+
     // Increment the clock
     currTick += 1.0;
 
@@ -142,7 +198,11 @@ function main()
     // deci-seconds since the above time
     let currTime: number = (Date.now() - 1632869657277.0) / 10000.0;
 
-    // Render with custom noise-based shader
+
+    
+
+
+    // Render scene
     renderer.render(camera, 
     flat, 
     [square], 
@@ -162,6 +222,42 @@ function main()
     controls.FocalLength,
     controls.SSS_All
     );
+
+
+
+    
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    gl.bindTexture(gl.TEXTURE_2D, sceneTexture);
+
+    gl.viewport(0, 0, window.innerWidth, window.innerHeight);
+    renderer.clear();
+
+
+
+
+    // Post-process scene
+    renderer.render(camera, 
+      postProcess, 
+      [square], 
+      // Divide by 256 to convert from web RGB to shader 0-1 values
+      vec4.fromValues(colorObject.RobotColor[0] / 256.0, 
+                      colorObject.RobotColor[1] / 256.0, 
+                      colorObject.RobotColor[2] / 256.0, 1),
+      vec4.fromValues(lightColor.LightColor[0] / 256.0, 
+                      lightColor.LightColor[1] / 256.0, 
+                      lightColor.LightColor[2] / 256.0, 1),
+      currTick,
+      currTime,
+      lightPos,
+      controls.AO_Amount,
+      controls.Aperture,
+      controls.Exposure,
+      controls.FocalLength,
+      controls.SSS_All
+      );
+
+
     
     stats.end();
 

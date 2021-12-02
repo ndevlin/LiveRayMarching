@@ -32,6 +32,8 @@ class ShaderProgram
   attrNor: number;
   attrCol: number;
 
+  attrUV: number;
+
 
   unifRef: WebGLUniformLocation;
   unifEye: WebGLUniformLocation;
@@ -65,6 +67,8 @@ class ShaderProgram
 
   unifCurrTime: WebGLUniformLocation;
 
+  unifTexLocation: WebGLUniformLocation;
+
   constructor(shaders: Array<Shader>) 
   {
     this.prog = gl.createProgram();
@@ -89,6 +93,8 @@ class ShaderProgram
     this.attrNor          = gl.getAttribLocation(this.prog, "vs_Nor");
     
     this.attrCol          = gl.getAttribLocation(this.prog, "vs_Col");
+
+    this.attrUV           = gl.getAttribLocation(this.prog, "vs_UV");
     
     this.unifModel        = gl.getUniformLocation(this.prog, "u_Model");
     
@@ -115,6 +121,8 @@ class ShaderProgram
     this.unifCurrTick     = gl.getUniformLocation(this.prog, "u_CurrTick");
 
     this.unifCurrTime     = gl.getUniformLocation(this.prog, "u_Time");
+
+    this.unifTexLocation  = gl.getUniformLocation(this.prog, "u_Texture");
   }
 
   use() 
@@ -270,6 +278,16 @@ class ShaderProgram
     }
   }
 
+  setTexLocation()
+  {
+    this.use();
+    if(this.unifTexLocation !== -1)
+    {
+      // Use Texture slot 0
+      gl.uniform1i(this.unifTexLocation, 0);
+    }
+  }
+
 
   draw(d: Drawable) 
   {
@@ -286,6 +304,15 @@ class ShaderProgram
       gl.enableVertexAttribArray(this.attrNor);
       gl.vertexAttribPointer(this.attrNor, 4, gl.FLOAT, false, 0, 0);
     }
+
+
+    if (this.attrUV != -1 && d.bindUV()) 
+    {
+      gl.enableVertexAttribArray(this.attrUV);
+      gl.vertexAttribPointer(this.attrUV, 2, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribDivisor(this.attrUV, 0);
+    }
+
 
     d.bindIdx();
     gl.drawElements(d.drawMode(), d.elemCount(), gl.UNSIGNED_INT, 0);

@@ -76,6 +76,8 @@ class OpenGLRenderer
 
     prog.setSSSall(SSS_All);
 
+    prog.setTexLocation();
+
     for (let drawable of drawables) 
     {
       prog.draw(drawable);
