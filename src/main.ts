@@ -169,16 +169,18 @@ function main()
   // This function will be called every frame
   function tick() 
   {
-
+    const textureWidth: number = window.innerWidth;
+    const textureHeight: number = window.innerHeight;
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuff);
+
+    gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, textureWidth, textureHeight, border, 
+      format, type, data);
 
     gl.bindTexture(gl.TEXTURE_2D, sceneTexture);
 
 
     gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, sceneTexture, level);
-      
-
 
 
     // Increment the clock
