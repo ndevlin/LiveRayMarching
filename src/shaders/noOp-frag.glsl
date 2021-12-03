@@ -15,15 +15,19 @@ uniform sampler2D u_Texture;
 void main()
 {
     // Output texture to screen
-    vec3 color = texture(u_Texture, fs_UV).rgb;
+    vec4 color = texture(u_Texture, fs_UV);
+
+    float dofZ = color.a;
+
+    out_Col = vec4(vec3(dofZ), 1.0);
 
 
-    if(fract(fs_UV.y * 10.0) > 0.5)
-    {
-        color = vec3(1.0, 1.0, 1.0) + -color;
-    } 
 
 
-    out_Col = vec4(color, 1.0);
+
+
+
+
+    //out_Col = vec4(color, 1.0);
 }
 

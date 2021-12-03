@@ -538,7 +538,7 @@ Intersection getRaymarchedIntersection(vec2 uv)
 }
 
 
-vec3 getSceneColor(vec2 uv)
+vec4 getSceneColor(vec2 uv)
 {
     Intersection intersection = getRaymarchedIntersection(uv);
     
@@ -765,19 +765,29 @@ vec3 getSceneColor(vec2 uv)
 
         finalColor *= u_Exposure * u_Exposure;
 
-        return finalColor;
+
+        float FOCAL_LENGTH = 5.0;
+        float FOCAL_RANGE = 5.0;
+
+        float distAlongCamZ = intersection.distance_t;
+
+        float dofZ = min(1.0, abs(distAlongCamZ - FOCAL_LENGTH) / FOCAL_RANGE);
+
+        dofZ = pow(dofZ, 0.5);
+
+
+        return vec4(finalColor, dofZ);
 
     }
-    return vec3(0.0);
+    return vec4(0.0);
 }
 
 
 void main()
 {
-    // Time varying pixel color
-    vec3 col = getSceneColor(fs_Pos);
+    // Store color to texture
+    // Alpha indicates distance from fragment to Eye
+    out_Col = getSceneColor(fs_Pos);
 
-    // Output to screen
-    out_Col = vec4(col, 1.0);
 }
 
