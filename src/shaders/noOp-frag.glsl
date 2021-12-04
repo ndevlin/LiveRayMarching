@@ -37,13 +37,13 @@ const float kernal[121] = float[121]
 void main()
 {
     // Output texture to screen
-    vec4 color = texture(u_Texture, fs_UV);
+    vec4 unblurredColor = texture(u_Texture, fs_UV);
 
-    float dofZ = color.a;
+    float dofZ = unblurredColor.a;
 
     //out_Col = vec4(vec3(dofZ), 1.0);
 
-    out_Col = vec4(color.rgb, 1.0);
+    out_Col = vec4(unblurredColor.rgb, 1.0);
 
 
     
@@ -83,13 +83,13 @@ void main()
 
     float ambientIncrease = 1.2f; // To make the image brighter
 
-    out_Col = vec4(outputColor * ambientIncrease, 1.0);
-    
 
-    //out_Col = vec4(u_Dimensions.x, 0.0, 0.0, 1.0);
+    vec3 finalBlurred = outputColor * ambientIncrease;
 
 
+    vec3 interpolatedColor = mix(unblurredColor.rgb, finalBlurred, dofZ);
 
-    //out_Col = vec4(color, 1.0);
+
+    out_Col = vec4(interpolatedColor, 1.0);
 }
 
