@@ -4,6 +4,8 @@ precision highp float;
 //uniform vec3 u_Eye, u_Ref, u_Up;
 uniform vec2 u_Dimensions;
 
+uniform float u_Aperture;
+
 in vec2 fs_Pos;
 
 in vec2 fs_UV;

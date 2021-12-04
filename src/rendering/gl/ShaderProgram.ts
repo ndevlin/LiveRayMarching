@@ -69,6 +69,9 @@ class ShaderProgram
 
   unifTexLocation: WebGLUniformLocation;
 
+  unifFocalLength: WebGLUniformLocation;
+
+
   constructor(shaders: Array<Shader>) 
   {
     this.prog = gl.createProgram();
@@ -123,6 +126,9 @@ class ShaderProgram
     this.unifCurrTime     = gl.getUniformLocation(this.prog, "u_Time");
 
     this.unifTexLocation  = gl.getUniformLocation(this.prog, "u_Texture");
+
+    this.unifFocalLength  = gl.getUniformLocation(this.prog, "u_FocalLength");
+
   }
 
   use() 
@@ -285,6 +291,16 @@ class ShaderProgram
     {
       // Use Texture slot 0
       gl.uniform1i(this.unifTexLocation, 0);
+    }
+  }
+
+
+  setFocalLength(focalLength: number)
+  {
+    this.use();
+    if(this.unifFocalLength !== -1)
+    {
+      gl.uniform1f(this.unifFocalLength, focalLength);
     }
   }
 

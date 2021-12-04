@@ -19,6 +19,8 @@ uniform float u_Exposure;   // Inversely corresponds to F-Stop
 
 uniform float u_Aperture;
 
+uniform float u_FocalLength;
+
 uniform float u_SSSall;
 
 in vec2 fs_Pos;
@@ -766,14 +768,13 @@ vec4 getSceneColor(vec2 uv)
         finalColor *= u_Exposure * u_Exposure;
 
 
-        float FOCAL_LENGTH = 5.0;
         float FOCAL_RANGE = 5.0;
 
         float distAlongCamZ = intersection.distance_t;
 
-        float dofZ = min(1.0, abs(distAlongCamZ - FOCAL_LENGTH) / FOCAL_RANGE);
+        float dofZ = min(1.0, abs(distAlongCamZ - u_FocalLength) / FOCAL_RANGE);
 
-        dofZ = pow(dofZ, 0.5);
+        dofZ = pow(dofZ, 0.2);
 
 
         return vec4(finalColor, dofZ);

@@ -78,6 +78,8 @@ class OpenGLRenderer
 
     prog.setTexLocation();
 
+    prog.setFocalLength(focalLength);
+
     for (let drawable of drawables) 
     {
       prog.draw(drawable);
