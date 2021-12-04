@@ -2,15 +2,13 @@
 precision highp float;
 
 //uniform vec3 u_Eye, u_Ref, u_Up;
-//uniform vec2 u_Dimensions;
+uniform vec2 u_Dimensions;
 
-//in vec2 fs_Pos;
+in vec2 fs_Pos;
 
 in vec2 fs_UV;
 
 out vec4 out_Col;
-
-uniform vec2 u_Dimensions;
 
 uniform sampler2D u_Texture;
 
@@ -45,22 +43,28 @@ void main()
 
     //out_Col = vec4(vec3(dofZ), 1.0);
 
+    out_Col = vec4(color.rgb, 1.0);
+
+
+    
+    //out_Col = vec4(texture(u_Texture, vec2(fract(fs_UV.x + 0.5), fract(fs_UV.y + 0.5))).rgb, 1.0);
 
 
 
 
-    float horizontalStep = 1.f / u_Dimensions[1];
-    float verticalStep = 1.f / u_Dimensions[0];
-
-    const float luminanceT = 0.6f;
 
 
-    // Get the original UV color for this fragment
-    vec3 colorIn = vec3(texture(u_Texture, fs_UV));
 
-    vec3 outputColorAdd = vec3(0.f, 0.f, 0.f);
 
-    // Calculate brightness to add based on surrounding pixels
+    // ShaderFun Gaussian Blur
+    
+    float horizontalStep = 1.f / u_Dimensions.y;
+    float verticalStep = 1.f / u_Dimensions.x;
+
+
+
+    vec3 outputColor = vec3(0.f, 0.f, 0.f);
+
     for(int r = -5; r < 5; r++)
     {
         for(int c = -5; c < 5; c++)
@@ -71,22 +75,18 @@ void main()
 
             float yUV = fs_UV[1] + float(r) * verticalStep;
 
-            vec3 colorAtCurrentPixel = vec3(texture(u_Texture,
-                   vec2(xUV, yUV)));
+            vec3 colorAtCurrentPixel = vec3(texture(u_Texture, vec2(xUV, yUV)));
 
-            float luminance = (colorAtCurrentPixel[0] + colorAtCurrentPixel[1] +
-                    colorAtCurrentPixel[2]);
-
-            // Test if luminance is above the threshold
-            int testAboveThreshold = int(luminance >= luminanceT);  // Will be 0 or 1
-            outputColorAdd += float(testAboveThreshold) * weight * colorAtCurrentPixel;
+            outputColor += weight * colorAtCurrentPixel;
         }
     }
 
-    out_Col = vec4(colorIn + outputColorAdd, 1.0);
+    float ambientIncrease = 1.2f; // To make the image brighter
 
+    out_Col = vec4(outputColor * ambientIncrease, 1.0);
+    
 
-
+    //out_Col = vec4(u_Dimensions.x, 0.0, 0.0, 1.0);
 
 
 

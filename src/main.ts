@@ -279,7 +279,11 @@ function main()
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.setAspectRatio(window.innerWidth / window.innerHeight);
   camera.updateProjectionMatrix();
+
   flat.setDimensions(window.innerWidth, window.innerHeight);
+
+  postProcess.setDimensions(window.innerWidth, window.innerHeight);
+
 
 
   // Start the render loop
