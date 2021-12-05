@@ -760,12 +760,7 @@ vec4 getSceneColor(vec2 uv)
 
         // Add exposure effects to final brightness
 
-        // Exposure based on F-Stop
-        float apertureExposurePercent = 1.0 / (u_Aperture * u_Aperture);
-
-        finalColor *= apertureExposurePercent;
-
-        finalColor *= u_Exposure * u_Exposure;
+        finalColor *= u_Exposure / 100.0;
 
 
         float FOCAL_RANGE = 1.0;
