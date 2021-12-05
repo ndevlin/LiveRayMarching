@@ -75,7 +75,7 @@ void main()
 
     vec3 outputColor = vec3(0.f, 0.f, 0.f);
 
-    /*
+    
     float horizontalStep = 1.f / u_Dimensions.y;
     float verticalStep = 1.f / u_Dimensions.x;
 
@@ -99,14 +99,14 @@ void main()
     
 
     outputColor *= ambientIncrease;
-    */
+    
 
 
 
 
-
+    /*
     // From https://www.shadertoy.com/view/XdfGDH
-    const int mSize = 21;
+    const int mSize = 11;
     const int kSize = (mSize - 1) / 2;
     float kernel[mSize];
     vec3 final_color = vec3(0.0);
@@ -148,18 +148,23 @@ void main()
     }
     
     final_color /= Z * Z;
+    */
 
 
 
 
-
-    vec3 finalBlurred = final_color;
+    vec3 finalBlurred = outputColor;
 
     float t = getBias(dofZ, 0.75);
 
-    vec3 interpolatedColor = mix(unblurredColor.rgb, finalBlurred, t);
+    vec3 dofColor = mix(unblurredColor.rgb, finalBlurred, t);
+
+
+    vec3 interpolatedColor = mix(dofColor, unblurredColor.rgb, (u_Aperture - 1.0) / 21.0);
 
 
     out_Col = vec4(interpolatedColor, 1.0);
+
+    //out_Col = vec4(vec3(t), 1.0);
 }
 

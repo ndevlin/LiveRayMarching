@@ -18,7 +18,7 @@ const controls =
   //'Load Scene': loadScene, // A function pointer, essentially
   LightPosTheta: -30,
   LightPosAzimuth: 60,
-  FocusDistance: 2.0,
+  FocusDistance: 5.0,
   Aperture: 1.0,
   Exposure: 1.0,
   AO_Amount: 3.5,

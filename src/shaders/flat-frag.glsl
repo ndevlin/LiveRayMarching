@@ -768,13 +768,13 @@ vec4 getSceneColor(vec2 uv)
         finalColor *= u_Exposure * u_Exposure;
 
 
-        float FOCAL_RANGE = 2.0;
+        float FOCAL_RANGE = 1.0;
 
         float distAlongCamZ = intersection.distance_t;
 
         float dofZ = min(1.0, abs(distAlongCamZ - u_FocusDistance) / FOCAL_RANGE);
 
-        //dofZ = pow(dofZ, 1.0);
+        //dofZ = pow(dofZ, 0.5);
 
 
         return vec4(finalColor, dofZ);
