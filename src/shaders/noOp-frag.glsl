@@ -15,9 +15,28 @@ out vec4 out_Col;
 uniform sampler2D u_Texture;
 
 
-float normpdf(in float x, in float sigma)
+float normpdf(float x, float sigma)
 {
 	return 0.39894*exp(-0.5 * x * x / (sigma * sigma)) / sigma;
+}
+
+
+float getBias(float t, float biasAmount)
+{
+  return (t / ((((1.0 / biasAmount) - 2.0) * (1.0 - t)) + 1.0));
+}
+
+
+float getGain(float t, float gainAmount)
+{
+  if(t < 0.5)
+  {
+    return getBias(t * 2.0, gainAmount) / 2.0;
+  }
+  else
+  {
+    return getBias(t * 2.0 - 1.0, 1.0 - gainAmount) / 2.0 + 0.5;
+  }
 }
 
 
@@ -52,20 +71,13 @@ void main()
     //out_Col = vec4(texture(u_Texture, vec2(fract(fs_UV.x + 0.5), fract(fs_UV.y + 0.5))).rgb, 1.0);
 
 
-
-
-
-
-
-
     // ShaderFun Gaussian Blur
-    
-    float horizontalStep = 1.f / u_Dimensions.y;
-    float verticalStep = 1.f / u_Dimensions.x;
-
-
 
     vec3 outputColor = vec3(0.f, 0.f, 0.f);
+
+    /*
+    float horizontalStep = 1.f / u_Dimensions.y;
+    float verticalStep = 1.f / u_Dimensions.x;
 
     for(int r = -5; r < 5; r++)
     {
@@ -84,12 +96,68 @@ void main()
     }
 
     float ambientIncrease = 1.2f; // To make the image brighter
+    
+
+    outputColor *= ambientIncrease;
+    */
 
 
-    vec3 finalBlurred = outputColor * ambientIncrease;
 
 
-    vec3 interpolatedColor = mix(unblurredColor.rgb, finalBlurred, dofZ);
+
+    // From https://www.shadertoy.com/view/XdfGDH
+    const int mSize = 21;
+    const int kSize = (mSize - 1) / 2;
+    float kernel[mSize];
+    vec3 final_color = vec3(0.0);
+
+    //create the 1-D kernel
+    float sigma = 100.0;
+    float Z = 0.0;
+    for (int j = 0; j <= kSize; ++j) 
+    {
+        kernel[kSize + j] = kernel[kSize - j] = normpdf(float(j), sigma);
+    }
+
+    //get the normalization factor (as the gaussian has been clamped)
+    for (int j = 0; j < mSize; ++j) 
+    {
+        Z += kernel[j];
+    }
+    
+    float horizontalStep = 1.f / u_Dimensions.y;
+    float verticalStep = 1.f / u_Dimensions.x;
+
+    //read out the texels
+    for (int i = -kSize; i <= kSize; ++i) 
+    {
+        for (int j = -kSize; j <= kSize; ++j) 
+        {
+            float weight = kernel[kSize + j] * kernel[kSize + i];
+
+            float xUV = fs_UV[0] + float(i) * horizontalStep;
+
+            float yUV = fs_UV[1] + float(j) * verticalStep;
+
+            vec3 colorAtCurrentPixel = vec3(texture(u_Texture, vec2(xUV, yUV)));
+
+            final_color += weight * colorAtCurrentPixel;
+
+
+        }
+    }
+    
+    final_color /= Z * Z;
+
+
+
+
+
+    vec3 finalBlurred = final_color;
+
+    float t = getBias(dofZ, 0.75);
+
+    vec3 interpolatedColor = mix(unblurredColor.rgb, finalBlurred, t);
 
 
     out_Col = vec4(interpolatedColor, 1.0);

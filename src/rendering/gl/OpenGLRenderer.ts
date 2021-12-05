@@ -40,7 +40,7 @@ class OpenGLRenderer
     aoIn: number,
     aperture: number,
     exposure: number,
-    focalLength: number,
+    focusDistance: number,
     SSS_All: number) 
   {
     let model = mat4.create();
@@ -78,7 +78,7 @@ class OpenGLRenderer
 
     prog.setTexLocation();
 
-    prog.setFocalLength(focalLength);
+    prog.setFocusDistance(focusDistance);
 
     for (let drawable of drawables) 
     {

@@ -19,7 +19,7 @@ uniform float u_Exposure;   // Inversely corresponds to F-Stop
 
 uniform float u_Aperture;
 
-uniform float u_FocalLength;
+uniform float u_FocusDistance;
 
 uniform float u_SSSall;
 
@@ -768,24 +768,26 @@ vec4 getSceneColor(vec2 uv)
         finalColor *= u_Exposure * u_Exposure;
 
 
-        float FOCAL_RANGE = 5.0;
+        float FOCAL_RANGE = 2.0;
 
         float distAlongCamZ = intersection.distance_t;
 
-        float dofZ = min(1.0, abs(distAlongCamZ - u_FocalLength) / FOCAL_RANGE);
+        float dofZ = min(1.0, abs(distAlongCamZ - u_FocusDistance) / FOCAL_RANGE);
 
-        dofZ = pow(dofZ, 0.2);
+        //dofZ = pow(dofZ, 1.0);
 
 
         return vec4(finalColor, dofZ);
 
     }
-    return vec4(0.0);
+    return vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 
 void main()
 {
+    out_Col = vec4(0.0, 0.0, 0.0, 1.0);
+
     // Store color to texture
     // Alpha indicates distance from fragment to Eye
     out_Col = getSceneColor(fs_Pos);

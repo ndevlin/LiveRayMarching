@@ -18,7 +18,7 @@ const controls =
   //'Load Scene': loadScene, // A function pointer, essentially
   LightPosTheta: -30,
   LightPosAzimuth: 60,
-  FocalLength: 2.0,
+  FocusDistance: 2.0,
   Aperture: 1.0,
   Exposure: 1.0,
   AO_Amount: 3.5,
@@ -83,7 +83,7 @@ function main()
   //gui.add(controls, 'Load Scene');
   gui.add(controls, 'LightPosTheta', -180, 180).step(1);
   gui.add(controls, 'LightPosAzimuth', 0, 90).step(0.1);
-  gui.add(controls, 'FocalLength', 0.1, 10.0).step(0.01);
+  gui.add(controls, 'FocusDistance', 0.1, 10.0).step(0.01);
   gui.add(controls, 'Aperture', 1.0, 22.0).step(0.1);
   gui.add(controls, 'Exposure', 0.0, 22.0).step(0.2);
   gui.add(controls, 'AO_Amount', 0, 5).step(0.1);
@@ -221,7 +221,7 @@ function main()
     controls.AO_Amount,
     controls.Aperture,
     controls.Exposure,
-    controls.FocalLength,
+    controls.FocusDistance,
     controls.SSS_All
     );
 
@@ -255,7 +255,7 @@ function main()
       controls.AO_Amount,
       controls.Aperture,
       controls.Exposure,
-      controls.FocalLength,
+      controls.FocusDistance,
       controls.SSS_All
       );
 

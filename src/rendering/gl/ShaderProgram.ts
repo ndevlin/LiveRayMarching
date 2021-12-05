@@ -69,7 +69,7 @@ class ShaderProgram
 
   unifTexLocation: WebGLUniformLocation;
 
-  unifFocalLength: WebGLUniformLocation;
+  unifFocusDistance: WebGLUniformLocation;
 
 
   constructor(shaders: Array<Shader>) 
@@ -127,7 +127,7 @@ class ShaderProgram
 
     this.unifTexLocation  = gl.getUniformLocation(this.prog, "u_Texture");
 
-    this.unifFocalLength  = gl.getUniformLocation(this.prog, "u_FocalLength");
+    this.unifFocusDistance  = gl.getUniformLocation(this.prog, "u_FocusDistance");
 
   }
 
@@ -295,12 +295,12 @@ class ShaderProgram
   }
 
 
-  setFocalLength(focalLength: number)
+  setFocusDistance(focusDistance: number)
   {
     this.use();
-    if(this.unifFocalLength !== -1)
+    if(this.unifFocusDistance !== -1)
     {
-      gl.uniform1f(this.unifFocalLength, focalLength);
+      gl.uniform1f(this.unifFocusDistance, focusDistance);
     }
   }
 
