@@ -3,8 +3,61 @@
 ## View a live WebGL Demo here!: https://ndevlin.github.io/LiveRayMarching/
 
 
-![](UserControls.png)
+![](FinalControls.png)
 
+
+## Results
+
+I was successfully able to implement all of the features I set out to implement. These were:
+
+- Depth Of Field
+- Ambient Occlusion
+- SubSurface Scattering
+
+I also added a few additional bonus features to the project, including
+- Reflections
+- Exposure
+- Modifiable Focal Length
+- Interactive User Controls
+
+I added interactive user controls to enable the user to modify:
+- Key Light position
+- Key Light Color
+- Aperture: Controls the amount of DOF blur
+- FocusDistance: How far from the camera the focal plane lies
+- Focal Length: Zoom amount: Small Focal length = Wide-Angle, Large Focal length = TelePhoto
+- Exposure: Percent above or below 100% default exposure level
+- AO Amount: Amount of Ambient Occlusion: More corresponds with greater AO shadowing
+- SSS All: By default, the robot's eyes use a Sub-Surface Scattering material, but this control makes everuthing use SSS to visibly show the effect
+- Robot Color: Change the albedo color of the robot
+
+### Demo Images:
+
+### Depth of Field
+
+![](FocusDemo.png)
+
+
+### Ambient Occlusion:
+
+![](AO_Example.png)
+
+
+### SubSurface Scattering
+
+![](SSS.png)
+
+
+### Reflections:
+
+![](Reflections.png)
+
+### Modifiable Albedo:
+
+![](ColorChange.png)
+
+
+## Previous Progress Log:
 
 ## Milestone #3:
 - Implemented Reflections
@@ -57,11 +110,6 @@ Currently, the only material in the scene that uses SSS is the Robot's eyes. I a
 ![](RobotReference.jpg)
 
 If time and logisics allows, I am considering creating a new SDF scene that would have more complexity and would give more opportunity to show off rendering techniques like subsurface scattering and ambient occlusion. For this, I am considering creating a classic still life scene that I think would have the advantage of having multiple objects close to each other to show off the ambient occlusion, could have objects that would naturally have subsurface scattering, and would enable me to add or remove objects in accordance with the needs of the complexity of my scene. Here is my still life reference, below:
-
-![](StillLifeReference.jpg)
-
-
-![](StillLife2Reference.jpg)
 
 
 ### Specification:
