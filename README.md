@@ -2,15 +2,15 @@
 
 ## Nathan Devlin - @ndevlin - ndevlin@seas.upenn.edu - www.ndevlin.com
 
-## View a live WebGL Demo here!: https://ndevlin.github.io/LiveRayMarching/
-
-
 ![](images/FinalControls.png)
+
+
+## View a live WebGL Demo here!: https://ndevlin.github.io/LiveRayMarching/
 
 
 ## Project Information
 
-This project uses Ray Marching and Signed Distance functions to render a scene in realtime using only mathematical functions. There is no actual geometry in the scene other than a quad that the scene is rendered upon. Each pixel ray-marches forward to interact with functions corresponding with each piece of geometry in the scene to determine which piece of geometry is closest to the camera. A number of rendering effects are calculated on top of this. These include Blinn-Phong reflection, specular reflection, sub-surface scattering, ambient occlusion, and more. Hard and soft shadows, depth of field, and more are also created using algorithms uniquely appropriate for an SDF scene. 
+This project uses Ray Marching and Signed Distance Functions to render a scene in real-time using only mathematical functions. There is no actual geometry in the scene other than a quad that the scene is rendered upon. Each pixel ray-marches forward to interact with functions corresponding with each piece of geometry in the scene to determine which piece of geometry is closest to the camera. A number of rendering effects are calculated on top of this. These include Blinn-Phong reflection, specular reflection, sub-surface scattering, ambient occlusion, and more. Hard and soft shadows, depth of field, and more are also created using algorithms uniquely appropriate for an SDF scene. 
 
 This project was created using TypeScript, WebGL, and GLSL. Visual Studio Code, Node.js, and Dat.gui were also utilized.
 
@@ -23,7 +23,8 @@ In addition, there are a number of user-controllable sliders:
 
 - LightPosTheta: Change the Theta Position of the Key Light
 - LightPosAzimuth: Change the azimuth (height) of the Key Light
-- FocusDistance: The distance of the focal plane from the camera. This will only be noticable with a small Aperture (i.e. a Shallow Depth of Field)
+- FocusDistance: The distance of the focal plane from the camera. This will only be noticeable with a small Aperture (i.e. a Shallow Depth of Field)
+- FocalLength: Controls the Zoom of the Camera; 20 is most Wide-Angle, 200 is most TelePhoto
 - Aperture: Controls the Depth of Field: at 22 everything will be in focus, at 1 the Depth of Field will be at its most shallow (i.e. blurry)
 - Exposure: The percentage above or below 100% standard exposure
 - AO_Amount: The amount of Ambient Occlusion rendered. 0 is none, 5 is maximal
@@ -57,7 +58,7 @@ I added interactive user controls to enable the user to modify:
 - Focal Length: Zoom amount: Small Focal length = Wide-Angle, Large Focal length = TelePhoto
 - Exposure: Percent above or below 100% default exposure level
 - AO Amount: Amount of Ambient Occlusion: More corresponds with greater AO shadowing
-- SSS All: By default, the robot's eyes use a Sub-Surface Scattering material, but this control makes everuthing use SSS to visibly show the effect
+- SSS All: By default, the robot's eyes use a Sub-Surface Scattering material, but this control makes everything use SSS to visibly show the effect
 - Robot Color: Change the albedo color of the robot
 
 
@@ -92,7 +93,7 @@ I added interactive user controls to enable the user to modify:
 
 I feel that the project went well overall. I was able to implement all of the features I set out to, and a few additional ones as well. 
 
-The Depth Of Field feature turned out to be a lot more challenging to implement than I had expected since I had to add a whole Post Processing framework to my project. In order to make it work, I added an additional render pass. The original ray-marched scene is first rendered and stored to a texture using a Frame Buffer. Depth information is stored to to the alpha channel since all elements in the scene are opaque. Since the first render pass renders everything on a single-pixel basis, each pixel doesn't have any information about it's neighboring pixels. The second pass allows access to the whole image. The second shader reads from the texture to sample neighboring pixels to accomplish a guassian blur. This is interpolated accoring to the depth information stored in the depth channel between a fully blurry image and an un-blurred image.
+The Depth Of Field feature turned out to be a lot more challenging to implement than I had expected since I had to add a whole Post Processing framework to my project. In order to make it work, I added an additional render pass. The original ray-marched scene is first rendered and stored to a texture using a Frame Buffer. Depth information is stored to to the alpha channel since all elements in the scene are opaque. Since the first render pass renders everything on a single-pixel basis, each pixel doesn't have any information about it's neighboring pixels. The second pass allows access to the whole image. The second shader reads from the texture to sample neighboring pixels to accomplish a Gaussian blur. This is interpolated according to the depth information stored in the depth channel between a fully blurry image and an un-blurred image.
 
 The other features were more straightforward to implement, but still had some interesting challenges of their own. The ambient occlusion, subsurface scattering, and reflection functionality each had some hurdles and some elements that needed to be tweaked in order to get them looking nice.
 
@@ -152,8 +153,6 @@ Currently, the only material in the scene that uses SSS is the Robot's eyes. I a
 - My starting point will be my HW3 project, and as such, my starting reference will be the robot I created in Maya, seen here
 
 ![](images/RobotReference.jpg)
-
-If time and logisics allows, I am considering creating a new SDF scene that would have more complexity and would give more opportunity to show off rendering techniques like subsurface scattering and ambient occlusion. For this, I am considering creating a classic still life scene that I think would have the advantage of having multiple objects close to each other to show off the ambient occlusion, could have objects that would naturally have subsurface scattering, and would enable me to add or remove objects in accordance with the needs of the complexity of my scene. Here is my still life reference, below:
 
 
 ### Specification:
