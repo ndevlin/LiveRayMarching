@@ -160,7 +160,10 @@ void main()
     vec3 dofColor = mix(unblurredColor.rgb, finalBlurred, t);
 
 
-    vec3 interpolatedColor = mix(dofColor, unblurredColor.rgb, (u_Aperture - 1.0) / 21.0);
+    // Bias the aperture slider to give more control near blurry side of spectrum
+    float blurAmount = getBias((u_Aperture - 1.0) / 21.0, 0.25);
+
+    vec3 interpolatedColor = mix(dofColor, unblurredColor.rgb, blurAmount);
 
 
     out_Col = vec4(interpolatedColor, 1.0);

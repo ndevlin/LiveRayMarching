@@ -21,6 +21,8 @@ uniform float u_Aperture;
 
 uniform float u_FocusDistance;
 
+uniform float u_FocalLength;
+
 uniform float u_SSSall;
 
 in vec2 fs_Pos;
@@ -70,6 +72,13 @@ struct Intersection
     float distance_t;
     int material_id;
 };
+
+
+
+float getBias(float t, float biasAmount)
+{
+  return (t / ((((1.0 / biasAmount) - 2.0) * (1.0 - t)) + 1.0));
+}
 
 
 // Operation functions
@@ -400,7 +409,10 @@ Ray getRay(vec2 uv)
     forward = normalize(forward);
     vec3 right = normalize(cross(forward, u_Up));
 
-    float tanAlpha = tan(FOV / 2.0);
+
+    float fov = FOV - ((u_FocalLength - 106.0) / 157.0);
+
+    float tanAlpha = tan(fov / 2.0);
     float aspectRatio = u_Dimensions.x / u_Dimensions.y;
 
     vec3 V = u_Up * len * tanAlpha;
@@ -644,6 +656,9 @@ vec4 getSceneColor(vec2 uv)
         light3_Color *= light3Intensity;
 
 
+        // Set camera Z here to maintain proper behavior for reflective floor
+        float distAlongCamZ = intersection.distance_t;
+
 
         // Floor; reflective material
         if(intersection.material_id == 0)
@@ -764,8 +779,6 @@ vec4 getSceneColor(vec2 uv)
 
 
         float FOCAL_RANGE = 1.0;
-
-        float distAlongCamZ = intersection.distance_t;
 
         float dofZ = min(1.0, abs(distAlongCamZ - u_FocusDistance) / FOCAL_RANGE);
 
