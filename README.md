@@ -1,9 +1,38 @@
 # Signed Distance Function Ray Marching
 
+## Nathan Devlin - @ndevlin - ndevlin@seas.upenn.edu - www.ndevlin.com
+
 ## View a live WebGL Demo here!: https://ndevlin.github.io/LiveRayMarching/
 
 
 ![](images/FinalControls.png)
+
+
+## Project Information
+
+This project uses Ray Marching and Signed Distance functions to render a scene in realtime using only mathematical functions. There is no actual geometry in the scene other than a quad that the scene is rendered upon. Each pixel ray-marches forward to interact with functions corresponding with each piece of geometry in the scene to determine which piece of geometry is closest to the camera. A number of rendering effects are calculated on top of this. These include Blinn-Phong reflection, specular reflection, sub-surface scattering, ambient occlusion, and more. Hard and soft shadows, depth of field, and more are also created using algorithms uniquely appropriate for an SDF scene. 
+
+This project was created using TypeScript, WebGL, and GLSL. Visual Studio Code, Node.js, and Dat.gui were also utilized.
+
+
+## User Details
+
+The user can move the camera using their mouse. Left click and drag to tumble the camera. Use the scroll wheel to dolly in and out. Right click and drag to move the camera position in screen space.
+
+In addition, there are a number of user-controllable sliders:
+
+- LightPosTheta: Change the Theta Position of the Key Light
+- LightPosAzimuth: Change the azimuth (height) of the Key Light
+- FocusDistance: The distance of the focal plane from the camera. This will only be noticable with a small Aperture (i.e. a Shallow Depth of Field)
+- Aperture: Controls the Depth of Field: at 22 everything will be in focus, at 1 the Depth of Field will be at its most shallow (i.e. blurry)
+- Exposure: The percentage above or below 100% standard exposure
+- AO_Amount: The amount of Ambient Occlusion rendered. 0 is none, 5 is maximal
+- SSS_All: Turns on Sub-Surface Scattering for all materials in the scene.
+- RobotColor: Use a Color Picker to select the Albedo color of the robot
+- LightColor: Use a Color Picker to select the color of the Key Light
+
+
+Notes: For reference, the diameter of the robot's head is about 1 unit. By default, only the robot's face uses Sub-Surface Scattering. 
 
 
 ## Results
