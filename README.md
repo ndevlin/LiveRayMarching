@@ -1,9 +1,9 @@
-# Nathan Design Doc
+# Signed Distance Function Ray Marching
 
 ## View a live WebGL Demo here!: https://ndevlin.github.io/LiveRayMarching/
 
 
-![](FinalControls.png)
+![](images/FinalControls.png)
 
 
 ## Results
@@ -31,30 +31,45 @@ I added interactive user controls to enable the user to modify:
 - SSS All: By default, the robot's eyes use a Sub-Surface Scattering material, but this control makes everuthing use SSS to visibly show the effect
 - Robot Color: Change the albedo color of the robot
 
+
 ### Demo Images:
 
 ### Depth of Field
 
-![](FocusDemo.png)
+![](images/FocusDemo.png)
 
 
 ### Ambient Occlusion:
 
-![](AO_Example.png)
+![](images/AO_Example.png)
 
 
 ### SubSurface Scattering
 
-![](SSS.png)
+![](images/SSS.png)
 
 
 ### Reflections:
 
-![](Reflections.png)
+![](images/Reflections.png)
 
-### Modifiable Albedo:
+### Modifiable Color:
 
-![](ColorChange.png)
+![](images/ColorChange.png)
+
+
+
+## Post Mortem
+
+I feel that the project went well overall. I was able to implement all of the features I set out to, and a few additional ones as well. 
+
+The Depth Of Field feature turned out to be a lot more challenging to implement than I had expected since I had to add a whole Post Processing framework to my project. In order to make it work, I added an additional render pass. The original ray-marched scene is first rendered and stored to a texture using a Frame Buffer. Depth information is stored to to the alpha channel since all elements in the scene are opaque. Since the first render pass renders everything on a single-pixel basis, each pixel doesn't have any information about it's neighboring pixels. The second pass allows access to the whole image. The second shader reads from the texture to sample neighboring pixels to accomplish a guassian blur. This is interpolated accoring to the depth information stored in the depth channel between a fully blurry image and an un-blurred image.
+
+The other features were more straightforward to implement, but still had some interesting challenges of their own. The ambient occlusion, subsurface scattering, and reflection functionality each had some hurdles and some elements that needed to be tweaked in order to get them looking nice.
+
+Finally, the user interface I felt was very important to give the user a feeling of interactivity, and to really show of the variety of effects implemented. There was a lot of wiring up to do to make all of that functionality work together interactively.
+
+Overall, I was able to achieve all the tasks I had laid out in my Design Document, which I feel was a solid accomplishment.
 
 
 ## Previous Progress Log:
@@ -78,11 +93,11 @@ I am still having trouble with the Depth of Field because it requires creating a
 
 Currently, the only material in the scene that uses SSS is the Robot's eyes. I added a toggle to make all materials use SSS so that the viewer can more easily see the effect of this material.
 
-![](Reflections.png)
+![](images/Reflections.png)
 
-![](SSS.png)
+![](images/SSS.png)
 
-![](ColorChange.png)
+![](images/ColorChange.png)
 
 
 ## Milestone #2:
@@ -93,7 +108,7 @@ Currently, the only material in the scene that uses SSS is the Robot's eyes. I a
 
 - Here is an example of one of my features, the ambient occlusion. It takes up a small amount of framerate, and is quite tunable to look very good and to meet the user's desires.
 
-![](AO_Example.png)
+![](images/AO_Example.png)
 
 
 ## Design Specification:
@@ -107,7 +122,7 @@ Currently, the only material in the scene that uses SSS is the Robot's eyes. I a
 ### Inspiration/reference:
 - My starting point will be my HW3 project, and as such, my starting reference will be the robot I created in Maya, seen here
 
-![](RobotReference.jpg)
+![](images/RobotReference.jpg)
 
 If time and logisics allows, I am considering creating a new SDF scene that would have more complexity and would give more opportunity to show off rendering techniques like subsurface scattering and ambient occlusion. For this, I am considering creating a classic still life scene that I think would have the advantage of having multiple objects close to each other to show off the ambient occlusion, could have objects that would naturally have subsurface scattering, and would enable me to add or remove objects in accordance with the needs of the complexity of my scene. Here is my still life reference, below:
 
