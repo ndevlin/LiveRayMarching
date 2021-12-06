@@ -40,6 +40,7 @@ class OpenGLRenderer
     aoIn: number,
     aperture: number,
     exposure: number,
+    gamma: number,
     focusDistance: number,
     focalLength: number,
     SSS_All: number) 
@@ -74,6 +75,8 @@ class OpenGLRenderer
     prog.setAperture(aperture);
 
     prog.setExposure(exposure);
+
+    prog.setGamma(gamma);
 
     prog.setSSSall(SSS_All);
 

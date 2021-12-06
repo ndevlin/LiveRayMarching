@@ -15,7 +15,9 @@ uniform vec4 u_LightColor;
 
 uniform vec4 u_RobotColor; // User input color for body
 
-uniform float u_Exposure;   // Inversely corresponds to F-Stop
+uniform float u_Exposure;
+
+uniform float u_Gamma;
 
 uniform float u_Aperture;
 
@@ -552,6 +554,17 @@ Intersection getRaymarchedIntersection(vec2 uv)
 }
 
 
+vec3 toneMap(vec3 colorIn)
+{
+    vec3 colorOut = colorIn;
+
+    // Gamma correction
+    colorOut = pow(colorOut, vec3(1.0 / u_Gamma));
+
+    return colorOut;
+}
+
+
 vec4 getSceneColor(vec2 uv)
 {
     Intersection intersection = getRaymarchedIntersection(uv);
@@ -778,11 +791,13 @@ vec4 getSceneColor(vec2 uv)
         finalColor *= u_Exposure / 100.0;
 
 
-        float FOCAL_RANGE = 1.0;
+        // Tone Map
+        finalColor = toneMap(finalColor);
 
-        float dofZ = min(1.0, abs(distAlongCamZ - u_FocusDistance) / FOCAL_RANGE);
 
-        //dofZ = pow(dofZ, 0.5);
+        const float focalRange = 1.0;
+
+        float dofZ = min(1.0, abs(distAlongCamZ - u_FocusDistance) / focalRange);
 
 
         return vec4(finalColor, dofZ);

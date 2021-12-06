@@ -61,6 +61,8 @@ class ShaderProgram
 
   unifExposure: WebGLUniformLocation;
 
+  unifGamma: WebGLUniformLocation;
+
   unifSSSall: WebGLUniformLocation;
 
   unifCurrTick: WebGLUniformLocation;
@@ -88,50 +90,52 @@ class ShaderProgram
       throw gl.getProgramInfoLog(this.prog);
     }
 
-    this.attrPos          = gl.getAttribLocation(this.prog, "vs_Pos");
+    this.attrPos            = gl.getAttribLocation(this.prog, "vs_Pos");
     
-    this.unifEye          = gl.getUniformLocation(this.prog, "u_Eye");
-    this.unifRef          = gl.getUniformLocation(this.prog, "u_Ref");
-    this.unifUp           = gl.getUniformLocation(this.prog, "u_Up");
-    this.unifDimensions   = gl.getUniformLocation(this.prog, "u_Dimensions");
+    this.unifEye            = gl.getUniformLocation(this.prog, "u_Eye");
+    this.unifRef            = gl.getUniformLocation(this.prog, "u_Ref");
+    this.unifUp             = gl.getUniformLocation(this.prog, "u_Up");
+    this.unifDimensions     = gl.getUniformLocation(this.prog, "u_Dimensions");
 
-    this.attrNor          = gl.getAttribLocation(this.prog, "vs_Nor");
+    this.attrNor            = gl.getAttribLocation(this.prog, "vs_Nor");
     
-    this.attrCol          = gl.getAttribLocation(this.prog, "vs_Col");
+    this.attrCol            = gl.getAttribLocation(this.prog, "vs_Col");
 
-    this.attrUV           = gl.getAttribLocation(this.prog, "vs_UV");
+    this.attrUV             = gl.getAttribLocation(this.prog, "vs_UV");
     
-    this.unifModel        = gl.getUniformLocation(this.prog, "u_Model");
+    this.unifModel          = gl.getUniformLocation(this.prog, "u_Model");
     
-    this.unifModelInvTr   = gl.getUniformLocation(this.prog, "u_ModelInvTr");
+    this.unifModelInvTr     = gl.getUniformLocation(this.prog, "u_ModelInvTr");
     
-    this.unifViewProj     = gl.getUniformLocation(this.prog, "u_ViewProj");
+    this.unifViewProj       = gl.getUniformLocation(this.prog, "u_ViewProj");
 
-    this.unifRobotColor   = gl.getUniformLocation(this.prog, "u_RobotColor");
+    this.unifRobotColor     = gl.getUniformLocation(this.prog, "u_RobotColor");
 
-    this.unifLightColor   = gl.getUniformLocation(this.prog, "u_LightColor");
+    this.unifLightColor     = gl.getUniformLocation(this.prog, "u_LightColor");
 
-    this.unifCameraPos    = gl.getUniformLocation(this.prog, "u_CameraPos");
+    this.unifCameraPos      = gl.getUniformLocation(this.prog, "u_CameraPos");
 
-    this.unifLightPos     = gl.getUniformLocation(this.prog, "u_LightPos");
+    this.unifLightPos       = gl.getUniformLocation(this.prog, "u_LightPos");
 
-    this.unifAO           = gl.getUniformLocation(this.prog, "u_AO");
+    this.unifAO             = gl.getUniformLocation(this.prog, "u_AO");
 
-    this.unifAperture     = gl.getUniformLocation(this.prog, "u_Aperture");
+    this.unifAperture       = gl.getUniformLocation(this.prog, "u_Aperture");
 
-    this.unifExposure     = gl.getUniformLocation(this.prog, "u_Exposure");
+    this.unifExposure       = gl.getUniformLocation(this.prog, "u_Exposure");
 
-    this.unifSSSall       = gl.getUniformLocation(this.prog, "u_SSSall");
+    this.unifGamma          = gl.getUniformLocation(this.prog, "u_Gamma");
+
+    this.unifSSSall         = gl.getUniformLocation(this.prog, "u_SSSall");
     
-    this.unifCurrTick     = gl.getUniformLocation(this.prog, "u_CurrTick");
+    this.unifCurrTick       = gl.getUniformLocation(this.prog, "u_CurrTick");
 
-    this.unifCurrTime     = gl.getUniformLocation(this.prog, "u_Time");
+    this.unifCurrTime       = gl.getUniformLocation(this.prog, "u_Time");
 
-    this.unifTexLocation  = gl.getUniformLocation(this.prog, "u_Texture");
+    this.unifTexLocation    = gl.getUniformLocation(this.prog, "u_Texture");
 
     this.unifFocusDistance  = gl.getUniformLocation(this.prog, "u_FocusDistance");
 
-    this.unifFocalLength  = gl.getUniformLocation(this.prog, "u_FocalLength");
+    this.unifFocalLength    = gl.getUniformLocation(this.prog, "u_FocalLength");
 
 
   }
@@ -261,6 +265,17 @@ class ShaderProgram
       gl.uniform1f(this.unifExposure, exposure);
     }
   }
+
+
+  setGamma(gamma: number)
+  {
+    this.use();
+    if(this.unifExposure !== -1)
+    {
+      gl.uniform1f(this.unifGamma, gamma);
+    }
+  }
+
 
   setSSSall(sssAll: number)
   {

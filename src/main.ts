@@ -22,6 +22,7 @@ const controls =
   FocalLength: 50,
   Aperture: 22.0,
   Exposure: 100.0,
+  Gamma: 1.0,
   AO_Amount: 3.5,
   SSS_All: 0.0
 };
@@ -88,6 +89,7 @@ function main()
   gui.add(controls, 'FocalLength', 20.0, 200.0).step(1.0);
   gui.add(controls, 'Aperture', 1.0, 22.0).step(0.1);
   gui.add(controls, 'Exposure', 10.0, 200.0).step(1.0);
+  gui.add(controls, 'Gamma', 0.1, 5.0).step(0.1);
   gui.add(controls, 'AO_Amount', 0, 5).step(0.1);
   gui.add(controls, 'SSS_All', 0, 1).step(1);
 
@@ -223,6 +225,7 @@ function main()
     controls.AO_Amount,
     controls.Aperture,
     controls.Exposure,
+    controls.Gamma,
     controls.FocusDistance,
     controls.FocalLength,
     controls.SSS_All
@@ -258,6 +261,7 @@ function main()
       controls.AO_Amount,
       controls.Aperture,
       controls.Exposure,
+      controls.Gamma,
       controls.FocusDistance,
       controls.FocalLength,
       controls.SSS_All
