@@ -242,7 +242,7 @@ vec2 sceneSDF(vec3 queryPos)
         closestPointDistance = unionSDF(head, closestPointDistance);
 
         // Add Eyes
-        matID = 5.0;
+        matID = 6.0;
         vec2 eyes = vec2(sdfSphere(queryPos, vec3(-0.025, 1.3, 0.36), 0.55), matID);
         closestPointDistance = unionSDF(eyes, closestPointDistance);
 
@@ -262,7 +262,9 @@ vec2 sceneSDF(vec3 queryPos)
         vec3 shiftedFace = queryPos - vec3(-0.13, 1.3, 0.6);
         shiftedFace = rotateAboutX(shiftedFace, PI / 2.0);
         // Make robot abruptly turn head to look at camera
-        shiftedFace = rotateAboutZ(shiftedFace, PI / 5.0 - quaImpulse(2.0, clamp(sin(u_CurrTick * 0.05), 0.0, 1.0)) / 2.0);
+        float timeVal = u_CurrTick;
+        timeVal = 6.0;
+        shiftedFace = rotateAboutZ(shiftedFace, PI / 5.0 - quaImpulse(2.0, clamp(sin(timeVal * 0.05), 0.0, 1.0)) / 2.0);
 
         vec2 scubaMask = vec2(sdfRoundedCylinder(shiftedFace, 0.2, 0.1, 0.2), matID);
         float negMask = sdfRoundedCylinder(shiftedFace, 0.15, 0.05, 0.5);
@@ -585,7 +587,7 @@ vec4 getSceneColor(vec2 uv)
         // Turn on blinnPhong for shiny objects
         if((intersection.material_id == 0 || intersection.material_id == 1 ||
             intersection.material_id == 3 || intersection.material_id == 4
-            || intersection.material_id == 5)
+            || intersection.material_id == 5 || intersection.material_id == 6)
             && u_SSSall < 0.5)
         {
             blinnPhong = true;
@@ -720,6 +722,34 @@ vec4 getSceneColor(vec2 uv)
         }
 
 
+        vec3 leftEye = vec3(-0.1, 0.0, 1.0);
+        vec3 rightEye = vec3(-0.5, 0.0, 1.0);
+
+        // Translucent Material Surface Color - Face
+        if(intersection.material_id == 6 || u_SSSall > 0.5)
+        {
+            diffuseColor = vec3(0.85, 0.9, 0.9);
+
+            //float t = floor(mod(1.0 * (sin(intersection.position.x * 20.0) + sin(intersection.position.z * 20.0)), 2.0));
+            //diffuseColor = mix(vec3(0.25), vec3(1.0), t);
+
+            //t = floor(mod(1.0 * (sin(intersection.position.x * 20.0 + 0.5) + sin(intersection.position.z * 20.0)), 2.0));
+            //diffuseColor = mix(vec3(0.25), vec3(1.0), t);
+
+            // Left Eye
+            if(dot(intersection.position, leftEye) > 0.91)
+            {
+                diffuseColor = vec3(0.0, 0.0, 0.0);
+            }
+
+            // Right Eye
+            if(dot(intersection.position, rightEye) > 0.98)
+            {
+                diffuseColor = vec3(0.0, 0.0, 0.0);
+            }
+        }
+
+
         // Combine different lights
         vec3 finalColor = diffuseColor * (light1_Color + light2_Color + light3_Color);
         finalColor = finalColor * (1.0 + AMBIENT);
@@ -733,10 +763,21 @@ vec4 getSceneColor(vec2 uv)
         vec3 sssColor = vec3(0.0);
 
         // Add SSS if applicable
-        if(intersection.material_id == 5 || u_SSSall > 0.5)
+        if(intersection.material_id == 5 || intersection.material_id == 6 || u_SSSall > 0.5)
         {
 
             vec3 subSurfaceColor = vec3(1.0, 0.85, 0.75);
+            
+            if(dot(intersection.position, leftEye) > 0.91)
+            {
+                subSurfaceColor = vec3(0.0, 0.0, 0.0);
+            }
+
+            // Right Eye
+            if(dot(intersection.position, rightEye) > 0.98)
+            {
+                subSurfaceColor = vec3(0.0, 0.0, 0.0);
+            }
 
             // Default values for SSS in head
             float aoK = 4.0;
