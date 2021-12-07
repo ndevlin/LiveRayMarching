@@ -23,10 +23,11 @@ In addition, there are a number of user-controllable sliders:
 
 - LightPosTheta: Change the Theta Position of the Key Light
 - LightPosAzimuth: Change the azimuth (height) of the Key Light
-- FocusDistance: The distance of the focal plane from the camera. This will only be noticeable with a small Aperture (i.e. a Shallow Depth of Field)
 - FocalLength: Controls the Zoom of the Camera; 20 is most Wide-Angle, 200 is most TelePhoto
 - Aperture: Controls the Depth of Field: at 22 everything will be in focus, at 1 the Depth of Field will be at its most shallow (i.e. blurry)
+- FocusDistance: The distance of the focal plane from the camera. This will only be noticeable with a small Aperture (i.e. a Shallow Depth of Field)
 - Exposure: The percentage above or below 100% standard exposure
+- Gamma: Change the contrast of the image. 1 is standard contrast, < 1 high contrast, > 1 lower contrast
 - AO_Amount: The amount of Ambient Occlusion rendered. 0 is none, 5 is maximal
 - SSS_All: Turns on Sub-Surface Scattering for all materials in the scene.
 - RobotColor: Use a Color Picker to select the Albedo color of the robot
@@ -34,33 +35,6 @@ In addition, there are a number of user-controllable sliders:
 
 
 Notes: For reference, the diameter of the robot's head is about 1 unit. By default, only the robot's face uses Sub-Surface Scattering. 
-
-
-## Results
-
-I was successfully able to implement all of the features I set out to implement. These were:
-
-- Depth Of Field
-- Ambient Occlusion
-- SubSurface Scattering
-
-I also added a few additional bonus features to the project, including
-- Reflections
-- Exposure
-- Modifiable Focal Length
-- Interactive User Controls
-
-I added interactive user controls to enable the user to modify:
-- Key Light position
-- Key Light Color
-- Aperture: Controls the amount of DOF blur
-- FocusDistance: How far from the camera the focal plane lies
-- Focal Length: Zoom amount: Small Focal length = Wide-Angle, Large Focal length = TelePhoto
-- Exposure: Percent above or below 100% default exposure level
-- AO Amount: Amount of Ambient Occlusion: More corresponds with greater AO shadowing
-- SSS All: By default, the robot's eyes use a Sub-Surface Scattering material, but this control makes everything use SSS to visibly show the effect
-- Robot Color: Change the albedo color of the robot
-
 
 ### Demo Images:
 
@@ -88,12 +62,54 @@ I added interactive user controls to enable the user to modify:
 ![](images/ColorChange.png)
 
 
+## Implementation Details:
+
+- Lens Controls: 
+    Enabling the creation of "real" camera controls required a few different techniques. In order to make it work, I added an additional render pass. To begin with, I needed to set up a Post-Processing framework with WebGL. The original ray-marched scene is first rendered and stored to a texture using a Frame Buffer. Depth information is stored to to the alpha channel since all elements in the scene are opaque. Since the first render pass renders everything on a single-pixel basis, each pixel doesn't have any information about it's neighboring pixels. The second pass allows access to the whole image. The second shader reads from the texture to sample neighboring pixels to accomplish a Gaussian blur. This is interpolated according to the depth information stored in the depth channel combined with the FocusDistance value between a fully blurry image and an un-blurred image. This gives the effect of a shallow depth of field. This result is interpolated with an un-blurry image according to the Aperture parameter to simulate a shallower or less shallow depth of field per the user's preference.
+
+- Ambient Occlusion:
+    This project utilizes a fast ambient occlusion algorithm to be able to run in real time. The algorithm simply samples along the normal to see if there is nearby geometry (using SDFs); the more geometry detected, the more shadowing results from the ambient occlusion.
+
+- SubSurface Scattering:
+    The SubSurface Scattering effect is modeled off of the algorithm given here: https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/ Essentially, the algorithm approximates the thickness of the object at a point by running ambient occlusion on the interior of the object. Thus, points that are near other geometry (and thus in an AO pass would be occluded) are marked as thin, whereas those that are not are marked thick. This information is then used in combination with the information about the light direction and viewing angle to calculate a highlight, in a manner not dissimilar to a Blinn-Phong highlight.
+
+- Tone Controls:
+    
+
+
+
+## Results
+
+I was successfully able to implement all of the features I set out to implement. These were:
+
+- Depth Of Field
+- Ambient Occlusion
+- SubSurface Scattering
+
+I also added a few additional bonus features to the project, including
+- Reflections
+- Exposure
+- Modifiable Focal Length
+- Gamma Correction
+- Interactive User Controls
+
+I added interactive user controls to enable the user to modify:
+- Key Light position
+- Key Light Color
+- Aperture: Controls the amount of DOF blur
+- FocusDistance: How far from the camera the focal plane lies
+- Focal Length: Zoom amount: Small Focal length = Wide-Angle, Large Focal length = TelePhoto
+- Exposure: Percent above or below 100% default exposure level
+- AO Amount: Amount of Ambient Occlusion: More corresponds with greater AO shadowing
+- SSS All: By default, the robot's eyes use a Sub-Surface Scattering material, but this control makes everything use SSS to visibly show the effect
+- Robot Color: Change the albedo color of the robot
+
 
 ## Post Mortem
 
 I feel that the project went well overall. I was able to implement all of the features I set out to, and a few additional ones as well. 
 
-The Depth Of Field feature turned out to be a lot more challenging to implement than I had expected since I had to add a whole Post Processing framework to my project. In order to make it work, I added an additional render pass. The original ray-marched scene is first rendered and stored to a texture using a Frame Buffer. Depth information is stored to to the alpha channel since all elements in the scene are opaque. Since the first render pass renders everything on a single-pixel basis, each pixel doesn't have any information about it's neighboring pixels. The second pass allows access to the whole image. The second shader reads from the texture to sample neighboring pixels to accomplish a Gaussian blur. This is interpolated according to the depth information stored in the depth channel between a fully blurry image and an un-blurred image.
+The Depth Of Field feature turned out to be a lot more challenging to implement than I had expected since I had to add a whole Post Processing framework to my project. 
 
 The other features were more straightforward to implement, but still had some interesting challenges of their own. The ambient occlusion, subsurface scattering, and reflection functionality each had some hurdles and some elements that needed to be tweaked in order to get them looking nice.
 

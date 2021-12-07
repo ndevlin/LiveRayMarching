@@ -30,8 +30,8 @@ uniform float u_SSSall;
 in vec2 fs_Pos;
 out vec4 out_Col;
 
-const int MAX_RAY_STEPS = 128;
-const float maxRayDistance = 20.0;
+const int MAX_RAY_STEPS = 256;
+const float maxRayDistance = 30.0;
 
 const float FOV = 45.0;
 const float EPSILON = 1e-4;
@@ -42,6 +42,7 @@ const float AMBIENT = 0.05;
 
 const float FLOOR_HEIGHT = -2.15;
 
+const vec3 fogColor = vec3(0.0471, 0.0471, 0.0471);
 
 // Replaced by Light Dir input
 //const vec3 LIGHT1_DIR = vec3(-1.0, 1.0, 2.0);
@@ -559,7 +560,7 @@ vec3 toneMap(vec3 colorIn)
     vec3 colorOut = colorIn;
 
     // Gamma correction
-    colorOut = pow(colorOut, vec3(1.0 / u_Gamma));
+    colorOut = pow(colorOut, vec3(u_Gamma));
 
     return colorOut;
 }
@@ -786,6 +787,11 @@ vec4 getSceneColor(vec2 uv)
 
         finalColor = finalColor + sssColor;
 
+        float fogT = smoothstep(12.0, 30.0, distance(intersection.position, u_Eye));
+        finalColor = mix(finalColor, fogColor, fogT);
+
+
+
         // Add exposure effects to final brightness
 
         finalColor *= u_Exposure / 100.0;
@@ -803,7 +809,7 @@ vec4 getSceneColor(vec2 uv)
         return vec4(finalColor, dofZ);
 
     }
-    return vec4(0.0, 0.0, 0.0, 1.0);
+    return vec4(fogColor, 1.0);
 }
 
 

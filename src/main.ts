@@ -85,9 +85,9 @@ function main()
   //gui.add(controls, 'Load Scene');
   gui.add(controls, 'LightPosTheta', -180, 180).step(1);
   gui.add(controls, 'LightPosAzimuth', 0, 90).step(0.1);
-  gui.add(controls, 'FocusDistance', 0.1, 10.0).step(0.01);
   gui.add(controls, 'FocalLength', 20.0, 200.0).step(1.0);
   gui.add(controls, 'Aperture', 1.0, 22.0).step(0.1);
+  gui.add(controls, 'FocusDistance', 0.1, 10.0).step(0.01);
   gui.add(controls, 'Exposure', 10.0, 200.0).step(1.0);
   gui.add(controls, 'Gamma', 0.1, 5.0).step(0.1);
   gui.add(controls, 'AO_Amount', 0, 5).step(0.1);
