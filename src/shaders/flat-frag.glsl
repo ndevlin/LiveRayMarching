@@ -40,7 +40,7 @@ const float PI = 3.14159265359;
 
 const float AMBIENT = 0.05;
 
-const float FLOOR_HEIGHT = -2.1;
+const float FLOOR_HEIGHT = -2.15;
 
 
 // Replaced by Light Dir input
@@ -389,10 +389,10 @@ vec2 sceneSDF(vec3 queryPos)
         vec2 ballJoint4 = vec2(sdfSphere(queryPos, vec3(0.4, -0.9, -0.3), 0.15), matID);
         closestPointDistance = unionSDF(ballJoint4, closestPointDistance);
 
-        vec2 ballJoint5 = vec2(sdfSphere(queryPos, vec3(1.35, 0.15, -0.05), 0.17), matID);
+        vec2 ballJoint5 = vec2(sdfSphere(queryPos, vec3(1.35, 0.17, -0.18), 0.17), matID);
         closestPointDistance = unionSDF(ballJoint5, closestPointDistance);
 
-        vec2 ballJoint6 = vec2(sdfSphere(queryPos, vec3(-1.3, -0.05, -0.3), 0.15), matID);
+        vec2 ballJoint6 = vec2(sdfSphere(queryPos, vec3(-1.36, -0.08, -0.3), 0.15), matID);
         closestPointDistance = unionSDF(ballJoint6, closestPointDistance);
 
         vec2 ballJoint7 = vec2(sdfSphere(queryPos, vec3(0.0, 0.53, 0.15), 0.15), matID);
