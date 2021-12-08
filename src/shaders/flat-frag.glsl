@@ -61,7 +61,7 @@ vec3 light3_Color = vec3(0.996, 0.879, 0.804); // 5000 Kelvin Tungsten light
 
 
 // Light inside head
-const vec3 LIGHT4_POS = vec3(0.0, 1.2, 0.2);
+const vec3 LIGHT4_POS = vec3(0.0, 1.15, 0.2);
 
 struct Ray 
 {
@@ -292,7 +292,35 @@ vec2 sceneSDF(vec3 queryPos)
         matID = 1.0;
         vec2 cube = vec2(sdfBox(bodyPos, vec3(0.5, 0.5, 0.5)), matID);
         closestPointDistance = unionSDF(cube, closestPointDistance);
+
+        // Add Panel
+        vec3 panelPos = rotateXYZ(queryPos, PI / 10.0,  PI / 4.0, 0.0);
+        matID = 5.0;
+        vec2 panel = vec2(sdfBox(bodyPos + vec3(-0.2, -0.2, -0.4), vec3(0.15, 0.1, 0.1)), matID);
+        closestPointDistance = unionSDF(panel, closestPointDistance);
         
+        // Add sqButton1
+        matID = 7.0;
+        vec2 sqButton1 = vec2(sdfBox(bodyPos + vec3(-0.1, -0.0, -0.45), vec3(0.05, 0.03, 0.1)), matID);
+        closestPointDistance = unionSDF(sqButton1, closestPointDistance);
+        
+        // Add sqButton1
+        matID = 7.0;
+        vec2 sqButton2 = vec2(sdfBox(bodyPos + vec3(-0.3, -0.0, -0.45), vec3(0.05, 0.03, 0.1)), matID);
+        closestPointDistance = unionSDF(sqButton2, closestPointDistance);
+        
+
+        // Add Button1
+        matID = 4.0;
+        vec2 button1 = vec2(sdfSphere(queryPos, vec3(-0.6, 0.16, 0.14), 0.07), matID);
+        closestPointDistance = unionSDF(button1, closestPointDistance);
+
+        // Add Button2
+        matID = 4.0;
+        vec2 button2 = vec2(sdfSphere(queryPos, vec3(-0.45, 0.11, 0.30), 0.07), matID);
+        closestPointDistance = unionSDF(button2, closestPointDistance);
+
+
         // Add head
         matID = 1.0;
         vec2 head = vec2(sdfSphere(queryPos, vec3(0.0, 1.3, 0.3), 0.6), matID);
@@ -770,6 +798,11 @@ vec4 getSceneColor(vec2 uv)
         if(intersection.material_id == 4)
         {
             diffuseColor = vec3(1.0, 0.0, 0.0);
+        }
+
+        if(intersection.material_id == 7)
+        {
+            diffuseColor = vec3(0.2196, 0.3451, 0.902);
         }
 
         // Translucent Material Surface Color
