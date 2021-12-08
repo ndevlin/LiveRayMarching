@@ -42,6 +42,8 @@ const float AMBIENT = 0.05;
 
 const float FLOOR_HEIGHT = -2.15;
 
+const vec3 WORLD_UP = vec3(0.0, 1.0, 0.0);
+
 const vec3 fogColor = vec3(0.0471, 0.0471, 0.0471);
 
 // Replaced by Light Dir input
@@ -186,6 +188,17 @@ float sdfSphere(vec3 query_position, vec3 position, float radius)
 }
 
 
+vec2 sphereUV(vec3 sphereCenter, vec3 position)
+{
+    vec3 pointOnSphereDir = normalize(position - sphereCenter);
+    
+    float u = atan(pointOnSphereDir.x, pointOnSphereDir.z) / (2.0 * PI) + 0.5;
+    float v = pointOnSphereDir.y * 0.5 + 0.5;
+    
+    return vec2(u, v);
+}
+
+
 float sdfRoundedCylinder( vec3 p, float ra, float rb, float h )
 {
   vec2 d = vec2( length(p.xz)-2.0*ra+rb, abs(p.y) - h );
@@ -213,6 +226,50 @@ float sdfTorus( vec3 point, float radius, float thickness)
     return length(vec2(length(point.xy)- radius, point.z)) - thickness;
 }
 
+
+vec3 getEyesFromUVs(vec2 uvIn)
+{
+    float a = 0.1;
+    float b = 1.0;
+    
+    float x = uvIn.x - 0.4;
+    float y = uvIn.y - 0.5;
+        
+    float angle = 0.5 * PI;
+
+    vec3 fragColor = vec3(1.0, 1.0, 1.0);
+	
+	float distance = pow( x, 2.0 ) / ( a * a ) + pow( y, 2.0 ) / ( b * b );
+    
+    if ( distance <= 0.1 )
+    {
+        fragColor = vec3( 0.0, 0.0, 0.0);
+    }
+    else
+    {
+     	fragColor = vec3( 1.0, 1.0, 1.0);   
+    }
+
+    x = uvIn.x - 0.6;
+    y = uvIn.y - 0.5;
+
+	distance = pow( x, 2.0 ) / ( a * a ) + pow( y, 2.0 ) / ( b * b );
+    
+    if(fragColor.x > 0.5)
+    {
+        if ( distance <= 0.1 )
+        {
+            fragColor = vec3( 0.0, 0.0, 0.0);
+        }
+        else
+        {
+            fragColor = vec3( 1.0, 1.0, 1.0); 
+        }
+    }
+
+
+    return fragColor;
+}
 
 
 // Describe the scene using sdf functions
@@ -767,7 +824,13 @@ vec4 getSceneColor(vec2 uv)
         {
 
             vec3 subSurfaceColor = vec3(1.0, 0.85, 0.75);
+
+
+            vec2 uv = sphereUV(vec3(0.0, 1.3, 0.3), intersection.position);
+
             
+
+
             if(dot(intersection.position, leftEye) > 0.91)
             {
                 subSurfaceColor = vec3(0.0, 0.0, 0.0);
@@ -862,5 +925,8 @@ void main()
     // Alpha indicates distance from fragment to Eye
     out_Col = getSceneColor(fs_Pos);
 
+
+    vec2 uv = fs_Pos * 0.5 + 0.5;
+    out_Col = vec4(getEyesFromUVs(uv), 1.0);
 }
 
