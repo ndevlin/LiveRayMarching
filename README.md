@@ -14,6 +14,10 @@ This project uses Ray Marching and Signed Distance Functions to render a scene i
 
 This project was created using TypeScript, WebGL, and GLSL. Visual Studio Code, Node.js, and Dat.gui were also utilized.
 
+The SDFs were modeled off of a Robot character I modeled, rigged, and lit in the traditional manner using Maya: 
+
+![](images/RobotReference.jpg)
+
 
 ## User Details
 
@@ -72,7 +76,7 @@ Notes: For reference, the diameter of the robot's head is about 1 unit. By defau
 
 - SubSurface Scattering:
     The SubSurface Scattering effect is modeled off of the algorithm given here: https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/ Essentially, the algorithm approximates the thickness of the object at a point by running ambient occlusion on the interior of the object. Thus, points that are near other geometry (and thus in an AO pass would be occluded) are marked as thin, whereas those that are not are marked thick. This information is then used in combination with the information about the light direction and viewing angle to calculate a highlight, in a manner not dissimilar to a Blinn-Phong highlight.
-    
+
 
 
 ## Results
