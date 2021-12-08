@@ -454,8 +454,8 @@ vec2 sceneSDF(vec3 queryPos)
 
         // Add antenna ball
         vec3 antennaPos = vec3(0.0, 1.0, 0.0);
-        antennaPos = rotateAboutX(antennaPos, cos(u_CurrTick * 0.4) / 10.0 + 0.1);
-        antennaPos = rotateAboutZ(antennaPos, cos(u_CurrTick * 0.4) / 10.0 + 0.1);
+        antennaPos = rotateAboutX(antennaPos, cos(u_CurrTick * 0.1) / 10.0 + 0.1);
+        antennaPos = rotateAboutZ(antennaPos, cos(u_CurrTick * 0.1) / 10.0 + 0.1);
         antennaPos += vec3(0.0, 1.3, 0.4);
 
         matID = 1.0;
