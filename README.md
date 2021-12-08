@@ -61,9 +61,14 @@ Notes: For reference, the diameter of the robot's head is about 1 unit. By defau
 
 ![](images/Reflections.png)
 
+
 ### Modifiable Color:
 
 ![](images/ColorChange.png)
+
+
+### Gamma:
+![](images/Gamma.png)
 
 
 ## Implementation Details:
