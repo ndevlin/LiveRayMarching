@@ -46,8 +46,6 @@ const vec3 WORLD_UP = vec3(0.0, 1.0, 0.0);
 
 const vec3 fogColor = vec3(0.0471, 0.0471, 0.0471);
 
-// Replaced by Light Dir input
-//const vec3 LIGHT1_DIR = vec3(-1.0, 1.0, 2.0);
 float light1_OutputIntensity = 0.9;
 vec3 light1_Color = vec3(1.0, 1.0, 1.0); // Full Daylight
 
@@ -77,7 +75,6 @@ struct Intersection
     float distance_t;
     int material_id;
 };
-
 
 
 float getBias(float t, float biasAmount)
@@ -112,6 +109,7 @@ vec3 rotateAboutY(vec3 point, float theta)
     return point;
 }
 
+
 vec3 rotateAboutZ(vec3 point, float theta)
 {
     float cosTheta = cos(theta);
@@ -143,6 +141,7 @@ vec2 unionSDF(vec2 object1, vec2 object2)
         return vec2(object1.x, object1.y);
     }
 }
+
 
 float smoothSubtraction( float d1, float d2, float k ) 
 {
@@ -181,21 +180,11 @@ float sdfBox( vec3 position, vec3 dimensions )
     return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
 }
 
+
 // Creates a sphere
 float sdfSphere(vec3 query_position, vec3 position, float radius)
 {
     return length(query_position - position) - radius;
-}
-
-
-vec2 sphereUV(vec3 sphereCenter, vec3 position)
-{
-    vec3 pointOnSphereDir = normalize(position - sphereCenter);
-    
-    float u = atan(pointOnSphereDir.x, pointOnSphereDir.z) / (2.0 * PI) + 0.5;
-    float v = pointOnSphereDir.y * 0.5 + 0.5;
-    
-    return vec2(u, v);
 }
 
 
@@ -227,6 +216,19 @@ float sdfTorus( vec3 point, float radius, float thickness)
 }
 
 
+// Takes in a 3D position on a sphere, returns 2D UV coordinates mapping it to a square
+vec2 sphereUV(vec3 sphereCenter, vec3 position)
+{
+    vec3 pointOnSphereDir = normalize(position - sphereCenter);
+    
+    float u = atan(pointOnSphereDir.x, pointOnSphereDir.z) / (2.0 * PI) + 0.5;
+    float v = pointOnSphereDir.y * 0.5 + 0.5;
+    
+    return vec2(u, v);
+}
+
+
+// Takes in a UV, returns a color: Draws two eyes
 vec3 getEyesFromUVs(vec2 uvIn)
 {
     float a = 0.05;
@@ -235,8 +237,6 @@ vec3 getEyesFromUVs(vec2 uvIn)
     float x = uvIn.x - 0.42;
     float y = uvIn.y - 0.5;
         
-    float angle = 0.5 * PI;
-
     vec3 fragColor = vec3(1.0, 1.0, 1.0);
 	
 	float distance = pow( x, 2.0 ) / ( a * a ) + pow( y, 2.0 ) / ( b * b );
@@ -266,7 +266,6 @@ vec3 getEyesFromUVs(vec2 uvIn)
             fragColor = vec3( 0.8, 0.8, 0.8); 
         }
     }
-
 
     return fragColor;
 }
@@ -309,7 +308,6 @@ vec2 sceneSDF(vec3 queryPos)
         vec2 sqButton2 = vec2(sdfBox(bodyPos + vec3(-0.3, -0.0, -0.45), vec3(0.05, 0.03, 0.1)), matID);
         closestPointDistance = unionSDF(sqButton2, closestPointDistance);
         
-
         // Add Button1
         matID = 4.0;
         vec2 button1 = vec2(sdfSphere(queryPos, vec3(-0.6, 0.16, 0.14), 0.07), matID);
@@ -319,7 +317,6 @@ vec2 sceneSDF(vec3 queryPos)
         matID = 4.0;
         vec2 button2 = vec2(sdfSphere(queryPos, vec3(-0.45, 0.11, 0.30), 0.07), matID);
         closestPointDistance = unionSDF(button2, closestPointDistance);
-
 
         // Add head
         matID = 1.0;
@@ -331,16 +328,12 @@ vec2 sceneSDF(vec3 queryPos)
         vec2 eyes = vec2(sdfSphere(queryPos, vec3(-0.025, 1.3, 0.36), 0.55), matID);
         closestPointDistance = unionSDF(eyes, closestPointDistance);
 
-
-
         // Add neck
         matID = 1.0;
         vec2 neck = vec2(sdfCapsule(queryPos - vec3(0.0, 0.3, 0.3), 
                                                     vec3(-0.0, 0.1, -0.2), 
                                                     vec3(0.0, 0.4, -0.1), 0.1), matID);
         closestPointDistance = unionSDF(neck, closestPointDistance);
-
-
 
         // Add face
         matID = 1.0;
@@ -375,7 +368,6 @@ vec2 sceneSDF(vec3 queryPos)
         vec2 rightHand = vec2(sdfSphere(queryPos + vec3(1.7, 0.625, -0.35), vec3(0.0, 0.53, 0.15), 0.12), matID);
         closestPointDistance = unionSDF(rightHand, closestPointDistance);
 
-
         // Left Upper arm
         matID = 1.0;
         vec2 leftUpperArm = vec2(sdfCapsule(queryPos - vec3(0.8, 0.0, 0.2), 
@@ -394,7 +386,6 @@ vec2 sceneSDF(vec3 queryPos)
         vec2 leftHand = vec2(sdfSphere(queryPos - vec3(1.20, -1.15, 0.55), vec3(0.0, 0.53, 0.15), 0.12), matID);
         closestPointDistance = unionSDF(leftHand, closestPointDistance);
 
-
         // Add right upper leg
         matID = 1.0;
         vec2 rightUpperLeg = vec2(sdfCapsule(queryPos - vec3(-0.8, -1.4, -0.4), 
@@ -408,7 +399,6 @@ vec2 sceneSDF(vec3 queryPos)
                                                     vec3(0.2, 0.4, 0.1), 
                                                     vec3(0.38, -0.2, -0.1), 0.1), matID);
 
-
         // Add left upper leg
         matID = 1.0;
         vec2 leftUpperLeg = vec2(sdfCapsule(queryPos - vec3(-0.4, -1.6, 0.1), 
@@ -421,7 +411,6 @@ vec2 sceneSDF(vec3 queryPos)
         vec2 leftLowerLeg = vec2(sdfCapsule(queryPos - vec3(-0.4, -1.6, 0.1), 
                                                     vec3(0.8, 0.7, -0.4), 
                                                     vec3(1.2, 0.85, -0.9), 0.1), matID);
-
 
         // Right wheel
         vec3 rightWheelPos = rotateAboutY(queryPos - vec3(-0.4, -1.8, -0.5), -PI / 4.0);
@@ -448,7 +437,6 @@ vec2 sceneSDF(vec3 queryPos)
         vec3 leftTirePos = rotateAboutY(queryPos - vec3(0.9, -0.7, -0.9), -PI / 4.0);
         vec2 leftTire = vec2(sdfTorus(leftWheelPos, 0.18, 0.07), matID);
         closestPointDistance = unionSDF(leftTire, closestPointDistance);
-
 
         // Right tire
         matID = 2.0;
@@ -498,6 +486,7 @@ vec2 sceneSDF(vec3 queryPos)
     return closestPointDistance;
 }
 
+
 Ray getRay(vec2 uv)
 {   
     Ray r;
@@ -506,7 +495,6 @@ Ray getRay(vec2 uv)
     float len = length(forward);
     forward = normalize(forward);
     vec3 right = normalize(cross(forward, u_Up));
-
 
     float fov = FOV - ((u_FocalLength - 106.0) / 157.0);
 
@@ -525,6 +513,7 @@ Ray getRay(vec2 uv)
 
     return r;
 }
+
 
 vec3 estimateNormal(vec3 p)
 {
@@ -695,8 +684,6 @@ vec4 getSceneColor(vec2 uv)
             }
         }
 
-
-
         // Turn on blinnPhong for shiny objects
         if((intersection.material_id == 0 || intersection.material_id == 1 ||
             intersection.material_id == 3 || intersection.material_id == 4
@@ -744,7 +731,6 @@ vec4 getSceneColor(vec2 uv)
             light2Intensity += specularIntensity * light2_OutputIntensity;
         }
 
-
         // Third Light
 
         float diffuse3Term = dot(intersection.normal, normalize(LIGHT3_DIR));
@@ -768,7 +754,6 @@ vec4 getSceneColor(vec2 uv)
         float shadowFactor = hardShadow(intersection.position, normalize(vec3(u_LightPos)), EPSILON * 1000.0, 100.0);
         light1Intensity *= shadowFactor;
 
-
         // Compute shadow from light2
         shadowFactor = softShadow(intersection.position, normalize(LIGHT2_DIR), EPSILON * 1000.0, 100.0, 20.0);
         light2Intensity *= shadowFactor;
@@ -788,6 +773,8 @@ vec4 getSceneColor(vec2 uv)
         // Set camera Z here to maintain proper behavior for reflective floor
         float distAlongCamZ = intersection.distance_t;
 
+
+        // Set diffuse colors according to material
 
         if(intersection.material_id == 1)
         {
@@ -826,33 +813,10 @@ vec4 getSceneColor(vec2 uv)
 
         // Translucent Material Surface Color - Face
         if(intersection.material_id == 6)
-        {
-            diffuseColor = vec3(0.85, 0.9, 0.9);
-
-            //float t = floor(mod(1.0 * (sin(intersection.position.x * 20.0) + sin(intersection.position.z * 20.0)), 2.0));
-            //diffuseColor = mix(vec3(0.25), vec3(1.0), t);
-
-            //t = floor(mod(1.0 * (sin(intersection.position.x * 20.0 + 0.5) + sin(intersection.position.z * 20.0)), 2.0));
-            //diffuseColor = mix(vec3(0.25), vec3(1.0), t);
-
-            
+        {            
             vec2 uv = sphereUV(vec3(0.0, 1.3, 0.3), intersection.position);
 
             diffuseColor = getEyesFromUVs(uv);
-
-            /*
-            // Left Eye
-            if(dot(intersection.position, leftEye) > 0.91)
-            {
-                diffuseColor = vec3(0.0, 0.0, 0.0);
-            }
-
-            // Right Eye
-            if(dot(intersection.position, rightEye) > 0.98)
-            {
-                diffuseColor = vec3(0.0, 0.0, 0.0);
-            }
-            */
         }
 
 
@@ -871,9 +835,7 @@ vec4 getSceneColor(vec2 uv)
         // Add SSS if applicable
         if(intersection.material_id == 5 || intersection.material_id == 6 || u_SSSall > 0.5)
         {
-
             vec3 subSurfaceColor = vec3(1.0, 0.85, 0.75);
-
 
             if(intersection.material_id == 6)
             {
@@ -881,19 +843,6 @@ vec4 getSceneColor(vec2 uv)
 
                 subSurfaceColor = getEyesFromUVs(uv);
             }
-
-            /*
-            if(dot(intersection.position, leftEye) > 0.91)
-            {
-                subSurfaceColor = vec3(0.0, 0.0, 0.0);
-            }
-
-            // Right Eye
-            if(dot(intersection.position, rightEye) > 0.98)
-            {
-                subSurfaceColor = vec3(0.0, 0.0, 0.0);
-            }
-            */
 
             // Default values for SSS in head
             float aoK = 4.0;
@@ -921,7 +870,6 @@ vec4 getSceneColor(vec2 uv)
                 sssAmbient = 0.4;
             }
 
-
             float thickness = 1.0 - occlusionShadowFactor(intersection.position, 
                                                             -intersection.normal, 
                                                             aoK, 
@@ -937,46 +885,37 @@ vec4 getSceneColor(vec2 uv)
                                                 scaleFactor, 
                                                 sssAmbient);
 
-            //subSurfaceLight = clamp(subSurfaceLight, 0.0, 1.0);
-
             sssColor = subSurfaceColor * subSurfaceLight;
         }
 
         finalColor = finalColor + sssColor;
 
+        // Add background fog
         float fogT = smoothstep(12.0, 30.0, distance(intersection.position, u_Eye));
         finalColor = mix(finalColor, fogColor, fogT);
 
 
-
         // Add exposure effects to final brightness
-
         finalColor *= u_Exposure / 100.0;
-
 
         // Tone Map
         finalColor = toneMap(finalColor);
 
-
+        // Add depth info to alpha channel
         const float focalRange = 1.0;
-
         float dofZ = min(1.0, abs(distAlongCamZ - u_FocusDistance) / focalRange);
 
-
         return vec4(finalColor, dofZ);
-
     }
+
     return vec4(fogColor, 1.0);
 }
 
 
 void main()
 {
-    out_Col = vec4(0.0, 0.0, 0.0, 1.0);
-
     // Store color to texture
     // Alpha indicates distance from fragment to Eye
     out_Col = getSceneColor(fs_Pos);
-
 }
 

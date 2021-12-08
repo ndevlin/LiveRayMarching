@@ -165,8 +165,8 @@ function main()
 
 
   const postProcess = new ShaderProgram([
-    new Shader(gl.VERTEX_SHADER, require('./shaders/noOp-vert.glsl')),
-    new Shader(gl.FRAGMENT_SHADER, require('./shaders/noOp-frag.glsl')),
+    new Shader(gl.VERTEX_SHADER, require('./shaders/postprocess-vert.glsl')),
+    new Shader(gl.FRAGMENT_SHADER, require('./shaders/postprocess-frag.glsl')),
   ]);
 
 
