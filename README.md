@@ -10,7 +10,7 @@
 
 ## Project Information
 
-This project uses Ray Marching and Signed Distance Functions to render a scene in real-time using only mathematical functions. There is no actual geometry in the scene other than a quad that the scene is rendered upon. Each pixel ray-marches forward to interact with functions corresponding with each piece of geometry in the scene to determine which piece of geometry is closest to the camera. A number of rendering effects are calculated on top of this. These include Blinn-Phong reflection, specular reflection, sub-surface scattering, ambient occlusion, and more. Hard and soft shadows, depth of field, and more are also created using algorithms uniquely appropriate for an SDF scene. 
+This project uses Ray Marching and Signed Distance Functions to render a scene in real-time using only mathematical functions. There is no actual geometry in the scene other than a quad that the scene is rendered upon. Each pixel ray-marches forward to interact with functions corresponding with each piece of geometry in the scene to determine which piece of geometry is closest to the camera. A number of rendering effects are calculated on top of this. These include Blinn-Phong reflection, specular reflection, sub-surface scattering, ambient occlusion, and more. UV mapped textures, Hard and soft shadows, depth of field, and more are also created using algorithms uniquely appropriate for an SDF scene. Check out a live demo using the link above!
 
 This project was created using TypeScript, WebGL, and GLSL. Visual Studio Code, Node.js, and Dat.gui were also utilized.
 
@@ -38,7 +38,7 @@ In addition, there are a number of user-controllable sliders:
 - LightColor: Use a Color Picker to select the color of the Key Light
 
 
-Notes: For reference, the diameter of the robot's head is about 1 unit. By default, only the robot's face uses Sub-Surface Scattering. 
+Notes: For reference, the diameter of the robot's head is about 1 unit. By default, only the robot's face and the small panel on the chest use Sub-Surface Scattering. 
 
 ### Demo Images:
 
@@ -67,6 +67,7 @@ Notes: For reference, the diameter of the robot's head is about 1 unit. By defau
 
 
 ## Implementation Details:
+Selected information about various algorithms and challenges overcome in implementing various features
 
 - Lens Controls: 
     Enabling the creation of "real" camera controls required a few different techniques. In order to make it work, I added an additional render pass. To begin with, I needed to set up a Post-Processing framework with WebGL. The original ray-marched scene is first rendered and stored to a texture using a Frame Buffer. Depth information is stored to to the alpha channel since all elements in the scene are opaque. Since the first render pass renders everything on a single-pixel basis, each pixel doesn't have any information about it's neighboring pixels. The second pass allows access to the whole image. The second shader reads from the texture to sample neighboring pixels to accomplish a Gaussian blur. This is interpolated according to the depth information stored in the depth channel combined with the FocusDistance value between a fully blurry image and an un-blurred image. This gives the effect of a shallow depth of field. This result is interpolated with an un-blurry image according to the Aperture parameter to simulate a shallower or less shallow depth of field per the user's preference.
@@ -76,6 +77,18 @@ Notes: For reference, the diameter of the robot's head is about 1 unit. By defau
 
 - SubSurface Scattering:
     The SubSurface Scattering effect is modeled off of the algorithm given here: https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/ Essentially, the algorithm approximates the thickness of the object at a point by running ambient occlusion on the interior of the object. Thus, points that are near other geometry (and thus in an AO pass would be occluded) are marked as thin, whereas those that are not are marked thick. This information is then used in combination with the information about the light direction and viewing angle to calculate a highlight, in a manner not dissimilar to a Blinn-Phong highlight.
+
+- Reflections:
+    To calculate reflections, a special reflective material is indicated. If an object is specified as using this material, then in the color calculation step of the algorithm, a ray is shot out to re-march originating at the original intersection location and heading in a direction calculated based on the camera's angle with the surface.
+
+- UV Mapping:
+    I created a procedural texture for the robot's face that mathematically describes two ellipses that create the robot's eyes. This texture is then mapped to the robot's face using a UV Mapping function that takes in the position on the sphere and returns the corresponding UV coordinates.
+
+- Tone Mapping:
+    Gamma correction and Exposure controls are used to allow the user to modify the contrast and the total brightness of the scene to compensate for different light colors, light angles, etc.
+
+- User Controls:
+    Dat.gui is utilized to take in input from the user in real time. This is then piped through WebGL to the shaders where they can modify the image on a per-pixel basis. Beyond the features described above, the user can also control the position and color of the Key light and the Robot's albedo color.
 
 
 
@@ -92,6 +105,7 @@ I also added a few additional bonus features to the project, including
 - Exposure
 - Modifiable Focal Length
 - Gamma Correction
+- UV Mapping, procedural textures
 - Interactive User Controls
 
 I added interactive user controls to enable the user to modify:
