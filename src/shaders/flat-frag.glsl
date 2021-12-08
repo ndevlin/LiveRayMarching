@@ -825,7 +825,7 @@ vec4 getSceneColor(vec2 uv)
         vec3 rightEye = vec3(-0.5, 0.0, 1.0);
 
         // Translucent Material Surface Color - Face
-        if(intersection.material_id == 6 || u_SSSall > 0.5)
+        if(intersection.material_id == 6)
         {
             diffuseColor = vec3(0.85, 0.9, 0.9);
 
@@ -875,9 +875,12 @@ vec4 getSceneColor(vec2 uv)
             vec3 subSurfaceColor = vec3(1.0, 0.85, 0.75);
 
 
-            vec2 uv = sphereUV(vec3(0.0, 1.3, 0.3), intersection.position);
+            if(intersection.material_id == 6)
+            {
+                vec2 uv = sphereUV(vec3(0.0, 1.3, 0.3), intersection.position);
 
-            subSurfaceColor = getEyesFromUVs(uv);
+                subSurfaceColor = getEyesFromUVs(uv);
+            }
 
             /*
             if(dot(intersection.position, leftEye) > 0.91)
