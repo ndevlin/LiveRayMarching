@@ -669,6 +669,26 @@ vec4 getSceneColor(vec2 uv)
         vec3 diffuseColor = vec3(1.0, 0.8745, 0.5333);
 
 
+        // Floor; reflective material
+        if(intersection.material_id == 0)
+        {
+            diffuseColor = vec3(0.9, 0.8, 0.75);
+
+            Ray r;
+            r.direction = getRay(fs_Pos).direction;
+            r.direction.y *= -1.0;
+            r.origin = intersection.position + r.direction * EPSILON * 1000.0;
+
+            Intersection newIntersection = rayMarch(r);
+
+            if (newIntersection.distance_t > 0.0)
+            { 
+                intersection = newIntersection;
+            }
+        }
+
+
+
         // Turn on blinnPhong for shiny objects
         if((intersection.material_id == 0 || intersection.material_id == 1 ||
             intersection.material_id == 3 || intersection.material_id == 4
@@ -759,25 +779,6 @@ vec4 getSceneColor(vec2 uv)
 
         // Set camera Z here to maintain proper behavior for reflective floor
         float distAlongCamZ = intersection.distance_t;
-
-
-        // Floor; reflective material
-        if(intersection.material_id == 0)
-        {
-            diffuseColor = vec3(0.9, 0.8, 0.75);
-
-            Ray r;
-            r.direction = getRay(fs_Pos).direction;
-            r.direction.y *= -1.0;
-            r.origin = intersection.position + r.direction * EPSILON * 1000.0;
-
-            Intersection newIntersection = rayMarch(r);
-
-            if (newIntersection.distance_t > 0.0)
-            { 
-                intersection = newIntersection;
-            }
-        }
 
 
         if(intersection.material_id == 1)
