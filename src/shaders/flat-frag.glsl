@@ -371,6 +371,10 @@ vec2 sceneSDF(vec3 queryPos)
                                                     vec3(-0.9, 0.3, 0.9), 0.1), matID);
         closestPointDistance = unionSDF(rightLowerArm, closestPointDistance);
 
+        // Add Right Hand
+        vec2 rightHand = vec2(sdfSphere(queryPos + vec3(1.7, 0.625, -0.35), vec3(0.0, 0.53, 0.15), 0.12), matID);
+        closestPointDistance = unionSDF(rightHand, closestPointDistance);
+
 
         // Left Upper arm
         matID = 1.0;
@@ -385,6 +389,10 @@ vec2 sceneSDF(vec3 queryPos)
                                                 vec3(0.4, 0.0, 0.5), 
                                                   vec3(0.6, 0.8, -0.4), 0.1), matID);
         closestPointDistance = unionSDF(leftLowerArm, closestPointDistance);
+
+        // Add Left Hand
+        vec2 leftHand = vec2(sdfSphere(queryPos - vec3(1.20, -1.15, 0.55), vec3(0.0, 0.53, 0.15), 0.12), matID);
+        closestPointDistance = unionSDF(leftHand, closestPointDistance);
 
 
         // Add right upper leg
