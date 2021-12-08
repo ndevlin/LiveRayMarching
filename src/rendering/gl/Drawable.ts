@@ -1,43 +1,48 @@
 import {gl} from '../../globals';
 
-abstract class Drawable {
+// A parent class of renderable shapes
+
+abstract class Drawable 
+{
   count: number = 0;
 
   bufIdx: WebGLBuffer;
   bufPos: WebGLBuffer;
   bufNor: WebGLBuffer;
 
-
   bufUV: WebGLBuffer;
-
 
   idxBound: boolean = false;
   posBound: boolean = false;
   norBound: boolean = false;
 
-
   uvGenerated: boolean = false;
-
 
   abstract create() : void;
 
-  destroy() {
+  destroy() 
+  {
     gl.deleteBuffer(this.bufIdx);
     gl.deleteBuffer(this.bufPos);
     gl.deleteBuffer(this.bufNor);
   }
 
-  generateIdx() {
+  generateIdx() 
+  {
     this.idxBound = true;
     this.bufIdx = gl.createBuffer();
   }
 
-  generatePos() {
+
+  generatePos() 
+  {
     this.posBound = true;
     this.bufPos = gl.createBuffer();
   }
 
-  generateNor() {
+
+  generateNor() 
+  {
     this.norBound = true;
     this.bufNor = gl.createBuffer();
   }
@@ -50,23 +55,29 @@ abstract class Drawable {
   }
 
 
-
-  bindIdx(): boolean {
-    if (this.idxBound) {
+  bindIdx(): boolean 
+  {
+    if (this.idxBound) 
+    {
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.bufIdx);
     }
     return this.idxBound;
   }
 
-  bindPos(): boolean {
-    if (this.posBound) {
+  bindPos(): boolean 
+  {
+    if (this.posBound) 
+    {
       gl.bindBuffer(gl.ARRAY_BUFFER, this.bufPos);
     }
     return this.posBound;
   }
 
-  bindNor(): boolean {
-    if (this.norBound) {
+
+  bindNor(): boolean 
+  {
+    if (this.norBound) 
+    {
       gl.bindBuffer(gl.ARRAY_BUFFER, this.bufNor);
     }
     return this.norBound;
@@ -83,14 +94,16 @@ abstract class Drawable {
   }
 
 
-
-  elemCount(): number {
+  elemCount(): number 
+  {
     return this.count;
   }
 
-  drawMode(): GLenum {
+  drawMode(): GLenum 
+  {
     return gl.TRIANGLES;
   }
 };
 
 export default Drawable;
+

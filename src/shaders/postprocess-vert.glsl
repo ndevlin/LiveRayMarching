@@ -1,5 +1,13 @@
 #version 300 es
+
+// Written by Nathan Devlin
+
+// Post-processing vertex shader
+// Simply passes info to fragment shader
+
 precision highp float;
+
+// Attributes
 
 in vec4 vs_Pos;
 

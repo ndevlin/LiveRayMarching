@@ -1,7 +1,11 @@
 var CameraControls = require('3d-view-controls');
 import {vec3, mat4} from 'gl-matrix';
 
-class Camera {
+// A camera object to calculate scene perspective;
+// where Eye is, where Up and Forward are, FOV, etc.
+
+class Camera 
+{
   controls: any;
   projectionMatrix: mat4 = mat4.create();
   viewMatrix: mat4 = mat4.create();
@@ -14,8 +18,10 @@ class Camera {
   target: vec3 = vec3.create();
   up: vec3 = vec3.create();
 
-  constructor(position: vec3, target: vec3) {
-    this.controls = CameraControls(document.getElementById('canvas'), {
+  constructor(position: vec3, target: vec3) 
+  {
+    this.controls = CameraControls(document.getElementById('canvas'), 
+    {
       eye: position,
       center: target,
     });
@@ -23,11 +29,13 @@ class Camera {
     mat4.lookAt(this.viewMatrix, this.controls.eye, this.controls.center, this.controls.up);
   }
 
-  setAspectRatio(aspectRatio: number) {
+  setAspectRatio(aspectRatio: number) 
+  {
     this.aspectRatio = aspectRatio;
   }
 
-  updateProjectionMatrix() {
+  updateProjectionMatrix() 
+  {
     mat4.perspective(this.projectionMatrix, this.fovy, this.aspectRatio, this.near, this.far);
   }
 
@@ -36,7 +44,8 @@ class Camera {
     return this.controls.eye;
   }
 
-  update() {
+  update() 
+  {
     this.controls.tick();
     vec3.add(this.target, this.position, this.direction);
     mat4.lookAt(this.viewMatrix, this.controls.eye, this.controls.center, this.controls.up);

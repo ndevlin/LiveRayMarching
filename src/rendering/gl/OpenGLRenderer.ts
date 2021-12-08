@@ -1,5 +1,7 @@
 
-// Original code by Adam Mally, additions by Nathan Devlin
+// Basic framework by Adam Mally, additions by Nathan Devlin
+
+// Sets up OpenGL Rendering
 
 import {mat4, vec4, vec3} from 'gl-matrix';
 import Drawable from './Drawable';

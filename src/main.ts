@@ -1,5 +1,5 @@
 
-// Original code by Adam Mally, additions by Nathan Devlin
+// Basic framework by Adam Mally, additions by Nathan Devlin
 
 import {vec3, vec4} from 'gl-matrix';
 const Stats = require('stats-js');
@@ -14,8 +14,6 @@ import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
 // Utilizes dat.GUI
 const controls = 
 {
-  //tesselations: 6,
-  //'Load Scene': loadScene, // A function pointer, essentially
   LightPosTheta: -30,
   LightPosAzimuth: 60,
   FocusDistance: 4.5,
@@ -43,8 +41,6 @@ const lightColor =
 
 let square: Square;
 
-//let prevTesselations: number = 6;
-
 // Used as a clock
 let currTick: number = 0.0;
 
@@ -62,6 +58,7 @@ function convertSphericalToCartesian(thetaDeg: number, distance: number, azimuth
 }
 
 
+// Create the quad upon which the image will be rendered
 function loadScene() 
 {
   square = new Square(vec3.fromValues(0, 0, 0));
@@ -81,8 +78,6 @@ function main()
 
   // Add controls to the gui
   const gui = new DAT.GUI();
-  //gui.add(controls, 'tesselations', 0, 8).step(1);
-  //gui.add(controls, 'Load Scene');
   gui.add(controls, 'LightPosTheta', -180, 180).step(1);
   gui.add(controls, 'LightPosAzimuth', 0, 90).step(0.1);
   gui.add(controls, 'FocalLength', 20.0, 200.0).step(1.0);
@@ -99,7 +94,7 @@ function main()
     // Color control for sun; RGB input
   gui.addColor(lightColor, 'LightColor');
 
-  // get canvas and webgl context
+  // Get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
   const gl = <WebGL2RenderingContext> canvas.getContext('webgl2');
   if (!gl) 
@@ -139,13 +134,9 @@ function main()
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuff);
 
-
   const attachmentPoint: number = gl.COLOR_ATTACHMENT0;
 
-
   gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, sceneTexture, level);
-
-
 
   // Initial call to load scene
   loadScene();
@@ -163,12 +154,10 @@ function main()
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/flat-frag.glsl')),
   ]);
 
-
   const postProcess = new ShaderProgram([
     new Shader(gl.VERTEX_SHADER, require('./shaders/postprocess-vert.glsl')),
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/postprocess-frag.glsl')),
   ]);
-
 
   // This function will be called every frame
   function tick() 
@@ -183,9 +172,7 @@ function main()
 
     gl.bindTexture(gl.TEXTURE_2D, sceneTexture);
 
-
     gl.framebufferTexture2D(gl.FRAMEBUFFER, attachmentPoint, gl.TEXTURE_2D, sceneTexture, level);
-
 
     // Increment the clock
     currTick += 1.0;
@@ -203,9 +190,6 @@ function main()
     // 1632869657277 = 09/29/2021 7PM
     // deci-seconds since the above time
     let currTime: number = (Date.now() - 1632869657277.0) / 10000.0;
-
-
-    
 
 
     // Render scene
@@ -230,9 +214,6 @@ function main()
     controls.FocalLength,
     controls.SSS_All
     );
-
-
-
     
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
@@ -240,9 +221,6 @@ function main()
 
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
-
-
-
 
     // Post-process scene
     renderer.render(camera, 
@@ -266,8 +244,6 @@ function main()
       controls.FocalLength,
       controls.SSS_All
       );
-
-
     
     stats.end();
 
@@ -291,8 +267,6 @@ function main()
   flat.setDimensions(window.innerWidth, window.innerHeight);
 
   postProcess.setDimensions(window.innerWidth, window.innerHeight);
-
-
 
   // Start the render loop
   tick();

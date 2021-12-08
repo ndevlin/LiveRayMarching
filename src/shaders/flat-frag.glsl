@@ -1,9 +1,19 @@
 #version 300 es
+
+// Written by Nathan Devlin
+
+// SDF Fragment shader
+// This shader does 90% of the work -
+// computes scene geometry using SDFs, then
+// computes lighting of each fragment
+
 precision highp float;
 
+// Uniforms
+
 uniform vec3 u_Eye, u_Ref, u_Up;
+
 uniform vec2 u_Dimensions;
-uniform float u_Time;
 
 uniform float u_CurrTick;
 
@@ -19,16 +29,18 @@ uniform float u_Exposure;
 
 uniform float u_Gamma;
 
-uniform float u_Aperture;
-
 uniform float u_FocusDistance;
 
 uniform float u_FocalLength;
 
 uniform float u_SSSall;
 
+// Attributes
+
 in vec2 fs_Pos;
 out vec4 out_Col;
+
+// Constant Values
 
 const int MAX_RAY_STEPS = 256;
 const float maxRayDistance = 30.0;
@@ -42,8 +54,6 @@ const float AMBIENT = 0.05;
 
 const float FLOOR_HEIGHT = -2.15;
 
-const vec3 WORLD_UP = vec3(0.0, 1.0, 0.0);
-
 const vec3 fogColor = vec3(0.0471, 0.0471, 0.0471);
 
 float light1_OutputIntensity = 0.9;
@@ -56,7 +66,6 @@ vec3 light2_Color = vec3(0.996, 0.879, 0.804); // 5000 Kelvin Tungsten light
 const vec3 LIGHT3_DIR = vec3(-1.0, 1.0, -2.0);
 float light3_OutputIntensity = 0.8;
 vec3 light3_Color = vec3(0.996, 0.879, 0.804); // 5000 Kelvin Tungsten light
-
 
 // Light inside head
 const vec3 LIGHT4_POS = vec3(0.0, 1.15, 0.2);
@@ -91,6 +100,7 @@ float smin( float a, float b, float k )
     return mix( b, a, h ) - k*h*(1.0-h);
 }
 
+// Rotations
 
 vec3 rotateAboutX(vec3 point, float theta)
 {
@@ -127,6 +137,7 @@ vec3 rotateXYZ(vec3 point, float thetaX, float thetaY, float thetaZ)
 
     return point;
 }
+
 
 // Each vec represents an object, e.g. sphere vs plane;
 // First component is distance of that object, second is its materialID
@@ -194,12 +205,12 @@ float sdfRoundedCylinder( vec3 p, float ra, float rb, float h )
   return min(max(d.x,d.y),0.0) + length(max(d,0.0)) - rb;
 }
 
-
 // Creates a plane
 float heightField(vec3 queryPos, float planeHeight)
 {
     return queryPos.y - planeHeight;
 }
+
 
 float sdfCapsule( vec3 point, vec3 pointA, vec3 pointB, float radius )
 {
@@ -215,7 +226,6 @@ float sdfTorus( vec3 point, float radius, float thickness)
     return length(vec2(length(point.xy)- radius, point.z)) - thickness;
 }
 
-
 // Takes in a 3D position on a sphere, returns 2D UV coordinates mapping it to a square
 vec2 sphereUV(vec3 sphereCenter, vec3 position)
 {
@@ -226,7 +236,6 @@ vec2 sphereUV(vec3 sphereCenter, vec3 position)
     
     return vec2(u, v);
 }
-
 
 // Takes in a UV, returns a color: Draws two eyes
 vec3 getEyesFromUVs(vec2 uvIn)
@@ -269,7 +278,6 @@ vec3 getEyesFromUVs(vec2 uvIn)
 
     return fragColor;
 }
-
 
 // Describe the scene using sdf functions
 vec2 sceneSDF(vec3 queryPos) 
@@ -486,7 +494,7 @@ vec2 sceneSDF(vec3 queryPos)
     return closestPointDistance;
 }
 
-
+// Takes in the UV coord of the square, shoots a ray from Eye through it
 Ray getRay(vec2 uv)
 {   
     Ray r;
@@ -514,7 +522,7 @@ Ray getRay(vec2 uv)
     return r;
 }
 
-
+// Calculate the Normal by jittering and taking differential
 vec3 estimateNormal(vec3 p)
 {
     vec3 normal = vec3(0.0, 0.0, 0.0);
@@ -541,7 +549,7 @@ float hardShadow(vec3 rayOrigin, vec3 rayDirection, float minT, float maxT)
     return 1.0;
 }
 
-
+// Penumbra shadows
 float softShadow(vec3 rayOrigin, vec3 rayDirection, float minT, float maxT, float k)
 {
     float result = 1.0;
@@ -558,7 +566,6 @@ float softShadow(vec3 rayOrigin, vec3 rayDirection, float minT, float maxT, floa
 
     return result;
 }
-
 
 // Returns float between 0 and 1 that indicates percentage of 
 // AO shadow created by nearby objects.
@@ -581,7 +588,6 @@ float occlusionShadowFactor(vec3 point, vec3 normal, float k,
     return k * aoShadowing;
 }
 
-
 // Subsurface Scattering Approximation
 float subSurface(vec3 lightDir, vec3 normal, vec3 viewVec, float thickness, float distortion, 
                     float glowAmount, float scaleFactor, float ssAmbient)
@@ -593,10 +599,9 @@ float subSurface(vec3 lightDir, vec3 normal, vec3 viewVec, float thickness, floa
     return thickness * (lightReachingCam + ssAmbient);
 }
 
-
+// Takes in a Ray, marches through scene with sceneSDF function to find an intersection
 Intersection rayMarch(Ray r)
 {
-
     Intersection intersection;    
     intersection.distance_t = -1.0;
     
@@ -623,14 +628,14 @@ Intersection rayMarch(Ray r)
             
             return intersection;
         }
+
         distancet += currentDistance;
-        
     }
 
     return intersection;
 }
 
-
+// Takes in a UV coord, returns the hit point that corresponds
 Intersection getRaymarchedIntersection(vec2 uv)
 {   
     Ray r = getRay(uv);
@@ -638,7 +643,7 @@ Intersection getRaymarchedIntersection(vec2 uv)
     return rayMarch(r);
 }
 
-
+// Takes in a color, remaps it according to user-input gamma value
 vec3 toneMap(vec3 colorIn)
 {
     vec3 colorOut = colorIn;
@@ -649,7 +654,8 @@ vec3 toneMap(vec3 colorIn)
     return colorOut;
 }
 
-
+// Calculates scene color. Takes in a UV coord, ray-marchs.
+// Gets resulting intersection, then does lighting and coloring calculations on it
 vec4 getSceneColor(vec2 uv)
 {
     Intersection intersection = getRaymarchedIntersection(uv);
@@ -664,7 +670,6 @@ vec4 getSceneColor(vec2 uv)
 
         // diffuseColor = Albedo: below is the default value;
         vec3 diffuseColor = vec3(1.0, 0.8745, 0.5333);
-
 
         // Floor; reflective material
         if(intersection.material_id == 0)
@@ -769,10 +774,8 @@ vec4 getSceneColor(vec2 uv)
 
         light3_Color *= light3Intensity;
 
-
         // Set camera Z here to maintain proper behavior for reflective floor
         float distAlongCamZ = intersection.distance_t;
-
 
         // Set diffuse colors according to material
 
@@ -908,6 +911,7 @@ vec4 getSceneColor(vec2 uv)
         return vec4(finalColor, dofZ);
     }
 
+    // We hit nothing, render fogColor background
     return vec4(fogColor, 1.0);
 }
 

@@ -1,5 +1,7 @@
 
-// Original code by Adam Mally, additions by Nathan Devlin
+// Basic framework by Adam Mally, additions by Nathan Devlin
+
+// Sets up framework to pipe info from CPU to shaders
 
 import {vec2, vec3, vec4, mat4} from 'gl-matrix';
 import Drawable from './Drawable';
@@ -34,12 +36,10 @@ class ShaderProgram
 
   attrUV: number;
 
-
   unifRef: WebGLUniformLocation;
   unifEye: WebGLUniformLocation;
   unifUp: WebGLUniformLocation;
   unifDimensions: WebGLUniformLocation;
-
 
   unifModel: WebGLUniformLocation;
   
@@ -137,7 +137,6 @@ class ShaderProgram
 
     this.unifFocalLength    = gl.getUniformLocation(this.prog, "u_FocalLength");
 
-
   }
 
   use() 
@@ -167,6 +166,7 @@ class ShaderProgram
     }
   }
 
+
   setDimensions(width: number, height: number) 
   {
     this.use();
@@ -194,6 +194,7 @@ class ShaderProgram
     }
   }
 
+
   setViewProjMatrix(vp: mat4) 
   {
     this.use();
@@ -202,6 +203,7 @@ class ShaderProgram
       gl.uniformMatrix4fv(this.unifViewProj, false, vp);
     }
   }
+
 
   setGeometryColor(color: vec4) 
   {
@@ -212,6 +214,7 @@ class ShaderProgram
     }
   }
 
+
   setLightColor(color: vec4)
   {
     this.use();
@@ -220,6 +223,7 @@ class ShaderProgram
       gl.uniform4fv(this.unifLightColor, color);
     }
   }
+
 
   setCameraPos(cameraPos: vec4) 
   {
@@ -230,6 +234,7 @@ class ShaderProgram
     }
   }
 
+
   setLightPos(lightPos: vec4)
    {
     this.use();
@@ -238,6 +243,7 @@ class ShaderProgram
       gl.uniform4fv(this.unifLightPos, lightPos);
     }
   }
+
 
   setAO(ao: number)
   {
@@ -248,6 +254,7 @@ class ShaderProgram
     }
   }
 
+
   setAperture(aperture: number)
   {
     this.use();
@@ -256,6 +263,7 @@ class ShaderProgram
       gl.uniform1f(this.unifAperture, aperture);
     }
   }
+
 
   setExposure(exposure: number)
   {
@@ -286,6 +294,7 @@ class ShaderProgram
     }
   }
 
+
   setCurrTick(currTick: number)
   {
     this.use();
@@ -294,6 +303,7 @@ class ShaderProgram
       gl.uniform1f(this.unifCurrTick, currTick);
     }
   }
+
 
   setCurrTime(currTime: number)
   {
@@ -304,6 +314,7 @@ class ShaderProgram
     }
   }
 
+  
   setTexLocation()
   {
     this.use();
