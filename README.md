@@ -95,6 +95,12 @@ Selected information about various algorithms and challenges overcome in impleme
 - User Controls:
     Dat.gui is utilized to take in input from the user in real time. This is then piped through WebGL to the shaders where they can modify the image on a per-pixel basis. Beyond the features described above, the user can also control the position and color of the Key light and the Robot's albedo color.
 
+- Lighting:
+    There are a number of techniques behind the lighting. Lambert and Blinn-Phong lighting is implemented using standard techniques. Shadows are created by casting rays between intersection points and lights to see if there is intersection within a given range; if so, shadows are created. A 3-point lighting setup is used which utilizes a Key light and two fill lights. The Key light casts hard shadows, whereas the fill lights cast soft shadows, which are implemented using a slightly different algorithm.
+
+- Geometry:
+    All the shapes in the scene are created using Signed Distnace functions, mathematically defining contours using formulas. IQs SDF formulas were super useful for this: https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm. Each shape has a corresponding function, and each fragment checks which of these functions has the shortest ray-length from the camera's Eye using ray marching. 
+
 
 ## Process
 
