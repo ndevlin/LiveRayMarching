@@ -21,6 +21,8 @@ The SDFs were modeled off of a Robot character I modeled, rigged, and lit in the
 
 ## User Details
 
+Please note that the project will run much better if you ensure that your browser is set up to use your dedicated graphics card with WebGL, rather than integrated graphics.
+
 The user can move the camera using their mouse. Left click and drag to tumble the camera. Use the scroll wheel to dolly in and out. Right click and drag to move the camera position in screen space.
 
 In addition, there are a number of user-controllable sliders:
